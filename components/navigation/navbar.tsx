@@ -4,14 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import {
-  Menu,
-  X,
-  Sword,
-  User,
-  BookOpen,
-  PlusCircle,
-} from "lucide-react";
+import { Menu, X, Sword, User, BookOpen, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -28,7 +21,7 @@ export default function Navbar() {
   const demoUser = {
     name: "Demo User",
     ninjaLevel: 1,
-    ninjaGold: 100
+    ninjaGold: 100,
   };
 
   const navLinks = [
@@ -49,8 +42,8 @@ export default function Navbar() {
           >
             {/* <Sword className="h-8 w-8 text-ninja-crimson" /> */}
             <Image src="/logo/logoRed.png" alt="logo" width={64} height={64} />
-            <span className="font-ninja text-2xl text-ninja-white">
-              The Writing Ninja
+            <span className="hidden md:block font-ninja text-2xl text-ninja-white">
+              The Writing Ninja Academy
             </span>
           </Link>
 
@@ -69,33 +62,39 @@ export default function Navbar() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/upload">
-              <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Upload Story
-              </Button>
-            </Link>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-8 w-8 rounded-full"
-                >
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-ninja-gold text-ninja-black">
-                      {demoUser.name[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <div className="flex items-center justify-start gap-2 p-2">
-                  <div className="flex flex-col space-y-1 leading-none">
-                    <p className="font-medium">{demoUser.name}</p>
+            {false ? (
+              <>
+                <Link href="/upload">
+                  <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Upload Story
+                  </Button>
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="relative h-8 w-8 rounded-full"
+                    >
+                      <Avatar className="h-8 w-8">
+                        {/* <AvatarImage
+                          src={session.user?.image || ""}
+                          alt={session.user?.name || ""}
+                        /> */}
+                        <AvatarFallback className="bg-ninja-gold text-ninja-black">
+                          {/* {session.user?.name?.[0] || "U"} */}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        {/* <p className="font-medium">{session.user?.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          Level {demoUser.ninjaLevel} •{" "}
-                          {demoUser.ninjaGold} Gold
-                        </p>
+                          Level {session.user?.ninjaLevel || 1} •{" "}
+                          {session.user?.ninjaGold || 0} Gold
+                        </p> */}
                       </div>
                     </div>
                     <DropdownMenuSeparator />
@@ -112,8 +111,33 @@ export default function Navbar() {
                       </DropdownMenuItem>
                     </Link>
                     <DropdownMenuSeparator />
+                    {/* <DropdownMenuItem
+                      onClick={() => signOut()}
+                      className="text-red-600"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign out
+                    </DropdownMenuItem> */}
                   </DropdownMenuContent>
                 </DropdownMenu>
+              </>
+            ) : (
+              <div className="space-x-2">
+                <Link href="/auth/signin">
+                  <Button
+                    variant="ghost"
+                    className="text-ninja-white hover:text-ninja-gold"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -135,7 +159,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-ninja-gray">
+          <div className="md:hidden fixed left-0 top-[66px] z-30 border-t bg-ninja-black w-[100vw] border-ninja-gray">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navLinks.map((link) => (
                 <Link
