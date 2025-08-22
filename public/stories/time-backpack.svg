@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <!-- Time portal background -->
+  <defs>
+    <radialGradient id="timePortal" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9370DB"/>
+      <stop offset="50%" stop-color="#4169E1"/>
+      <stop offset="100%" stop-color="#000080"/>
+    </radialGradient>
+  </defs>
+  
+  <rect width="400" height="300" fill="url(#timePortal)"/>
+  
+  <!-- Time swirls -->
+  <g stroke="#FFD700" stroke-width="2" fill="none" opacity="0.6">
+    <circle cx="200" cy="150" r="50"/>
+    <circle cx="200" cy="150" r="80"/>
+    <circle cx="200" cy="150" r="110"/>
+  </g>
+  
+  <!-- Attic setting -->
+  <rect x="0" y="200" width="400" height="100" fill="#8B4513"/>
+  
+  <!-- Wooden floor planks -->
+  <g stroke="#654321" stroke-width="1">
+    <line x1="0" y1="220" x2="400" y2="220"/>
+    <line x1="0" y1="240" x2="400" y2="240"/>
+    <line x1="0" y1="260" x2="400" y2="260"/>
+    <line x1="0" y1="280" x2="400" y2="280"/>
+  </g>
+  
+  <!-- Old trunk -->
+  <rect x="50" y="220" width="60" height="40" fill="#654321" rx="5"/>
+  <rect x="55" y="225" width="50" height="30" fill="#8B4513" rx="3"/>
+  
+  <!-- Jake (the boy) -->
+  <g>
+    <!-- Body -->
+    <rect x="180" y="200" width="25" height="50" fill="#4169E1" rx="12"/>
+    
+    <!-- Head -->
+    <circle cx="192" cy="190" r="15" fill="#FDBCB4"/>
+    
+    <!-- Hair -->
+    <path d="M 177 185 Q 192 175 207 185 Q 207 195 192 195 Q 177 195 177 185" fill="#8B4513"/>
+    
+    <!-- Eyes (amazed expression) -->
+    <circle cx="188" cy="188" r="2" fill="black"/>
+    <circle cx="196" cy="188" r="2" fill="black"/>
+    <circle cx="189" cy="187" r="0.5" fill="white"/>
+    <circle cx="197" cy="187" r="0.5" fill="white"/>
+    
+    <!-- Mouth (surprised) -->
+    <ellipse cx="192" cy="194" rx="2" ry="3" fill="black"/>
+    
+    <!-- Arms -->
+    <rect x="160" y="210" width="20" height="6" fill="#FDBCB4" rx="3"/>
+    <rect x="205" y="210" width="20" height="6" fill="#FDBCB4" rx="3"/>
+    
+    <!-- Legs -->
+    <rect x="185" y="250" width="8" height="25" fill="#000080" rx="4"/>
+    <rect x="197" y="250" width="8" height="25" fill="#000080" rx="4"/>
+  </g>
+  
+  <!-- The magical backpack -->
+  <g>
+    <!-- Backpack body -->
+    <rect x="220" y="180" width="30" height="40" fill="#8B4513" rx="5"/>
+    
+    <!-- Backpack straps -->
+    <rect x="225" y="175" width="4" height="15" fill="#654321"/>
+    <rect x="241" y="175" width="4" height="15" fill="#654321"/>
+    
+    <!-- Magical glow -->
+    <circle cx="235" cy="200" r="20" fill="#FFD700" opacity="0.3"/>
+    
+    <!-- Time symbols on backpack -->
+    <g fill="#FFD700">
+      <text x="235" y="195" text-anchor="middle" font-family="serif" font-size="12">⏰</text>
+      <text x="230" y="205" text-anchor="middle" font-family="serif" font-size="8">∞</text>
+      <text x="240" y="205" text-anchor="middle" font-family="serif" font-size="8">⧖</text>
+    </g>
+  </g>
+  
+  <!-- Historical time periods floating around -->
+  <g opacity="0.7">
+    <!-- Egyptian pyramid -->
+    <polygon points="80,120 100,100 120,120" fill="#DAA520"/>
+    
+    <!-- Medieval castle -->
+    <rect x="300" y="100" width="20" height="30" fill="#696969"/>
+    <polygon points="300,100 310,90 320,100" fill="#696969"/>
+    
+    <!-- Dinosaur silhouette -->
+    <ellipse cx="350" cy="180" rx="15" ry="8" fill="#228B22" opacity="0.6"/>
+    <ellipse cx="340" cy="175" rx="8" ry="6" fill="#228B22" opacity="0.6"/>
+  </g>
+  
+  <!-- Magical sparkles -->
+  <g fill="#FFD700" opacity="0.8">
+    <polygon points="120,160 122,165 127,165 123,168 125,173 120,170 115,173 117,168 113,165 118,165" />
+    <polygon points="280,140 282,145 287,145 283,148 285,153 280,150 275,153 277,148 273,145 278,145" />
+    <polygon points="150,200 152,205 157,205 153,208 155,213 150,210 145,213 147,208 143,205 148,205" />
+    <polygon points="320,200 322,205 327,205 323,208 325,213 320,210 315,213 317,208 313,205 318,205" />
+  </g>
+  
+  <!-- Title text -->
+  <text x="200" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFD700">The Time-Traveling Backpack</text>
+</svg>

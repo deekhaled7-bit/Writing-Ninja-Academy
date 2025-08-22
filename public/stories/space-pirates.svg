@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <!-- Space background -->
+  <rect width="400" height="300" fill="#000428"/>
+  
+  <!-- Stars -->
+  <g fill="white">
+    <circle cx="50" cy="40" r="1"/>
+    <circle cx="120" cy="30" r="1.5"/>
+    <circle cx="200" cy="50" r="1"/>
+    <circle cx="280" cy="35" r="1"/>
+    <circle cx="350" cy="45" r="1.5"/>
+    <circle cx="80" cy="80" r="1"/>
+    <circle cx="320" cy="70" r="1"/>
+    <circle cx="150" cy="90" r="1.5"/>
+    <circle cx="250" cy="85" r="1"/>
+  </g>
+  
+  <!-- Nebula Seven (planet) -->
+  <circle cx="350" cy="80" r="30" fill="#4169E1"/>
+  <ellipse cx="340" cy="75" rx="8" ry="15" fill="#32CD32" opacity="0.7"/>
+  <ellipse cx="360" cy="85" rx="6" ry="10" fill="#32CD32" opacity="0.7"/>
+  
+  <!-- Hero spaceship -->
+  <g>
+    <!-- Main body -->
+    <ellipse cx="150" cy="180" rx="40" ry="15" fill="#C0C0C0"/>
+    
+    <!-- Cockpit -->
+    <ellipse cx="140" cy="175" rx="15" ry="10" fill="#87CEEB" opacity="0.8"/>
+    
+    <!-- Wings -->
+    <polygon points="110,185 130,175 130,185 110,195" fill="#A9A9A9"/>
+    <polygon points="170,175 190,185 170,185 190,195" fill="#A9A9A9"/>
+    
+    <!-- Engine flames -->
+    <ellipse cx="190" cy="180" rx="8" ry="4" fill="#FF4500"/>
+    <ellipse cx="195" cy="180" rx="5" ry="3" fill="#FFD700"/>
+  </g>
+  
+  <!-- Pirate ship -->
+  <g>
+    <!-- Main body -->
+    <ellipse cx="280" cy="150" rx="35" ry="12" fill="#8B0000"/>
+    
+    <!-- Spikes/weapons -->
+    <polygon points="245,150 255,145 255,155" fill="#FF0000"/>
+    <polygon points="305,145 315,150 305,155" fill="#FF0000"/>
+    
+    <!-- Cockpit -->
+    <ellipse cx="275" cy="147" rx="12" ry="8" fill="#FF6347" opacity="0.8"/>
+    
+    <!-- Engine flames -->
+    <ellipse cx="315" cy="150" rx="6" ry="3" fill="#FF0000"/>
+    <ellipse cx="320" cy="150" rx="4" ry="2" fill="#FF4500"/>
+  </g>
+  
+  <!-- Captain Alex (in hero ship) -->
+  <circle cx="140" cy="175" r="6" fill="#FDBCB4"/>
+  <circle cx="138" cy="173" r="1" fill="black"/>
+  <circle cx="142" cy="173" r="1" fill="black"/>
+  
+  <!-- Laser beams -->
+  <g stroke-width="2">
+    <line x1="110" y1="180" x2="245" y2="150" stroke="#00FF00" opacity="0.8"/>
+    <line x1="315" y1="150" x2="190" y2="180" stroke="#FF0000" opacity="0.8"/>
+  </g>
+  
+  <!-- Explosion effects -->
+  <g fill="#FFD700" opacity="0.7">
+    <polygon points="220,140 225,135 230,140 225,145" />
+    <polygon points="200,160 205,155 210,160 205,165" />
+  </g>
+  
+  <!-- Action lines -->
+  <g stroke="white" stroke-width="1" opacity="0.5">
+    <line x1="100" y1="190" x2="120" y2="185"/>
+    <line x1="105" y1="195" x2="125" y2="190"/>
+    <line x1="290" y1="140" x2="310" y2="135"/>
+    <line x1="295" y1="145" x2="315" y2="140"/>
+  </g>
+  
+  <!-- Title text -->
+  <text x="200" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FFD700">Space Pirates of Nebula Seven</text>
+</svg>

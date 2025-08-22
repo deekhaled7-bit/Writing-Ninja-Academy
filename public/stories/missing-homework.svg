@@ -1,0 +1,58 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#87CEEB"/>
+  
+  <!-- Classroom floor -->
+  <rect x="0" y="200" width="400" height="100" fill="#8B4513"/>
+  
+  <!-- Desk -->
+  <rect x="150" y="160" width="100" height="40" fill="#D2691E" stroke="#8B4513" stroke-width="2"/>
+  <rect x="145" y="200" width="10" height="30" fill="#8B4513"/>
+  <rect x="245" y="200" width="10" height="30" fill="#8B4513"/>
+  
+  <!-- Books on desk -->
+  <rect x="160" y="150" width="15" height="20" fill="#FF6B6B" stroke="#000" stroke-width="1"/>
+  <rect x="180" y="150" width="15" height="20" fill="#4ECDC4" stroke="#000" stroke-width="1"/>
+  <rect x="200" y="150" width="15" height="20" fill="#45B7D1" stroke="#000" stroke-width="1"/>
+  
+  <!-- Student (worried expression) -->
+  <circle cx="200" cy="120" r="25" fill="#FDBCB4"/>
+  <circle cx="190" cy="115" r="3" fill="#000"/>
+  <circle cx="210" cy="115" r="3" fill="#000"/>
+  <path d="M 185 125 Q 200 135 215 125" stroke="#000" stroke-width="2" fill="none"/>
+  
+  <!-- Hair -->
+  <path d="M 175 105 Q 200 85 225 105 Q 220 95 200 90 Q 180 95 175 105" fill="#8B4513"/>
+  
+  <!-- Body -->
+  <rect x="185" y="145" width="30" height="40" fill="#FF6B6B" rx="5"/>
+  
+  <!-- Arms -->
+  <rect x="170" y="150" width="15" height="25" fill="#FDBCB4" rx="7"/>
+  <rect x="215" y="150" width="15" height="25" fill="#FDBCB4" rx="7"/>
+  
+  <!-- Thought bubble -->
+  <circle cx="280" cy="80" r="30" fill="#FFF" stroke="#000" stroke-width="2"/>
+  <circle cx="250" cy="110" r="15" fill="#FFF" stroke="#000" stroke-width="2"/>
+  <circle cx="235" cy="125" r="8" fill="#FFF" stroke="#000" stroke-width="2"/>
+  
+  <!-- Missing homework paper in thought bubble -->
+  <rect x="265" y="65" width="20" height="25" fill="#FFF" stroke="#000" stroke-width="2" stroke-dasharray="3,3"/>
+  <text x="275" y="80" font-family="Arial" font-size="8" text-anchor="middle" fill="#000">?</text>
+  
+  <!-- Backpack on floor -->
+  <rect x="120" y="180" width="25" height="35" fill="#4ECDC4" rx="5"/>
+  <rect x="125" y="175" width="15" height="8" fill="#45B7D1" rx="3"/>
+  
+  <!-- Window -->
+  <rect x="50" y="50" width="60" height="80" fill="#87CEEB" stroke="#8B4513" stroke-width="3"/>
+  <line x1="80" y1="50" x2="80" y2="130" stroke="#8B4513" stroke-width="2"/>
+  <line x1="50" y1="90" x2="110" y2="90" stroke="#8B4513" stroke-width="2"/>
+  
+  <!-- Sun through window -->
+  <circle cx="75" cy="70" r="12" fill="#FFD700"/>
+  <path d="M 75 55 L 75 50 M 90 70 L 95 70 M 85 58 L 88 55 M 85 82 L 88 85" stroke="#FFD700" stroke-width="2"/>
+  
+  <!-- Title -->
+  <text x="200" y="30" font-family="Arial" font-size="18" font-weight="bold" text-anchor="middle" fill="#2C3E50">The Missing Homework</text>
+</svg>

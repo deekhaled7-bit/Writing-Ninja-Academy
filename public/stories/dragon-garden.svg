@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <!-- Sky background -->
+  <rect width="400" height="300" fill="#87CEEB"/>
+  
+  <!-- Clouds -->
+  <ellipse cx="80" cy="50" rx="30" ry="15" fill="white" opacity="0.8"/>
+  <ellipse cx="320" cy="40" rx="25" ry="12" fill="white" opacity="0.8"/>
+  
+  <!-- Garden ground -->
+  <rect x="0" y="200" width="400" height="100" fill="#90EE90"/>
+  
+  <!-- Magical flowers -->
+  <g>
+    <!-- Flower 1 -->
+    <circle cx="100" cy="220" r="8" fill="#FF69B4"/>
+    <rect x="98" y="220" width="4" height="30" fill="#228B22"/>
+    
+    <!-- Flower 2 -->
+    <circle cx="150" cy="210" r="10" fill="#FFD700"/>
+    <rect x="148" y="210" width="4" height="35" fill="#228B22"/>
+    
+    <!-- Flower 3 -->
+    <circle cx="200" cy="225" r="7" fill="#FF4500"/>
+    <rect x="198" y="225" width="4" height="25" fill="#228B22"/>
+    
+    <!-- Flower 4 -->
+    <circle cx="250" cy="215" r="9" fill="#9370DB"/>
+    <rect x="248" y="215" width="4" height="30" fill="#228B22"/>
+  </g>
+  
+  <!-- Friendly dragon -->
+  <g>
+    <!-- Dragon body -->
+    <ellipse cx="320" cy="180" rx="40" ry="25" fill="#32CD32"/>
+    
+    <!-- Dragon head -->
+    <ellipse cx="280" cy="160" rx="25" ry="20" fill="#32CD32"/>
+    
+    <!-- Dragon eyes -->
+    <circle cx="275" cy="155" r="3" fill="white"/>
+    <circle cx="275" cy="155" r="2" fill="black"/>
+    <circle cx="285" cy="155" r="3" fill="white"/>
+    <circle cx="285" cy="155" r="2" fill="black"/>
+    
+    <!-- Dragon smile -->
+    <path d="M 270 165 Q 280 170 290 165" stroke="black" stroke-width="2" fill="none"/>
+    
+    <!-- Dragon wings -->
+    <ellipse cx="310" cy="150" rx="15" ry="25" fill="#228B22" opacity="0.7"/>
+    <ellipse cx="330" cy="150" rx="15" ry="25" fill="#228B22" opacity="0.7"/>
+    
+    <!-- Dragon tail -->
+    <ellipse cx="360" cy="190" rx="20" ry="10" fill="#32CD32"/>
+  </g>
+  
+  <!-- Little girl -->
+  <g>
+    <!-- Girl body -->
+    <rect x="45" y="180" width="20" height="40" fill="#FFB6C1" rx="10"/>
+    
+    <!-- Girl head -->
+    <circle cx="55" cy="170" r="12" fill="#FDBCB4"/>
+    
+    <!-- Girl hair -->
+    <path d="M 43 165 Q 55 155 67 165 Q 67 175 55 175 Q 43 175 43 165" fill="#8B4513"/>
+    
+    <!-- Girl eyes -->
+    <circle cx="52" cy="168" r="1" fill="black"/>
+    <circle cx="58" cy="168" r="1" fill="black"/>
+    
+    <!-- Girl smile -->
+    <path d="M 52 172 Q 55 174 58 172" stroke="black" stroke-width="1" fill="none"/>
+    
+    <!-- Girl arms -->
+    <rect x="35" y="185" width="15" height="4" fill="#FDBCB4" rx="2"/>
+    <rect x="65" y="185" width="15" height="4" fill="#FDBCB4" rx="2"/>
+    
+    <!-- Girl legs -->
+    <rect x="48" y="220" width="6" height="20" fill="#4169E1" rx="3"/>
+    <rect x="56" y="220" width="6" height="20" fill="#4169E1" rx="3"/>
+  </g>
+  
+  <!-- Magical sparkles -->
+  <g fill="#FFD700">
+    <polygon points="120,180 122,185 127,185 123,188 125,193 120,190 115,193 117,188 113,185 118,185" opacity="0.8"/>
+    <polygon points="180,170 182,175 187,175 183,178 185,183 180,180 175,183 177,178 173,175 178,175" opacity="0.8"/>
+    <polygon points="270,200 272,205 277,205 273,208 275,213 270,210 265,213 267,208 263,205 268,205" opacity="0.8"/>
+  </g>
+  
+  <!-- Title text -->
+  <text x="200" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#2F4F4F">The Dragon's Secret Garden</text>
+</svg>
