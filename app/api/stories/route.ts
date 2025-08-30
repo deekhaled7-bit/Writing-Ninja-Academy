@@ -1,12 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "../../../lib/mongodb";
-import Story from "../../../models/Story";
-import User from "../../../models/User";
-import { uploadToCloudinary } from "../../../lib/cloudinary";
+
+// Mock stories data
+const mockStories = [
+  {
+    _id: "1",
+    title: "The Dragon's Secret Garden",
+    description: "A young girl discovers a hidden garden where a friendly dragon grows magical flowers that can heal any wound.",
+    authorName: "Emma Chen",
+    ageGroup: "5-8",
+    category: "fantasy",
+    readCount: 1247,
+    likeCount: 89,
+    commentCount: 12,
+    completedCount: 156,
+    createdAt: "2024-01-15T10:30:00Z",
+    fileType: "pdf",
+    coverImageUrl: "/stories/dragon-garden.svg",
+    fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+    isPublished: true,
+    author: { _id: "author1", name: "Emma Chen" }
+  },
+  {
+    _id: "2",
+    title: "Space Pirates of Nebula Seven",
+    description: "Captain Alex and their crew must outsmart alien pirates to save their home planet from destruction.",
+    authorName: "Marcus Rodriguez",
+    ageGroup: "9-12",
+    category: "science-fiction",
+    readCount: 2156,
+    likeCount: 134,
+    commentCount: 23,
+    completedCount: 289,
+    createdAt: "2024-01-12T14:20:00Z",
+    fileType: "video",
+    coverImageUrl: "/stories/space-pirates.svg",
+    fileUrl: "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+    isPublished: true,
+    author: { _id: "author2", name: "Marcus Rodriguez" }
+  },
+  {
+    _id: "3",
+    title: "The Mystery of the Missing Homework",
+    description: "When homework starts disappearing from lockers, detective duo Sam and Riley must solve the case before the big test.",
+    authorName: "Zoe Williams",
+    ageGroup: "9-12",
+    category: "mystery",
+    readCount: 987,
+    likeCount: 67,
+    commentCount: 8,
+    completedCount: 123,
+    createdAt: "2024-01-10T09:15:00Z",
+    fileType: "pdf",
+    coverImageUrl: "/stories/mystery-homework.svg",
+    fileUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+    isPublished: true,
+    author: { _id: "author3", name: "Zoe Williams" }
+  }
+];
 
 export async function GET(request: NextRequest) {
-  await dbConnect();
-
   const { searchParams } = new URL(request.url);
   const ageGroup = searchParams.get("ageGroup");
   const category = searchParams.get("category");
@@ -15,36 +67,39 @@ export async function GET(request: NextRequest) {
   const limit = parseInt(searchParams.get("limit") || "12");
   const skip = (page - 1) * limit;
 
-  const filter: any = { isPublished: true };
-
-  if (ageGroup && ageGroup !== "all") {
-    filter.ageGroup = ageGroup;
-  }
-
-  if (category && category !== "all") {
-    filter.category = category;
-  }
-
-  if (search) {
-    filter.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
-      { authorName: { $regex: search, $options: "i" } },
-    ];
-  }
-
   try {
-    const stories = await Story.find(filter)
-      .sort({ readCount: -1, createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate("author", "name")
-      .lean();
+    let filteredStories = mockStories.filter(story => story.isPublished);
 
-    const total = await Story.countDocuments(filter);
+    if (ageGroup && ageGroup !== "all") {
+      filteredStories = filteredStories.filter(story => story.ageGroup === ageGroup);
+    }
+
+    if (category && category !== "all") {
+      filteredStories = filteredStories.filter(story => story.category === category);
+    }
+
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredStories = filteredStories.filter(story => 
+        story.title.toLowerCase().includes(searchLower) ||
+        story.description.toLowerCase().includes(searchLower) ||
+        story.authorName.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Sort by readCount and createdAt
+    filteredStories.sort((a, b) => {
+      if (b.readCount !== a.readCount) {
+        return b.readCount - a.readCount;
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    const paginatedStories = filteredStories.slice(skip, skip + limit);
+    const total = filteredStories.length;
 
     return NextResponse.json({
-      stories,
+      stories: paginatedStories,
       pagination: {
         current: page,
         pages: Math.ceil(total / limit),
@@ -60,11 +115,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // For demo purposes, we'll use a default user ID
-  const defaultUserId = "65f4b0b0f0b0b0b0b0b0b0b0";
-
-  await dbConnect();
-
   try {
     const formData = await request.formData();
     const title = formData.get("title") as string;
@@ -80,43 +130,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Upload to Cloudinary
-    const fileType = file.type.startsWith("video/") ? "video" : "raw";
-    const uploadResult = (await uploadToCloudinary(file, fileType)) as any;
-
-    // Get user info (or create a default user for demo)
-    let user = await User.findById(defaultUserId);
-    if (!user) {
-      // Create a default user for demo purposes
-      user = await User.create({
-        _id: defaultUserId,
-        name: "Demo User",
-        email: "demo@example.com",
-        ninjaLevel: 1,
-        ninjaGold: 100,
-        storiesUploaded: 0
-      });
-    }
-
-    // Create story
-    const story = await Story.create({
+    // Mock story creation (no actual file upload for demo)
+    const mockStory = {
+      _id: `story_${Date.now()}`,
       title,
       description,
-      author: defaultUserId,
-      authorName: user.name,
+      author: "demo_user_id",
+      authorName: "Demo User",
       ageGroup,
       category,
       fileType: file.type.startsWith("video/") ? "video" : "pdf",
-      fileUrl: uploadResult.secure_url,
-      cloudinaryId: uploadResult.public_id,
-    });
+      fileUrl: file.type.startsWith("video/") 
+        ? "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
+        : "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      readCount: 0,
+      likeCount: 0,
+      commentCount: 0,
+      completedCount: 0,
+      isPublished: false, // Stories need admin approval
+      createdAt: new Date().toISOString()
+    };
 
-    // Update user stats
-    await User.findByIdAndUpdate(defaultUserId, {
-      $inc: { storiesUploaded: 1, ninjaGold: 10 },
-    });
-
-    return NextResponse.json({ story }, { status: 201 });
+    return NextResponse.json({ story: mockStory }, { status: 201 });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(

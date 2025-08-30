@@ -194,7 +194,7 @@ export default function ContactPage() {
       </section>
 
       {/* Call to Action Section */}
-      <section className="py-16 bg-gradient-to-r from-ninja-crimson to-red-600">
+      {/* <section className="py-16 bg-gradient-to-r from-ninja-crimson to-red-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-ninja text-3xl sm:text-4xl text-ninja-white mb-4">
             Ready to Begin Your Writing Adventure?
@@ -212,7 +212,7 @@ export default function ContactPage() {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }
