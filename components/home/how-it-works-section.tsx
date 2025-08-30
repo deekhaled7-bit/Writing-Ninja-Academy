@@ -1,38 +1,42 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { PlusCircle, BookOpen, Heart, Trophy } from 'lucide-react';
+import { motion } from "framer-motion";
+import { BookOpen, Brain, PenTool, Share2, Trophy } from "lucide-react";
 
 const steps = [
   {
-    icon: PlusCircle,
-    title: 'Create & Upload',
-    description: 'Write your amazing story and upload it as a PDF or video to share with the ninja community.',
-    color: 'ninja-crimson',
-  },
-  {
     icon: BookOpen,
-    title: 'Explore & Discover',
-    description: 'Browse stories by age group and category to find the perfect adventure for you.',
-    color: 'ninja-gold',
+    title: "Read & Listen",
+    description:
+      "Explore a library full of books written by kids just like you. Choose to read online or listen to the audiobook version. After each book, take a fun comprehension quiz to earn points and see how much you understood.",
+    color: "ninja-peach",
   },
   {
-    icon: Heart,
-    title: 'Read & Connect',
-    description: 'Read stories, leave comments, and connect with fellow young authors from around the world.',
-    color: 'ninja-crimson',
+    icon: PenTool,
+    title: "Write Your Own Story",
+    description:
+      "Create your own story and ask your teacher or parent to upload it as a PDF or video. Our Ninja Masters (admins) will review and approve your story before publishing it in the library.",
+    color: "ninja-peach",
+  },
+  {
+    icon: Share2,
+    title: "Share & Celebrate",
+    description:
+      "Once published, your story becomes part of the Ninja Library. Other students can read, like, and comment on your work.",
+    color: "ninja-peach",
   },
   {
     icon: Trophy,
-    title: 'Level Up',
-    description: 'Earn ninja gold, unlock achievements, and become a legendary member of our writing dojo!',
-    color: 'ninja-gold',
+    title: "Earn Points & Badges",
+    description:
+      "Collect points by reading, listening, completing quizzes, and sharing stories. Unlock badges and climb the Ninja Leaderboard!",
+    color: "ninja-peach",
   },
 ];
 
 export default function HowItWorksSection() {
   return (
-    <section className="py-20 bg-ninja-white">
+    <section id="howItWorks" className="py-20 bg-ninja-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -42,10 +46,10 @@ export default function HowItWorksSection() {
           className="text-center mb-16"
         >
           <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-black mb-4">
-            How It Works
+            For Students
           </h2>
           <p className="text-xl text-ninja-gray max-w-3xl mx-auto">
-            Join our ninja dojo in 4 simple steps and start your writing adventure!
+            We help you sharpen your skills and train like Writing Ninjas today! Every book you read makes your Ninja powers stronger. Write your own story scroll and share it with the Ninja clan, then complete the quiz to earn points and level up your Ninja rank. Remember, a true Writing Ninja reads, writes, and inspires others.
           </p>
         </motion.div>
 
@@ -59,26 +63,28 @@ export default function HowItWorksSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
                 viewport={{ once: true }}
-                className="text-center group"
+                className="text-center group bg-ninja-cream border-ninja-light-gray p-2 rounded-2xl border-2"
               >
                 <div className="relative mb-6">
                   {/* Step Number */}
-                  <div className="absolute -top-4 -left-4 w-8 h-8 bg-ninja-black rounded-full flex items-center justify-center text-ninja-white font-bold text-sm z-10">
+                  {/* <div className="absolute -top-4 -left-4 w-8 h-8 bg-ninja-black rounded-full flex items-center justify-center text-ninja-white font-bold text-sm z-10">
                     {index + 1}
-                  </div>
-                  
+                  </div> */}
+
                   {/* Icon Container */}
-                  <div className={`w-20 h-20 bg-${step.color} rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className="h-10 w-10 text-ninja-white" />
+                  <div
+                    className={`w-20 h-20 bg-${step.color} rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <Icon className="h-10 w-10 text-ninja-black" />
                   </div>
-                  
+
                   {/* Connection Line (except last item) */}
-                  {index < steps.length - 1 && (
+                  {/* {index < steps.length - 1 && (
                     <div className="hidden lg:block absolute top-10 left-20 w-full h-0.5 bg-ninja-gray bg-opacity-30 -z-10"></div>
-                  )}
+                  )} */}
                 </div>
 
-                <h3 className="font-ninja text-xl text-ninja-black mb-3 group-hover:text-ninja-crimson transition-colors">
+                <h3 className="font-ninja text-xl text-ninja-crimson transition-colors">
                   {step.title}
                 </h3>
                 <p className="text-ninja-gray leading-relaxed">

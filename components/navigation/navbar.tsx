@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   // For demo purposes, we'll show as if user is logged in
   const demoUser = {
     name: "Demo User",
@@ -27,12 +28,29 @@ export default function Navbar() {
   const navLinks = [
     { href: "/explore", label: "Explore Stories", icon: BookOpen },
     { href: "/about", label: "About" },
-    { href: "/how-it-works", label: "How It Works" },
+    { href: "/#howItWorks", label: "How It Works" },
     { href: "/contact", label: "Contact" },
   ];
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
   return (
-    <nav className="bg-ninja-black font-ninja border-b border-ninja-gray sticky top-0 z-50">
+    <nav className="bg-ninja-crimson font-ninja border-b border-ninja-coral/30 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 ">
           {/* Logo */}
@@ -41,9 +59,9 @@ export default function Navbar() {
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
             {/* <Sword className="h-8 w-8 text-ninja-crimson" /> */}
-            <Image src="/logo/logoRed.png" alt="logo" width={64} height={64} />
+            <img src="/logo/logo1.png" alt="logo" width={70} height={70} />
             <span className="hidden md:block font-ninja text-2xl text-ninja-white">
-              The Writing Ninja Academy
+              The Writing Ninjas Academy
             </span>
           </Link>
 
@@ -65,7 +83,7 @@ export default function Navbar() {
             {false ? (
               <>
                 <Link href="/upload">
-                  <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">
+                  <Button className="bg-ninja-coral hover:bg-ninja-crimson text-ninja-white">
                     <PlusCircle className="h-4 w-4 mr-2" />
                     Upload Story
                   </Button>
@@ -81,7 +99,7 @@ export default function Navbar() {
                           src={session.user?.image || ""}
                           alt={session.user?.name || ""}
                         /> */}
-                        <AvatarFallback className="bg-ninja-gold text-ninja-black">
+                        <AvatarFallback className="bg-ninja-peach text-ninja-black">
                           {/* {session.user?.name?.[0] || "U"} */}
                         </AvatarFallback>
                       </Avatar>
@@ -126,13 +144,13 @@ export default function Navbar() {
                 <Link href="/auth/signin">
                   <Button
                     variant="ghost"
-                    className="text-ninja-white hover:text-ninja-gold"
+                    className="text-ninja-white hover:bg-none hover:text-ninja-gold"
                   >
                     Sign In
                   </Button>
                 </Link>
                 <Link href="/auth/signup">
-                  <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">
+                  <Button variant="ghost" className="  text-ninja-white">
                     Sign Up
                   </Button>
                 </Link>
@@ -159,13 +177,13 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden fixed left-0 top-[66px] z-30 border-t bg-ninja-black w-[100vw] border-ninja-gray">
+          <div ref={mobileMenuRef} className="md:hidden fixed left-0 top-[66px] z-30 border-t bg-ninja-crimson w-[100vw] border-ninja-coral/30">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block px-3 py-2 text-ninja-white hover:text-ninja-gold transition-colors"
+                  className="block px-3 py-2 text-ninja-white hover:text-ninja-peach transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
@@ -176,14 +194,14 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/upload"
-                    className="block px-3 py-2 text-ninja-crimson hover:text-red-400 font-medium"
+                    className="block px-3 py-2 text-ninja-white hover:text-ninja-peach font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Upload Story
                   </Link>
                   <Link
                     href="/profile"
-                    className="block px-3 py-2 text-ninja-white hover:text-ninja-gold"
+                    className="block px-3 py-2 text-ninja-white hover:text-ninja-peach"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Profile
@@ -202,14 +220,14 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/auth/signin"
-                    className="block px-3 py-2 text-ninja-white hover:text-ninja-gold"
+                    className="block px-3 py-2 text-ninja-white hover:text-ninja-peach"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/auth/signup"
-                    className="block px-3 py-2 text-ninja-crimson hover:text-red-400 font-medium"
+                    className="block px-3 py-2 text-ninja-white hover:text-ninja-peach font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign Up

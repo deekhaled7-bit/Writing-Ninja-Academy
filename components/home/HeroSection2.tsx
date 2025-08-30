@@ -3,7 +3,8 @@ import Image from "next/image";
 
 const HeroSection2 = () => {
   return (
-    <section className="relative min-h-[calc(100vh-64px)] bg-gradient-to-br from-ninja-black  via-ninja-crimson to-ninja-black overflow-hidden">
+    // <section className="relative min-h-[calc(100vh-64px)] bg-gradient-to-br from-ninja-cream via-ninja-gold to-ninja-coral overflow-hidden">
+    <section className="relative min-h-[calc(100vh-64px)] bg-ninja-white  overflow-hidden">
       {/* Ninja Equipment Background */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 transform rotate-12">
@@ -29,15 +30,9 @@ const HeroSection2 = () => {
           {/* Left Side - Quote */}
           <div className="text-center  space-y-8 order-2 lg:order-1">
             <div className="space-y-6 justify-center text-center items-center">
-              <h1 className="text-4xl lg:text-6xl font-bold text-white text-center leading-wide mx-auto">
-                <span className="text-white">Sharpen Your Skills,</span>
-                <br />
-                {/* <span className="text-white">Your Skills,</span> */}
-                <br />
-                <span className="text-white">Master Your Words.</span>
-                <br />
-                {/* <br />
-                <span className="text-white">Your Words.</span> */}
+              <h1 className="text-2xl lg:text-4xl font-bold text-ninja-black text-center leading-wide tracking-wider mx-auto">
+                A safe and inspiring digital reading platform where kids write
+                the books — and everyone gets to read them.
               </h1>
 
               {/* <p className="text-xl text-center text-white max-w-lg mx-auto lg:mx-0">
@@ -47,11 +42,11 @@ const HeroSection2 = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center ">
-              <button className="px-8 py-4 bg-ninja-black border-2 border-ninja-gold text-ninja-gold  font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:from-red-700 hover:to-orange-700">
-                {/* <button className="px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:from-red-700 hover:to-orange-700"> */}
+              <button className="px-8 py-4 bg-ninja-crimson border-2  text-ninja-white  font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:from-red-700 hover:to-orange-700">
+                {/* <button className="px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 hover:from-red-700 hover:to-orange-700"> */}
                 Start Your Journey
               </button>
-              <button className="px-8 py-4 border-2 border-ninja-gold text-ninja-gold font-semibold rounded-lg  bg-ninja-black transition-all duration-300 transform hover:scale-105 ">
+              <button className="px-8 py-4 border-2  text-ninja-white font-semibold rounded-2xl  bg-ninja-crimson transition-all duration-300 transform hover:scale-105 ">
                 {/* <button className="px-8 py-4 border-2 border-yellow-400 text-yellow-400 font-semibold rounded-lg hover:bg-yellow-400 hover:text-black transition-all duration-300"> */}
                 Learn More
               </button>
@@ -62,16 +57,16 @@ const HeroSection2 = () => {
           <div className="flex justify-center lg:justify-center order-1 lg:order-2">
             <div className="relative">
               {/* Glowing background effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-600 rounded-full blur-3xl opacity-30 scale-110"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-600 rounded-full blur-2xl opacity-30 scale-75"></div>
 
               {/* Image container */}
               {/* <div className="relative bg-gradient-to-br from-ninja-black via-ninja-gray to-ninja-black p-8 rounded-full shadow-2xl border border-red-500/30"> */}
-              <div className="w-80 lg:w-96  lg:h-96 h-80 relative">
+              <div className="w-[450px] lg:w-[600px]  lg:h-[600px] h-[450px] relative">
                 <Image
-                  src="/logo/logoRed.png"
+                  src="/logo/logo1.png"
                   alt="Ninja Logo"
                   fill
-                  className="object-contain filter drop-shadow-2xl"
+                  className="object-contain  filter drop-shadow-2xl"
                   priority
                 />
               </div>
@@ -87,7 +82,7 @@ const HeroSection2 = () => {
       </div>
 
       {/* Bottom gradient overlay */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900 to-transparent"></div>
+      {/* <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-900 to-transparent"></div> */}
     </section>
   );
 };

@@ -58,7 +58,7 @@ export default function TestimonialsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="ninja-scroll p-8 relative group ninja-hover"
+              className="ninja-scroll p-8 bg-ninja-light-gray relative group ninja-hover"
             >
               {/* Quote Icon */}
               <Quote className="absolute top-4 right-4 h-8 w-8 text-ninja-gold opacity-20" />
@@ -68,14 +68,14 @@ export default function TestimonialsSection() {
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <Star
                     key={i}
-                    className="h-4 w-4 text-ninja-gold fill-current"
+                    className="h-4 w-4 text-ninja-peach fill-current"
                   />
                 ))}
               </div>
 
               {/* Quote */}
               <p className="text-ninja-gray mb-6 italic leading-relaxed">
-                "{testimonial.quote}"
+                &quot;{testimonial.quote}&quot;
               </p>
 
               {/* Author Info */}
@@ -84,7 +84,7 @@ export default function TestimonialsSection() {
                   {testimonial.name}, age {testimonial.age}
                 </div>
                 <div className="text-sm text-ninja-gray">
-                  Author of "{testimonial.story}"
+                  Author of &quot;{testimonial.story}&quot;
                 </div>
               </div>
             </motion.div>

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Set up PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -26,36 +26,48 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
   }
 
   function onDocumentLoadError(error: any) {
-    console.error('PDF loading error:', error);
-    setError('Failed to load PDF. Please try again later.');
+    console.error("PDF loading error:", error);
+    setError("Failed to load PDF. Please try again later.");
     setLoading(false);
   }
 
   const goToPrevPage = () => {
-    setPageNumber(page => Math.max(1, page - 1));
+    setPageNumber((page) => Math.max(1, page - 1));
   };
 
   const goToNextPage = () => {
-    setPageNumber(page => Math.min(numPages, page + 1));
+    setPageNumber((page) => Math.min(numPages, page + 1));
   };
 
   const zoomIn = () => {
-    setScale(scale => Math.min(2.0, scale + 0.2));
+    setScale((scale) => Math.min(2.0, scale + 0.2));
   };
 
   const zoomOut = () => {
-    setScale(scale => Math.max(0.5, scale - 0.2));
+    setScale((scale) => Math.max(0.5, scale - 0.2));
   };
 
   if (error) {
     return (
       <div className="text-center py-16">
         <div className="text-ninja-crimson mb-4">
-          <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-16 h-16 mx-auto"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         </div>
-        <h3 className="font-ninja text-xl text-ninja-black mb-2">Unable to Load Story</h3>
+        <h3 className="font-ninja text-xl text-ninja-black mb-2">
+          Unable to Load Story
+        </h3>
         <p className="text-ninja-gray">{error}</p>
       </div>
     );
@@ -75,7 +87,7 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm text-ninja-gray px-2">
-            {loading ? 'Loading...' : `${pageNumber} of ${numPages}`}
+            {loading ? "Loading..." : `${pageNumber} of ${numPages}`}
           </span>
           <Button
             variant="outline"
@@ -125,8 +137,8 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
             onLoadError={onDocumentLoadError}
             loading=""
           >
-            <Page 
-              pageNumber={pageNumber} 
+            <Page
+              pageNumber={pageNumber}
               scale={scale}
               renderTextLayer={false}
               renderAnnotationLayer={false}

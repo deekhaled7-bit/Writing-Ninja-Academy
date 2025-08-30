@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   return (
-    <section className="relative bg-gradient-to-br from-ninja-black  via-ninja-crimson to-ninja-black overflow-hidden">
+    <section className="relative bg-gradient-to-br from-ninja-cream via-ninja-peach to-ninja-gold overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 text-6xl text-ninja-gold">
+        <div className="absolute top-10 left-10 text-6xl text-ninja-peach">
           ⭐
         </div>
         <div className="absolute top-32 right-20 text-4xl text-ninja-crimson">
@@ -19,10 +19,10 @@ export default function HeroSection() {
         <div className="absolute bottom-20 left-32 text-5xl text-ninja-gold">
           📚
         </div>
-        <div className="absolute bottom-32 right-10 text-4xl text-ninja-crimson">
+        <div className="absolute bottom-32 right-10 text-4xl text-ninja-coral">
           ✨
         </div>
-        <div className="absolute top-1/2 left-1/4 text-3xl text-ninja-gold">
+        <div className="absolute top-1/2 left-1/4 text-3xl text-ninja-cream">
           🖋️
         </div>
       </div>
@@ -35,15 +35,15 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="font-ninja text-4xl sm:text-6xl lg:text-7xl text-ninja-white mb-6 leading-tight">
+            <h1 className="font-ninja text-4xl sm:text-6xl lg:text-7xl text-ninja-black mb-6 leading-tight">
               Where Young
               <span className="text-ninja-crimson"> Authors </span>
               <br />
               Share Their
-              <span className="text-ninja-gold"> Stories</span>
+              <span className="text-ninja-coral"> Stories</span>
             </h1>
 
-            <p className="text-xl sm:text-2xl text-ninja-white opacity-90 max-w-3xl mx-auto mb-8 leading-relaxed">
+            <p className="text-xl sm:text-2xl text-ninja-gray opacity-90 max-w-3xl mx-auto mb-8 leading-relaxed">
               Join our ninja dojo of creative writers! Upload your stories,
               discover amazing tales from fellow ninjas, and level up your
               writing skills.
@@ -115,7 +115,7 @@ export default function HeroSection() {
             </div>
 
             <div className="ninja-scroll p-6 text-center ninja-hover">
-              <div className="w-16 h-16 bg-ninja-black rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-ninja-coral rounded-full flex items-center justify-center mx-auto mb-4">
                 <Sword className="h-8 w-8 text-ninja-gold" />
               </div>
               <h3 className="font-ninja text-xl text-ninja-black mb-2">

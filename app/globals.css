@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Inter:wght@400;500;600;700&display=swap");
 
 /* Local Bangers Font */
 @font-face {
-  font-family: 'Bangers';
-  src: url('./fonts/Bangers-Regular.ttf') format('truetype');
+  font-family: "Bangers";
+  src: url("./fonts/Bangers-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -87,27 +87,30 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground font-body;
   }
-  
-  h1, h2, h3 {
+
+  h1,
+  h2,
+  h3 {
     @apply font-ninja;
   }
-  
+
   .ninja-scroll {
-    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    /* background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%); */
     border-radius: 15px;
-    box-shadow: 
-      0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-      0 2px 4px -1px rgba(0, 0, 0, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
-  
+
   .ninja-glow {
     box-shadow: 0 0 20px rgba(255, 209, 102, 0.3);
   }
-  
+
   .ninja-hover:hover {
     transform: translateY(-2px);
     transition: transform 0.2s ease;

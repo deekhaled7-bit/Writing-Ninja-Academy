@@ -1,8 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { Play, Pause, Volume2, VolumeX, Maximize, RotateCcw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState, useRef } from "react";
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  Maximize,
+  RotateCcw,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface VideoPlayerProps {
   src: string;
@@ -73,11 +80,11 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const handleError = () => {
-    setError('Unable to load video. Please try again later.');
+    setError("Unable to load video. Please try again later.");
   };
 
   if (error) {
@@ -85,8 +92,18 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
       <div className="bg-ninja-black rounded-lg aspect-video flex items-center justify-center">
         <div className="text-center text-ninja-white">
           <div className="text-ninja-crimson mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
           <h3 className="font-ninja text-xl mb-2">Video Unavailable</h3>
@@ -118,7 +135,11 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
             size="lg"
             className="bg-ninja-white bg-opacity-20 hover:bg-opacity-40 text-ninja-white border-2 border-ninja-white rounded-full w-16 h-16 p-0"
           >
-            {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8 ml-1" />}
+            {isPlaying ? (
+              <Pause className="h-8 w-8" />
+            ) : (
+              <Play className="h-8 w-8 ml-1" />
+            )}
           </Button>
         </div>
       </div>
@@ -126,13 +147,15 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
       {/* Controls */}
       <div className="bg-ninja-black p-4">
         {/* Progress Bar */}
-        <div 
+        <div
           className="w-full h-2 bg-ninja-gray bg-opacity-30 rounded-full mb-4 cursor-pointer"
           onClick={handleSeek}
         >
-          <div 
+          <div
             className="h-full bg-ninja-crimson rounded-full transition-all duration-200"
-            style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+            style={{
+              width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`,
+            }}
           ></div>
         </div>
 
@@ -145,7 +168,11 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
               variant="ghost"
               className="text-ninja-white hover:text-ninja-gold"
             >
-              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+              {isPlaying ? (
+                <Pause className="h-5 w-5" />
+              ) : (
+                <Play className="h-5 w-5" />
+              )}
             </Button>
 
             <Button
@@ -163,7 +190,11 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
               variant="ghost"
               className="text-ninja-white hover:text-ninja-gold"
             >
-              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+              {isMuted ? (
+                <VolumeX className="h-5 w-5" />
+              ) : (
+                <Volume2 className="h-5 w-5" />
+              )}
             </Button>
 
             <span className="text-ninja-white text-sm">
