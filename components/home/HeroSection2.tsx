@@ -66,7 +66,7 @@ const HeroSection2 = () => {
                   src="/logo/logo1.png"
                   alt="Ninja Logo"
                   fill
-                  className="object-contain  filter drop-shadow-2xl"
+                  className="object-contain filter drop-shadow-2xl"
                   priority
                 />
               </div>
