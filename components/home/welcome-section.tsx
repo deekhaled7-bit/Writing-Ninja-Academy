@@ -20,13 +20,15 @@ export default function WelcomeSection() {
                 Welcome to The Writing Ninjas Academy
               </h1>
               <p className="text-lg md:text-2xl  leading-relaxed  ">
-                a unique reading space made by kids, for kids! Here, students
+                A unique reading space made by kids, for kids! Here, students
                 under 16 can explore stories written by their peers, enjoy
                 audiobooks, and strengthen their comprehension skills through
                 interactive quizzes after every book. Teachers can use the
                 platform to support classroom reading, while young authors can
-                see how others interact with their creations. Our mission is
-                simple: to spark a lifelong love of reading and writing.
+                see how others interact with their creations.
+                <br />
+                <span className="font-bold"> Our mission is simple:</span> to
+                spark a lifelong love of reading and writing.
               </p>
             </div>
             <div className="relative w-64 h-64 md:w-80 md:h-80 aspect-square rounded-full border-4 border-ninja-coral bg-ninja-white overflow-hidden">

@@ -38,7 +38,7 @@ export default function WhyChooseSection() {
           viewport={{ once: true }}
           className="text-center mb-4"
         >
-          <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-black mb-4">
+          <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-black mb-4">
             Why Choose The Writing Ninjas Academy?
           </h2>
         </motion.div>
@@ -68,7 +68,7 @@ export default function WhyChooseSection() {
                   >
                     <Icon className="h-8 w-8 text-ninja-black" />
                   </div>
-                  <h3 className="font-ninja text-xl text-ninja-crimson">
+                  <h3 className="font-oswald text-xl text-ninja-crimson">
                     {feature.title}
                   </h3>
                 </motion.div>
@@ -83,7 +83,7 @@ export default function WhyChooseSection() {
               viewport={{ once: true }}
               className="pt-8"
             >
-              <h3 className="font-ninja text-2xl text-ninja-black mb-4">
+              <h3 className="font-oswald text-2xl text-ninja-black mb-4">
                 Start your journey today!
               </h3>
               <p className="text-ninja-gray text-lg mb-6">

@@ -67,7 +67,7 @@ export default function StatsSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-black mb-4">
+          <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-black mb-4">
             Our Growing Community
           </h2>
           <p className="text-xl text-ninja-gray opacity-80 max-w-3xl mx-auto">
@@ -94,7 +94,7 @@ export default function StatsSection() {
                   <Icon className="h-8 w-8 text-ninja-black" />
                 </div>
 
-                <div className="text-3xl sm:text-4xl font-ninja text-ninja-white mb-2">
+                <div className="text-3xl sm:text-4xl font-oswald text-ninja-white mb-2">
                   {item.value.toLocaleString()}
                 </div>
 

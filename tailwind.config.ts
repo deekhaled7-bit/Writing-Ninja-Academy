@@ -118,9 +118,11 @@ const config: Config = {
         glow: "glow 2s ease-in-out infinite alternate",
       },
       fontFamily: {
+        sans: ["Oswald", "sans-serif"],
+        oswald: ["Oswald", "sans-serif"],
         comic: ["Comic Neue", "cursive"],
         ninja: ["Bangers", "cursive"],
-        body: ["Inter", "sans-serif"],
+        body: ["Oswald", "sans-serif"],
       },
     },
   },

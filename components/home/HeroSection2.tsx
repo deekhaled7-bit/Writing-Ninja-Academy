@@ -29,11 +29,15 @@ const HeroSection2 = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12  items-center w-full">
           {/* Left Side - Quote */}
           <div className="text-center  space-y-8 order-2 lg:order-1">
-            <div className="space-y-6 justify-center text-center items-center">
-              <h1 className="text-2xl lg:text-4xl font-bold text-ninja-black text-center leading-wide tracking-wider mx-auto">
+            <div className="space-y-6 flex justify-center text-center items-center">
+              <h1 className="text-5xl lg:text-7xl font-bold text-ninja-black text-center leading-wide  max-md:max-w-sm max-auto ">
+                LEARN HOW TO WRITE LIKE A{" "}
+                <span className="text-ninja-crimson">NINJA</span>
+              </h1>
+              {/* <h1 className="text-2xl lg:text-4xl font-bold text-ninja-black text-center leading-wide  mx-auto">
                 A safe and inspiring digital reading platform where kids write
                 the books — and everyone gets to read them.
-              </h1>
+              </h1> */}
 
               {/* <p className="text-xl text-center text-white max-w-lg mx-auto lg:mx-0">
                 Unleash your inner ninja and transform your storytelling
@@ -62,12 +66,13 @@ const HeroSection2 = () => {
               {/* Image container */}
               {/* <div className="relative bg-gradient-to-br from-ninja-black via-ninja-gray to-ninja-black p-8 rounded-full shadow-2xl border border-red-500/30"> */}
               <div className="w-[450px] lg:w-[600px]  lg:h-[600px] h-[450px] relative">
-                <Image
+                <img
                   src="/logo/logo1.png"
                   alt="Ninja Logo"
-                  fill
+                  width={600}
+                  height={600}
                   className="object-contain filter drop-shadow-2xl"
-                  priority
+                  // priority
                 />
               </div>
               {/* </div> */}

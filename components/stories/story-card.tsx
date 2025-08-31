@@ -74,7 +74,7 @@ export default function StoryCard({ story }: StoryCardProps) {
 
           {/* Bottom Overlay with Title */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-3">
-            <h3 className="font-ninja text-white text-sm font-bold line-clamp-2 mb-1">
+            <h3 className="font-oswald text-white text-sm font-bold line-clamp-2 mb-1">
               {story.title}
             </h3>
             <p className="text-white/80 text-xs">By {story.authorName}</p>

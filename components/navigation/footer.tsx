@@ -17,7 +17,7 @@ export default function Footer() {
                 height={64}
               /> */}
 
-              <span className="font-ninja text-2xl text-ninja-white">
+              <span className="font-oswald text-2xl text-ninja-white">
                 The Writing Ninjas Academy
               </span>
             </Link>
@@ -30,7 +30,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-ninja-white text-lg text-ninja-white mb-4">
+            <h3 className="font-oswald-white text-lg text-ninja-white mb-4">
               Quick Links
             </h3>
             <div className="space-y-2">
@@ -63,7 +63,7 @@ export default function Footer() {
 
           {/* For Parents */}
           <div>
-            <h3 className="font-ninja text-lg text-ninja-white mb-4">
+            <h3 className="font-oswald text-lg text-ninja-white mb-4">
               For Parents
             </h3>
             <div className="space-y-2">
@@ -96,7 +96,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-ninja-coral/30 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-ninja-white opacity-60 text-sm">
+          <p className="text-ninja-white  text-sm">
             © 2025 The Writing Ninja. All rights reserved.
           </p>
           <div className="flex items-center text-ninja-white opacity-60 text-sm mt-2 sm:mt-0">

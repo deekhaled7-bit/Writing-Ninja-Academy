@@ -106,7 +106,7 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
               />
             </svg>
           </div>
-          <h3 className="font-ninja text-xl mb-2">Video Unavailable</h3>
+          <h3 className="font-oswald text-xl mb-2">Video Unavailable</h3>
           <p className="text-ninja-white opacity-80">{error}</p>
         </div>
       </div>

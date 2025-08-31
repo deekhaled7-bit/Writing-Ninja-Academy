@@ -1,26 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import Link from 'next/link';
-import { 
-  Eye, 
-  Heart, 
-  MessageCircle, 
-  Clock, 
-  User, 
+import Link from "next/link";
+import {
+  Eye,
+  Heart,
+  MessageCircle,
+  Clock,
+  User,
   Star,
   FileText,
   Video,
   ChevronLeft,
-  Send
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import PDFViewer from '@/components/stories/pdf-viewer';
-import VideoPlayer from '@/components/stories/video-player';
+  Send,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import PDFViewer from "@/components/stories/pdf-viewer";
+import VideoPlayer from "@/components/stories/video-player";
 
 interface Story {
   _id: string;
@@ -58,53 +58,58 @@ interface StoryDetailsProps {
   comments: Comment[];
 }
 
-export default function StoryDetails({ story, comments: initialComments }: StoryDetailsProps) {
+export default function StoryDetails({
+  story,
+  comments: initialComments,
+}: StoryDetailsProps) {
   const { toast } = useToast();
   // For demo purposes, we'll show as if user is logged in
   const demoUser = {
     id: "demo-user-id",
-    name: "Demo User"
+    name: "Demo User",
   };
   const [isLiked, setIsLiked] = useState(false);
   const [isReading, setIsReading] = useState(false);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [comments, setComments] = useState(initialComments);
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   useEffect(() => {
     // Track read when component mounts
-    handleInteraction('read');
+    handleInteraction("read");
   }, []);
 
-  const handleInteraction = async (action: 'read' | 'completed' | 'like') => {
-
+  const handleInteraction = async (action: "read" | "completed" | "like") => {
     try {
       const response = await fetch(`/api/stories/${story._id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ action }),
       });
 
       if (response.ok) {
-        if (action === 'like') {
+        if (action === "like") {
           setIsLiked(!isLiked);
           toast({
-            title: isLiked ? 'Removed like' : 'Liked story',
-            description: isLiked ? 'You removed your like from this story.' : 'You liked this story!',
+            title: isLiked ? "Removed like" : "Liked story",
+            description: isLiked
+              ? "You removed your like from this story."
+              : "You liked this story!",
           });
-        } else if (action === 'completed') {
+        } else if (action === "completed") {
           setHasCompleted(true);
           toast({
-            title: 'Story completed!',
-            description: 'Great job finishing this story! You earned 5 ninja gold.',
+            title: "Story completed!",
+            description:
+              "Great job finishing this story! You earned 5 ninja gold.",
           });
         }
       }
     } catch (error) {
-      console.error('Error handling interaction:', error);
+      console.error("Error handling interaction:", error);
     }
   };
 
@@ -117,9 +122,9 @@ export default function StoryDetails({ story, comments: initialComments }: Story
 
     try {
       const response = await fetch(`/api/stories/${story._id}/comments`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           content: newComment.trim(),
@@ -129,19 +134,19 @@ export default function StoryDetails({ story, comments: initialComments }: Story
       if (response.ok) {
         const comment = await response.json();
         setComments([comment, ...comments]);
-        setNewComment('');
+        setNewComment("");
         toast({
-          title: 'Comment added!',
-          description: 'Your comment has been posted successfully.',
+          title: "Comment added!",
+          description: "Your comment has been posted successfully.",
         });
       } else {
-        throw new Error('Failed to submit comment');
+        throw new Error("Failed to submit comment");
       }
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to submit comment. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to submit comment. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmittingComment(false);
@@ -150,25 +155,25 @@ export default function StoryDetails({ story, comments: initialComments }: Story
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
-      fantasy: 'bg-purple-100 text-purple-800',
-      adventure: 'bg-green-100 text-green-800',
-      mystery: 'bg-blue-100 text-blue-800',
-      'science-fiction': 'bg-indigo-100 text-indigo-800',
-      friendship: 'bg-pink-100 text-pink-800',
-      family: 'bg-orange-100 text-orange-800',
-      animals: 'bg-emerald-100 text-emerald-800',
-      school: 'bg-yellow-100 text-yellow-800',
-      humor: 'bg-red-100 text-red-800',
-      other: 'bg-gray-100 text-gray-800',
+      fantasy: "bg-purple-100 text-purple-800",
+      adventure: "bg-green-100 text-green-800",
+      mystery: "bg-blue-100 text-blue-800",
+      "science-fiction": "bg-indigo-100 text-indigo-800",
+      friendship: "bg-pink-100 text-pink-800",
+      family: "bg-orange-100 text-orange-800",
+      animals: "bg-emerald-100 text-emerald-800",
+      school: "bg-yellow-100 text-yellow-800",
+      humor: "bg-red-100 text-red-800",
+      other: "bg-gray-100 text-gray-800",
     };
     return colors[category] || colors.other;
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
@@ -176,7 +181,10 @@ export default function StoryDetails({ story, comments: initialComments }: Story
     <div className="min-h-screen bg-ninja-light-gray">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
-        <Link href="/explore" className="inline-flex items-center text-ninja-gray hover:text-ninja-crimson transition-colors mb-6">
+        <Link
+          href="/explore"
+          className="inline-flex items-center text-ninja-gray hover:text-ninja-crimson transition-colors mb-6"
+        >
           <ChevronLeft className="h-4 w-4 mr-1" />
           Back to Stories
         </Link>
@@ -188,21 +196,23 @@ export default function StoryDetails({ story, comments: initialComments }: Story
             <div className="ninja-scroll p-8 mb-8">
               <div className="flex flex-wrap gap-3 mb-4">
                 <Badge className={getCategoryColor(story.category)}>
-                  {story.category.replace('-', ' ')}
+                  {story.category.replace("-", " ")}
                 </Badge>
-                <Badge variant="outline">
-                  {story.ageGroup} years
-                </Badge>
+                <Badge variant="outline">{story.ageGroup} years</Badge>
                 <div className="flex items-center gap-1 text-ninja-gray">
-                  {story.fileType === 'video' ? (
-                    <><Video className="h-4 w-4" /> Video Story</>
+                  {story.fileType === "video" ? (
+                    <>
+                      <Video className="h-4 w-4" /> Video Story
+                    </>
                   ) : (
-                    <><FileText className="h-4 w-4" /> PDF Story</>
+                    <>
+                      <FileText className="h-4 w-4" /> PDF Story
+                    </>
                   )}
                 </div>
               </div>
 
-              <h1 className="font-ninja text-3xl sm:text-4xl text-ninja-black mb-4">
+              <h1 className="font-oswald text-3xl sm:text-4xl text-ninja-black mb-4">
                 {story.title}
               </h1>
 
@@ -249,9 +259,11 @@ export default function StoryDetails({ story, comments: initialComments }: Story
 
             {/* Story Content */}
             <div className="ninja-scroll p-8 mb-8">
-              <h2 className="font-ninja text-2xl text-ninja-black mb-4">Read the Story</h2>
-              
-              {story.fileType === 'video' ? (
+              <h2 className="font-oswald text-2xl text-ninja-black mb-4">
+                Read the Story
+              </h2>
+
+              {story.fileType === "video" ? (
                 <VideoPlayer src={story.fileUrl} title={story.title} />
               ) : (
                 <PDFViewer src={story.fileUrl} title={story.title} />
@@ -260,17 +272,23 @@ export default function StoryDetails({ story, comments: initialComments }: Story
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-4 mt-6">
                 <Button
-                  onClick={() => handleInteraction('like')}
-                  variant={isLiked ? 'default' : 'outline'}
-                  className={isLiked ? 'bg-ninja-crimson hover:bg-red-600' : 'border-ninja-crimson text-ninja-crimson hover:bg-ninja-crimson hover:text-ninja-white'}
+                  onClick={() => handleInteraction("like")}
+                  variant={isLiked ? "default" : "outline"}
+                  className={
+                    isLiked
+                      ? "bg-ninja-crimson hover:bg-red-600"
+                      : "border-ninja-crimson text-ninja-crimson hover:bg-ninja-crimson hover:text-ninja-white"
+                  }
                 >
-                  <Heart className={`h-4 w-4 mr-2 ${isLiked ? 'fill-current' : ''}`} />
-                  {isLiked ? 'Liked' : 'Like Story'}
+                  <Heart
+                    className={`h-4 w-4 mr-2 ${isLiked ? "fill-current" : ""}`}
+                  />
+                  {isLiked ? "Liked" : "Like Story"}
                 </Button>
 
                 {!hasCompleted && (
                   <Button
-                    onClick={() => handleInteraction('completed')}
+                    onClick={() => handleInteraction("completed")}
                     className="bg-ninja-gold hover:bg-yellow-500 text-ninja-black"
                   >
                     Mark as Completed
@@ -281,7 +299,7 @@ export default function StoryDetails({ story, comments: initialComments }: Story
 
             {/* Comments Section */}
             <div className="ninja-scroll p-8">
-              <h2 className="font-ninja text-2xl text-ninja-black mb-6">
+              <h2 className="font-oswald text-2xl text-ninja-black mb-6">
                 Comments ({comments.length})
               </h2>
 
@@ -300,7 +318,7 @@ export default function StoryDetails({ story, comments: initialComments }: Story
                   className="bg-ninja-crimson hover:bg-red-600 text-ninja-white"
                 >
                   <Send className="h-4 w-4 mr-2" />
-                  {isSubmittingComment ? 'Posting...' : 'Post Comment'}
+                  {isSubmittingComment ? "Posting..." : "Post Comment"}
                 </Button>
               </form>
 
@@ -308,7 +326,10 @@ export default function StoryDetails({ story, comments: initialComments }: Story
               <div className="space-y-6">
                 {comments.length > 0 ? (
                   comments.map((comment) => (
-                    <div key={comment._id} className="border-b border-ninja-gray border-opacity-20 pb-6">
+                    <div
+                      key={comment._id}
+                      className="border-b border-ninja-gray border-opacity-20 pb-6"
+                    >
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-8 h-8 bg-ninja-gold rounded-full flex items-center justify-center">
                           <span className="text-ninja-black text-sm font-semibold">
@@ -342,32 +363,48 @@ export default function StoryDetails({ story, comments: initialComments }: Story
           <div className="space-y-8">
             {/* Story Info */}
             <div className="ninja-scroll p-6">
-              <h3 className="font-ninja text-xl text-ninja-black mb-4">Story Details</h3>
+              <h3 className="font-oswald text-xl text-ninja-black mb-4">
+                Story Details
+              </h3>
               <div className="space-y-3">
                 <div>
-                  <span className="font-medium text-ninja-black">Category:</span>
+                  <span className="font-medium text-ninja-black">
+                    Category:
+                  </span>
                   <span className="ml-2 text-ninja-gray capitalize">
-                    {story.category.replace('-', ' ')}
+                    {story.category.replace("-", " ")}
                   </span>
                 </div>
                 <div>
-                  <span className="font-medium text-ninja-black">Age Group:</span>
-                  <span className="ml-2 text-ninja-gray">{story.ageGroup} years</span>
+                  <span className="font-medium text-ninja-black">
+                    Age Group:
+                  </span>
+                  <span className="ml-2 text-ninja-gray">
+                    {story.ageGroup} years
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium text-ninja-black">Format:</span>
-                  <span className="ml-2 text-ninja-gray capitalize">{story.fileType}</span>
+                  <span className="ml-2 text-ninja-gray capitalize">
+                    {story.fileType}
+                  </span>
                 </div>
                 <div>
-                  <span className="font-medium text-ninja-black">Published:</span>
-                  <span className="ml-2 text-ninja-gray">{formatDate(story.createdAt)}</span>
+                  <span className="font-medium text-ninja-black">
+                    Published:
+                  </span>
+                  <span className="ml-2 text-ninja-gray">
+                    {formatDate(story.createdAt)}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Related Actions */}
             <div className="ninja-scroll p-6">
-              <h3 className="font-ninja text-xl text-ninja-black mb-4">More Actions</h3>
+              <h3 className="font-oswald text-xl text-ninja-black mb-4">
+                More Actions
+              </h3>
               <div className="space-y-3">
                 <Link href={`/authors/${story.author._id}`}>
                   <Button variant="outline" className="w-full justify-start">
@@ -378,7 +415,7 @@ export default function StoryDetails({ story, comments: initialComments }: Story
                 <Link href={`/explore?category=${story.category}`}>
                   <Button variant="outline" className="w-full justify-start">
                     <Eye className="h-4 w-4 mr-2" />
-                    More {story.category.replace('-', ' ')} Stories
+                    More {story.category.replace("-", " ")} Stories
                   </Button>
                 </Link>
                 <Link href={`/explore?ageGroup=${story.ageGroup}`}>

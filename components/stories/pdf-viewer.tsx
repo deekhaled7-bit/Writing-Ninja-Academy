@@ -65,7 +65,7 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
             />
           </svg>
         </div>
-        <h3 className="font-ninja text-xl text-ninja-black mb-2">
+        <h3 className="font-oswald text-xl text-ninja-black mb-2">
           Unable to Load Story
         </h3>
         <p className="text-ninja-gray">{error}</p>

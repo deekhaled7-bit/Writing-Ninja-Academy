@@ -19,7 +19,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  
+
   // For demo purposes, we'll show as if user is logged in
   const demoUser = {
     name: "Demo User",
@@ -41,9 +41,9 @@ export default function Navbar() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMenuOpen]);
 
@@ -55,7 +55,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-ninja-crimson font-ninja border-b border-ninja-coral/30 sticky top-0 z-50">
+    <nav className="bg-ninja-crimson font-oswald border-b border-ninja-coral/30 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20 ">
           {/* Logo */}
@@ -65,7 +65,7 @@ export default function Navbar() {
           >
             {/* <Sword className="h-8 w-8 text-ninja-crimson" /> */}
             <Image src="/logo/logo1.png" alt="logo" width={80} height={80} />
-            <span className="hidden md:block font-ninja text-2xl text-ninja-white">
+            <span className="hidden md:block font-oswald text-2xl text-ninja-white">
               The Writing Ninjas Academy
             </span>
           </Link>
@@ -183,7 +183,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div 
+          <div
             ref={mobileMenuRef}
             className="md:hidden fixed left-0 top-[66px] z-30 border-t bg-ninja-crimson w-[100vw] border-ninja-coral/30"
           >

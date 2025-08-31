@@ -45,14 +45,20 @@ export default function HowItWorksSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-black mb-4">
+          <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-black mb-4">
             For Students
           </h2>
-          <p className="text-xl text-ninja-gray max-w-3xl mx-auto">
-            We help you sharpen your skills and train like Writing Ninjas today! Every book you read makes your Ninja powers stronger. Write your own story scroll and share it with the Ninja clan, then complete the quiz to earn points and level up your Ninja rank. Remember, a true Writing Ninja reads, writes, and inspires others.
+          <p className="text-xl text-ninja-gray max-w-3xl mx-auto mb-8">
+            We help you sharpen your skills and train like Writing Ninjas today!
+            Every book you read makes your Ninja powers stronger. Write your own
+            story scroll and share it with the Ninja clan, then complete the
+            quiz to earn points and level up your Ninja rank. Remember, a true
+            Writing Ninja reads, writes, and inspires others.
           </p>
+          <h3 className="font-oswald w-full text-center text-2xl sm:text-3xl text-ninja-crimson mb-8">
+            How Students Can Use The Writing Ninja
+          </h3>
         </motion.div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -84,7 +90,7 @@ export default function HowItWorksSection() {
                   )} */}
                 </div>
 
-                <h3 className="font-ninja text-xl text-ninja-crimson transition-colors">
+                <h3 className="font-oswald text-xl text-ninja-crimson transition-colors">
                   {step.title}
                 </h3>
                 <p className="text-ninja-gray leading-relaxed">

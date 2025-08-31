@@ -15,7 +15,7 @@ export default function QuoteSection() {
           viewport={{ once: true }}
           className="text-center"
         >
-          <blockquote className="text-2xl sm:text-4xl lg:text-5xl font-ninja text-ninja-white  leading-relaxed">
+          <blockquote className="text-3xl sm:text-5xl lg:text-7xl font-semibold font-oswald text-ninja-white  leading-relaxed">
             <span className="block">Sharpen Your Skills,</span>
             <span className="block mt-2">Master Your Words.</span>
           </blockquote>

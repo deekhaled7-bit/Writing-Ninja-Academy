@@ -41,7 +41,7 @@ export default function TestimonialsSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-light-gray mb-4">
+          <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-light-gray mb-4">
             What Young Authors Say
           </h2>
           <p className="text-xl text-ninja-light-gray max-w-3xl mx-auto">

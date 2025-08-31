@@ -6,7 +6,7 @@ export default function ContactPage() {
       {/* Hero Section - Same as About Page */}
       <section className="bg-gradient-to-br from-ninja-cream via-ninja-peach to-ninja-gold py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-ninja text-4xl sm:text-6xl text-ninja-black mb-6">
+          <h1 className="font-oswald text-4xl sm:text-6xl text-ninja-black mb-6">
             Contact Us
           </h1>
           <p className="text-xl text-ninja-gray opacity-90 leading-relaxed">
@@ -22,7 +22,7 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <div className="bg-ninja-cream p-8 rounded-lg border-2 border-ninja-peach /30">
-              <h2 className="font-ninja text-3xl text-ninja-crimson mb-6">
+              <h2 className="font-oswald text-3xl text-ninja-crimson mb-6">
                 Send Us a Message
               </h2>
               <form className="space-y-6">
@@ -95,7 +95,7 @@ export default function ContactPage() {
             {/* Contact Information */}
             <div className="space-y-8">
               <div>
-                <h2 className="font-ninja text-3xl text-ninja-black mb-4">
+                <h2 className="font-oswald text-3xl text-ninja-black mb-4">
                   Get in Touch
                 </h2>
                 <p className="text-ninja-gray text-lg leading-relaxed mb-8">
@@ -114,7 +114,7 @@ export default function ContactPage() {
                       <Mail className="h-6 w-6 text-ninja-black" />
                     </div>
                     <div>
-                      <h3 className="text-ninja-crimson tracking-wide font-semibold text-lg">
+                      <h3 className="text-ninja-crimson  font-semibold text-lg">
                         Email Us
                       </h3>
                       <p className="text-ninja-gray">hello@writingninja.com</p>
@@ -128,7 +128,7 @@ export default function ContactPage() {
                       <MessageCircle className="h-6 w-6 text-ninja-black" />
                     </div>
                     <div>
-                      <h3 className="text-ninja-crimson tracking-wide font-semibold text-lg">
+                      <h3 className="text-ninja-crimson  font-semibold text-lg">
                         Live Chat
                       </h3>
                       <p className="text-ninja-gray">
@@ -144,7 +144,7 @@ export default function ContactPage() {
                       <Clock className="h-6 w-6 text-ninja-black" />
                     </div>
                     <div>
-                      <h3 className="text-ninja-crimson tracking-wide font-semibold text-lg">
+                      <h3 className="text-ninja-crimson  font-semibold text-lg">
                         Response Time
                       </h3>
                       <p className="text-ninja-gray">Within 24 hours</p>
@@ -155,7 +155,7 @@ export default function ContactPage() {
 
               {/* FAQ Section */}
               <div className="border-2 border-ninja-peach bg-ninja-cream p-8 rounded-lg">
-                <h3 className="font-ninja text-2xl text-ninja-crimson mb-4">
+                <h3 className="font-oswald text-2xl text-ninja-crimson mb-4">
                   Quick Questions?
                 </h3>
                 <div className="space-y-4">
@@ -196,7 +196,7 @@ export default function ContactPage() {
       {/* Call to Action Section */}
       {/* <section className="py-16 bg-gradient-to-r from-ninja-crimson to-red-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-ninja text-3xl sm:text-4xl text-ninja-white mb-4">
+          <h2 className="font-oswald text-3xl sm:text-4xl text-ninja-white mb-4">
             Ready to Begin Your Writing Adventure?
           </h2>
           <p className="text-xl text-ninja-white opacity-90 mb-8">

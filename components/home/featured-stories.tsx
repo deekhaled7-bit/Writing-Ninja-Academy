@@ -132,7 +132,7 @@ export default function FeaturedStories() {
       <section className="py-20 bg-ninja-cream">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-black mb-4">
+            <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-black mb-4">
               Featured Stories
             </h2>
           </div>
@@ -165,7 +165,7 @@ export default function FeaturedStories() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-black mb-4">
+          <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-black mb-4">
             Featured Stories
           </h2>
           <p className="text-xl text-ninja-gray max-w-3xl mx-auto">
@@ -208,7 +208,7 @@ export default function FeaturedStories() {
               <div className="w-24 h-24 bg-ninja-gray bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Eye className="h-12 w-12 text-ninja-gray opacity-50" />
               </div>
-              <h3 className="font-ninja text-2xl text-ninja-gray mb-2">
+              <h3 className="font-oswald text-2xl text-ninja-gray mb-2">
                 No Stories Yet
               </h3>
               <p className="text-ninja-gray opacity-80">

@@ -2,13 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Inter:wght@400;500;600;700&display=swap");
+
 
 /* Local Bangers Font */
 @font-face {
   font-family: "Bangers";
   src: url("./fonts/Bangers-Regular.ttf") format("truetype");
   font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Local Oswald Font */
+@font-face {
+  font-family: "Oswald";
+  src: url("./fonts/Oswald-VariableFont_wght.ttf") format("truetype");
+  font-weight: 200 700;
   font-style: normal;
   font-display: swap;
 }
@@ -90,14 +99,20 @@
   html {
     scroll-behavior: smooth;
   }
+  * {
+    font-family: "Oswald", sans-serif;
+  }
+  
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground;
+    font-family: "Oswald", sans-serif;
   }
 
   h1,
   h2,
   h3 {
-    @apply font-ninja;
+    font-family: "Oswald", sans-serif;
+    font-weight: 700;
   }
 
   .ninja-scroll {

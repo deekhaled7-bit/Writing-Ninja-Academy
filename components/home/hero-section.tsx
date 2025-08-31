@@ -35,7 +35,7 @@ export default function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="font-ninja text-4xl sm:text-6xl lg:text-7xl text-ninja-black mb-6 leading-tight">
+            <h1 className="font-oswald text-4xl sm:text-6xl lg:text-7xl text-ninja-black mb-6 leading-tight">
               Where Young
               <span className="text-ninja-crimson"> Authors </span>
               <br />
@@ -92,7 +92,7 @@ export default function HeroSection() {
               <div className="w-16 h-16 bg-ninja-crimson rounded-full flex items-center justify-center mx-auto mb-4">
                 <PlusCircle className="h-8 w-8 text-ninja-white" />
               </div>
-              <h3 className="font-ninja text-xl text-ninja-black mb-2">
+              <h3 className="font-oswald text-xl text-ninja-black mb-2">
                 Share Your Stories
               </h3>
               <p className="text-ninja-gray text-sm">
@@ -105,7 +105,7 @@ export default function HeroSection() {
               <div className="w-16 h-16 bg-ninja-gold rounded-full flex items-center justify-center mx-auto mb-4">
                 <BookOpen className="h-8 w-8 text-ninja-black" />
               </div>
-              <h3 className="font-ninja text-xl text-ninja-black mb-2">
+              <h3 className="font-oswald text-xl text-ninja-black mb-2">
                 Discover Adventures
               </h3>
               <p className="text-ninja-gray text-sm">
@@ -118,7 +118,7 @@ export default function HeroSection() {
               <div className="w-16 h-16 bg-ninja-coral rounded-full flex items-center justify-center mx-auto mb-4">
                 <Sword className="h-8 w-8 text-ninja-gold" />
               </div>
-              <h3 className="font-ninja text-xl text-ninja-black mb-2">
+              <h3 className="font-oswald text-xl text-ninja-black mb-2">
                 Level Up
               </h3>
               <p className="text-ninja-gray text-sm">

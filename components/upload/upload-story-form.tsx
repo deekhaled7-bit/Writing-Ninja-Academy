@@ -1,38 +1,38 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Upload, FileText, Video, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Upload, FileText, Video, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
 const categories = [
-  { value: 'fantasy', label: 'Fantasy' },
-  { value: 'adventure', label: 'Adventure' },
-  { value: 'mystery', label: 'Mystery' },
-  { value: 'science-fiction', label: 'Science Fiction' },
-  { value: 'friendship', label: 'Friendship' },
-  { value: 'family', label: 'Family' },
-  { value: 'animals', label: 'Animals' },
-  { value: 'school', label: 'School' },
-  { value: 'humor', label: 'Humor' },
-  { value: 'other', label: 'Other' },
+  { value: "fantasy", label: "Fantasy" },
+  { value: "adventure", label: "Adventure" },
+  { value: "mystery", label: "Mystery" },
+  { value: "science-fiction", label: "Science Fiction" },
+  { value: "friendship", label: "Friendship" },
+  { value: "family", label: "Family" },
+  { value: "animals", label: "Animals" },
+  { value: "school", label: "School" },
+  { value: "humor", label: "Humor" },
+  { value: "other", label: "Other" },
 ];
 
 const ageGroups = [
-  { value: '5-8', label: '5-8 years' },
-  { value: '9-12', label: '9-12 years' },
-  { value: '13-17', label: '13-17 years' },
+  { value: "5-8", label: "5-8 years" },
+  { value: "9-12", label: "9-12 years" },
+  { value: "13-17", label: "13-17 years" },
 ];
 
 export default function UploadStoryForm() {
@@ -43,18 +43,18 @@ export default function UploadStoryForm() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    ageGroup: '',
-    category: '',
+    title: "",
+    description: "",
+    ageGroup: "",
+    category: "",
   });
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+    if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (e.type === "dragleave") {
       setDragActive(false);
     }
   };
@@ -63,7 +63,7 @@ export default function UploadStoryForm() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileSelection(e.dataTransfer.files[0]);
     }
@@ -71,22 +71,27 @@ export default function UploadStoryForm() {
 
   const handleFileSelection = (file: File) => {
     const maxSize = 50 * 1024 * 1024; // 50MB
-    
+
     if (file.size > maxSize) {
       toast({
-        title: 'File too large',
-        description: 'Please select a file smaller than 50MB.',
-        variant: 'destructive',
+        title: "File too large",
+        description: "Please select a file smaller than 50MB.",
+        variant: "destructive",
       });
       return;
     }
 
-    const allowedTypes = ['application/pdf', 'video/mp4', 'video/mov', 'video/avi'];
+    const allowedTypes = [
+      "application/pdf",
+      "video/mp4",
+      "video/mov",
+      "video/avi",
+    ];
     if (!allowedTypes.includes(file.type)) {
       toast({
-        title: 'Invalid file type',
-        description: 'Please select a PDF or video file (MP4, MOV, AVI).',
-        variant: 'destructive',
+        title: "Invalid file type",
+        description: "Please select a PDF or video file (MP4, MOV, AVI).",
+        variant: "destructive",
       });
       return;
     }
@@ -103,20 +108,25 @@ export default function UploadStoryForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.description || !formData.ageGroup || !formData.category) {
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.ageGroup ||
+      !formData.category
+    ) {
       toast({
-        title: 'Missing information',
-        description: 'Please fill in all required fields.',
-        variant: 'destructive',
+        title: "Missing information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
       });
       return;
     }
 
     if (!selectedFile) {
       toast({
-        title: 'No file selected',
-        description: 'Please select a PDF or video file to upload.',
-        variant: 'destructive',
+        title: "No file selected",
+        description: "Please select a PDF or video file to upload.",
+        variant: "destructive",
       });
       return;
     }
@@ -125,14 +135,14 @@ export default function UploadStoryForm() {
 
     try {
       const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('ageGroup', formData.ageGroup);
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('file', selectedFile);
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("ageGroup", formData.ageGroup);
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("file", selectedFile);
 
-      const response = await fetch('/api/stories', {
-        method: 'POST',
+      const response = await fetch("/api/stories", {
+        method: "POST",
         body: formDataToSend,
       });
 
@@ -140,19 +150,21 @@ export default function UploadStoryForm() {
 
       if (response.ok) {
         toast({
-          title: 'Story uploaded successfully!',
-          description: 'Your story has been shared with the community. You earned 10 ninja gold!',
+          title: "Story uploaded successfully!",
+          description:
+            "Your story has been shared with the community. You earned 10 ninja gold!",
         });
         router.push(`/stories/${data.story._id}`);
       } else {
-        throw new Error(data.error || 'Failed to upload story');
+        throw new Error(data.error || "Failed to upload story");
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
       toast({
-        title: 'Upload failed',
-        description: 'There was an error uploading your story. Please try again.',
-        variant: 'destructive',
+        title: "Upload failed",
+        description:
+          "There was an error uploading your story. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -160,7 +172,7 @@ export default function UploadStoryForm() {
   };
 
   const getFileIcon = (file: File) => {
-    if (file.type.startsWith('video/')) {
+    if (file.type.startsWith("video/")) {
       return <Video className="h-8 w-8 text-ninja-crimson" />;
     }
     return <FileText className="h-8 w-8 text-ninja-crimson" />;
@@ -178,7 +190,9 @@ export default function UploadStoryForm() {
             <Input
               id="title"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               placeholder="Enter your story title..."
               maxLength={100}
               required
@@ -189,10 +203,18 @@ export default function UploadStoryForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="ageGroup" className="text-ninja-black font-semibold">
+            <Label
+              htmlFor="ageGroup"
+              className="text-ninja-black font-semibold"
+            >
               Age Group *
             </Label>
-            <Select value={formData.ageGroup} onValueChange={(value) => setFormData({ ...formData, ageGroup: value })}>
+            <Select
+              value={formData.ageGroup}
+              onValueChange={(value) =>
+                setFormData({ ...formData, ageGroup: value })
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select target age group" />
               </SelectTrigger>
@@ -209,10 +231,18 @@ export default function UploadStoryForm() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-ninja-black font-semibold">
+            <Label
+              htmlFor="category"
+              className="text-ninja-black font-semibold"
+            >
               Category *
             </Label>
-            <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+            <Select
+              value={formData.category}
+              onValueChange={(value) =>
+                setFormData({ ...formData, category: value })
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select story category" />
               </SelectTrigger>
@@ -228,13 +258,18 @@ export default function UploadStoryForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description" className="text-ninja-black font-semibold">
+          <Label
+            htmlFor="description"
+            className="text-ninja-black font-semibold"
+          >
             Story Description *
           </Label>
           <Textarea
             id="description"
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             placeholder="Tell us about your story... What happens? Who are the characters? What makes it special?"
             rows={4}
             maxLength={500}
@@ -250,14 +285,14 @@ export default function UploadStoryForm() {
           <Label className="text-ninja-black font-semibold">
             Upload Your Story *
           </Label>
-          
+
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
               dragActive
-                ? 'border-ninja-crimson bg-red-50'
+                ? "border-ninja-crimson bg-red-50"
                 : selectedFile
-                ? 'border-ninja-gold bg-yellow-50'
-                : 'border-ninja-gray hover:border-ninja-crimson'
+                ? "border-ninja-gold bg-yellow-50"
+                : "border-ninja-gray hover:border-ninja-crimson"
             }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -291,12 +326,10 @@ export default function UploadStoryForm() {
               <div className="space-y-4">
                 <Upload className="h-16 w-16 text-ninja-gray mx-auto" />
                 <div className="space-y-2">
-                  <h3 className="font-ninja text-xl text-ninja-black">
+                  <h3 className="font-oswald text-xl text-ninja-black">
                     Drop your story here
                   </h3>
-                  <p className="text-ninja-gray">
-                    or click to browse files
-                  </p>
+                  <p className="text-ninja-gray">or click to browse files</p>
                   <p className="text-sm text-ninja-gray">
                     Supported formats: PDF, MP4, MOV, AVI (max 50MB)
                   </p>
@@ -325,7 +358,7 @@ export default function UploadStoryForm() {
 
         {/* Guidelines */}
         <div className="bg-ninja-light-gray p-6 rounded-lg border border-ninja-gold">
-          <h3 className="font-ninja text-lg text-ninja-black mb-3">
+          <h3 className="font-oswald text-lg text-ninja-black mb-3">
             📝 Story Guidelines
           </h3>
           <ul className="text-sm text-ninja-gray space-y-2">

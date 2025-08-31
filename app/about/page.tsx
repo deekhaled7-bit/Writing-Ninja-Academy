@@ -6,7 +6,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-ninja-peach via-ninja-cream to-ninja-peach py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-ninja  text-4xl sm:text-6xl text-ninja-black mb-6">
+          <h1 className="font-oswald  text-4xl sm:text-6xl text-ninja-black mb-6">
             About The Writing Ninjas
           </h1>
           <p className="text-xl text-ninja-gray opacity-90 leading-relaxed">
@@ -22,7 +22,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="font-ninja text-3xl sm:text-4xl text-ninja-black mb-6">
+              <h2 className="font-oswald text-3xl sm:text-4xl text-ninja-black mb-6">
                 Our Mission
               </h2>
               <div className="space-y-4 text-ninja-gray text-lg leading-relaxed">
@@ -48,7 +48,7 @@ export default function AboutPage() {
               <div className="w-24 h-24 bg-ninja-peach rounded-full flex items-center justify-center mx-auto mb-6">
                 <Sword className="h-12 w-12 text-ninja-black" />
               </div>
-              <h3 className="font-ninja text-2xl text-ninja-crimson mb-4">
+              <h3 className="font-oswald text-2xl text-ninja-crimson mb-4">
                 Empowering Young Voices
               </h3>
               <p className="text-ninja-gray">
@@ -65,7 +65,7 @@ export default function AboutPage() {
       <section className="py-20 bg-ninja-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-ninja text-3xl sm:text-4xl text-ninja-black mb-6">
+            <h2 className="font-oswald text-3xl sm:text-4xl text-ninja-black mb-6">
               Our Ninja Values
             </h2>
             <p className="text-xl text-ninja-gray max-w-3xl mx-auto">
@@ -75,27 +75,20 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              {
-                icon: Shield,
-                title: "Safety First",
-                description:
-                  "We maintain a safe, moderated environment where young writers can express themselves without worry.",
-                color: "ninja-peach",
-              },
               // {
               //   icon: Heart,
               //   title: "Kindness Always",
               //   description:
               //     "Every interaction on our platform is built on respect, encouragement, and constructive feedback.",
               //   color: "ninja-gold",
-              // },
               {
-                icon: Target,
-                title: "Growth Mindset",
+                icon: BookOpen,
+                title: "Love of Learning",
                 description:
-                  "We celebrate progress, effort, and creativity, helping every young writer improve their craft.",
+                  "Reading and writing go hand in hand. We inspire young people to both create and discover stories.",
                 color: "ninja-peach",
               },
+              // },
               {
                 icon: Users,
                 title: "Community Spirit",
@@ -104,10 +97,10 @@ export default function AboutPage() {
                 color: "ninja-peach",
               },
               {
-                icon: BookOpen,
-                title: "Love of Learning",
+                icon: Target,
+                title: "Growth Mindset",
                 description:
-                  "Reading and writing go hand in hand. We inspire young people to both create and discover stories.",
+                  "We celebrate progress, effort, and creativity, helping every young writer improve their craft.",
                 color: "ninja-peach",
               },
               // {
@@ -117,6 +110,13 @@ export default function AboutPage() {
               //     "We encourage young writers to be brave with their stories and proud of their unique voice.",
               //   color: "ninja-gold",
               // },
+              {
+                icon: Shield,
+                title: "Safety First",
+                description:
+                  "We maintain a safe, moderated environment where young writers can express themselves without worry.",
+                color: "ninja-peach",
+              },
             ].map((value, index) => (
               <div
                 key={index}
@@ -127,7 +127,7 @@ export default function AboutPage() {
                 >
                   <value.icon className="h-8 w-8 text-ninja-black" />
                 </div>
-                <h3 className="font-ninja text-xl text-ninja-crimson transition-colors">
+                <h3 className="font-oswald text-xl text-ninja-crimson transition-colors">
                   {value.title}
                 </h3>
                 <p className="text-ninja-gray leading-relaxed">
@@ -143,7 +143,7 @@ export default function AboutPage() {
       <section className="py-20 bg-ninja-white">
         <div className="max-w-4xl  mx-auto px-4 sm:px-6 lg:px-8">
           <div className="ninja-scroll p-12 bg-ninja-cream text-ninja-black">
-            <h2 className="font-ninja text-ninja-crimson text-3xl sm:text-4xl  mb-8 text-center">
+            <h2 className="font-oswald text-ninja-crimson text-3xl sm:text-4xl  mb-8 text-center">
               How The Writing Ninja Began
             </h2>
             <div className="space-y-6  text-lg leading-relaxed">
@@ -178,7 +178,7 @@ export default function AboutPage() {
       {/* Call to Action */}
       <section className="py-20 bg-gradient-to-br bg-ninja-white">
         <div className="max-w-4xl mx-auto rounded-2xl p-4 sm:p-6 lg:p-8 bg-ninja-gold text-center">
-          <h2 className="font-ninja text-3xl sm:text-4xl text-ninja-black mb-6">
+          <h2 className="font-oswald text-3xl sm:text-4xl text-ninja-black mb-6">
             Join Our Ninja Dojo
           </h2>
           <p className="text-xl text-ninja-gray opacity-90 mb-8">

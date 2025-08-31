@@ -72,7 +72,7 @@ const HowItWorksTeachers = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="font-ninja text-4xl sm:text-5xl text-ninja-black mb-4">
+          <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-black mb-4">
             For Educators
           </h2>
           <p className="text-xl text-ninja-gray max-w-4xl mx-auto mb-8">
@@ -81,7 +81,7 @@ const HowItWorksTeachers = () => {
             features to make the platform a helpful teaching companion in and
             beyond the classroom.
           </p>
-          <h3 className="font-ninja text-2xl sm:text-3xl text-ninja-crimson mb-8">
+          <h3 className="font-oswald text-2xl sm:text-3xl text-ninja-crimson mb-8">
             How Educators Can Use The Writing Ninja
           </h3>
         </motion.div>
@@ -107,7 +107,7 @@ const HowItWorksTeachers = () => {
                   </div>
 
                   <div className="flex-1">
-                    <h3 className="font-ninja text-lg text-ninja-crimson mb-3">
+                    <h3 className="font-oswald text-lg text-ninja-crimson mb-3">
                       {feature.title}
                     </h3>
                     <ul className="space-y-2">
