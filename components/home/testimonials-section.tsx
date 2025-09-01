@@ -42,7 +42,7 @@ export default function TestimonialsSection() {
           className="text-center mb-16"
         >
           <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-light-gray mb-4">
-            What Young Authors Say
+            What Young Authors Say About Us
           </h2>
           <p className="text-xl text-ninja-light-gray max-w-3xl mx-auto">
             Hear from our amazing community of young writers about their
