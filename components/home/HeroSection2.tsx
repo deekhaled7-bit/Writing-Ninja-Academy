@@ -29,15 +29,23 @@ const HeroSection2 = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12  items-center w-full">
           {/* Left Side - Quote */}
           <div className="text-center  space-y-8 order-2 lg:order-1">
-            <div className="space-y-6 flex justify-center text-center items-center">
-              <h1 className="text-5xl lg:text-7xl font-bold text-ninja-black text-center leading-wide  max-md:max-w-sm max-auto ">
+            <div className="space-y-6 flex flex-col justify-center text-center items-center">
+              {/* <h1 className="text-5xl lg:text-7xl font-bold text-ninja-black text-center leading-wide  max-md:max-w-sm max-auto ">
                 LEARN HOW TO WRITE LIKE A{" "}
                 <span className="text-ninja-crimson">NINJA</span>
+              </h1> */}
+             
+             <div className="md:hidden tracking-wider">
+
+              <h1 className="text-3xl  lg:text-5xl font-bold text-ninja-black text-center leading-wide  mx-auto">
+              WRITING NINJAS 
               </h1>
-              {/* <h1 className="text-2xl lg:text-4xl font-bold text-ninja-black text-center leading-wide  mx-auto">
+              <h2>ACADEMY</h2>
+             </div>
+              <h1 className="text-3xl lg:text-5xl font-bold text-ninja-black text-center leading-wide  mx-auto">
                 A safe and inspiring digital reading platform where kids write
                 the books — and everyone gets to read them.
-              </h1> */}
+              </h1>
 
               {/* <p className="text-xl text-center text-white max-w-lg mx-auto lg:mx-0">
                 Unleash your inner ninja and transform your storytelling
