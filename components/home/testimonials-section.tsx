@@ -46,7 +46,7 @@ export default function TestimonialsSection() {
           </h2>
           <p className="text-xl text-ninja-light-gray max-w-3xl mx-auto">
             Hear from our amazing community of young writers about their
-            experience!
+            experience!!!!
           </p>
         </motion.div>
 
