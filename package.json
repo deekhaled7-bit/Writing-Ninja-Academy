@@ -45,7 +45,10 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
+    "axios": "^1.9.0",
     "bcryptjs": "^3.0.2",
+    "browser-image-compression": "^2.0.2",
+    "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
@@ -57,10 +60,14 @@
     "framer-motion": "^12.23.12",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.540.0",
+    "mongodb": "^6.16.0",
     "mongoose": "^8.17.1",
     "multer": "^2.0.2",
     "next": "^15.4.7",
+    "next-auth": "^4.24.11",
     "next-themes": "^0.3.0",
+    "nodemailer": "^6.10.1",
+    "pdfjs-dist": "^5.3.93",
     "postcss": "8.4.30",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -80,6 +87,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
-    "@babel/preset-react": "^7.22.0"
+    "@babel/preset-react": "^7.22.0",
+    "@types/uuid": "^10.0.0"
   }
 }

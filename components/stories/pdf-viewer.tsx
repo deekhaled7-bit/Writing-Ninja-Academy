@@ -6,7 +6,9 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+if (typeof window !== 'undefined') {
+  pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+}
 
 interface PDFViewerProps {
   src: string;
@@ -27,7 +29,21 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
 
   function onDocumentLoadError(error: any) {
     console.error("PDF loading error:", error);
-    setError("Failed to load PDF. Please try again later.");
+    let errorMessage = "Failed to load PDF. Please try again later.";
+    
+    if (error?.message) {
+      if (error.message.includes('CORS')) {
+        errorMessage = "PDF cannot be loaded due to CORS restrictions.";
+      } else if (error.message.includes('404') || error.message.includes('Not Found')) {
+        errorMessage = "PDF file not found. Please check if the file exists.";
+      } else if (error.message.includes('network')) {
+        errorMessage = "Network error while loading PDF. Please check your connection.";
+      } else {
+        errorMessage = `PDF loading error: ${error.message}`;
+      }
+    }
+    
+    setError(errorMessage);
     setLoading(false);
   }
 
@@ -136,6 +152,11 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             loading=""
+            options={{
+          cMapUrl: '/cmaps/',
+          standardFontDataUrl: '/standard_fonts/',
+          cMapPacked: true,
+        }}
           >
             <Page
               pageNumber={pageNumber}

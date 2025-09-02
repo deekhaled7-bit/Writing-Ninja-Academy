@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileText, Video, CheckCircle } from "lucide-react";
+import { Upload, FileText, Video, CheckCircle, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,6 +41,8 @@ export default function UploadStoryForm() {
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedCoverImage, setSelectedCoverImage] = useState<File | null>(null);
+  const [coverImageDragActive, setCoverImageDragActive] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -99,6 +101,62 @@ export default function UploadStoryForm() {
     setSelectedFile(file);
   };
 
+  const handleCoverImageDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setCoverImageDragActive(true);
+    } else if (e.type === "dragleave") {
+      setCoverImageDragActive(false);
+    }
+  };
+
+  const handleCoverImageDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCoverImageDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleCoverImageSelection(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleCoverImageSelection = (file: File) => {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (file.size > maxSize) {
+      toast({
+        title: "Image too large",
+        description: "Please select an image smaller than 10MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Invalid image type",
+        description: "Please select a JPEG, PNG, or WebP image.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSelectedCoverImage(file);
+  };
+
+  const handleCoverImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleCoverImageSelection(e.target.files[0]);
+    }
+  };
+
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       handleFileSelection(e.target.files[0]);
@@ -140,6 +198,11 @@ export default function UploadStoryForm() {
       formDataToSend.append("ageGroup", formData.ageGroup);
       formDataToSend.append("category", formData.category);
       formDataToSend.append("file", selectedFile);
+      
+      // Add cover image if selected
+      if (selectedCoverImage) {
+        formDataToSend.append("coverImage", selectedCoverImage);
+      }
 
       const response = await fetch("/api/stories", {
         method: "POST",
@@ -278,6 +341,87 @@ export default function UploadStoryForm() {
           <p className="text-sm text-ninja-gray">
             {formData.description.length}/500 characters
           </p>
+        </div>
+
+        {/* Cover Image Upload */}
+        <div className="space-y-4">
+          <Label className="text-ninja-black font-semibold">
+            Cover Image (Optional)
+          </Label>
+          
+          {selectedCoverImage ? (
+            <div className="border-2 border-ninja-green rounded-lg p-4 bg-ninja-green/5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-ninja-green/20 rounded-lg">
+                    <Image className="h-6 w-6 text-ninja-green" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-ninja-black">
+                      {selectedCoverImage.name}
+                    </p>
+                    <p className="text-sm text-ninja-gray">
+                      {(selectedCoverImage.size / (1024 * 1024)).toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5 text-ninja-green" />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedCoverImage(null)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                coverImageDragActive
+                  ? "border-ninja-green bg-ninja-green/5"
+                  : "border-ninja-gray/30 hover:border-ninja-green/50"
+              }`}
+              onDragEnter={handleCoverImageDrag}
+              onDragLeave={handleCoverImageDrag}
+              onDragOver={handleCoverImageDrag}
+              onDrop={handleCoverImageDrop}
+            >
+              <div className="space-y-4">
+                <div className="mx-auto w-12 h-12 bg-ninja-green/10 rounded-lg flex items-center justify-center">
+                  <Image className="h-6 w-6 text-ninja-green" />
+                </div>
+                <div>
+                  <p className="text-lg font-medium text-ninja-black">
+                    Drop your cover image here
+                  </p>
+                  <p className="text-ninja-gray">
+                    or{" "}
+                    <label
+                      htmlFor="cover-image-input"
+                      className="text-ninja-green hover:text-ninja-green/80 cursor-pointer font-medium"
+                    >
+                      browse files
+                    </label>
+                  </p>
+                  <input
+                    id="cover-image-input"
+                    type="file"
+                    className="hidden"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleCoverImageInput}
+                  />
+                </div>
+                <div className="text-sm text-ninja-gray">
+                  <p>Supported formats: JPEG, PNG, WebP</p>
+                  <p>Maximum size: 10MB</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* File Upload */}

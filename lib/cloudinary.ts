@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -6,25 +6,40 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function uploadToCloudinary(file: File, resourceType: 'auto' | 'video' | 'raw' = 'auto') {
+export async function uploadToCloudinary(
+  file: File,
+  resourceType: "auto" | "video" | "raw" = "auto"
+) {
   const buffer = await file.arrayBuffer();
   const bytes = Buffer.from(buffer);
 
   return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream(
-      {
-        resource_type: resourceType,
-        folder: 'writing-ninja-stories',
-        allowed_formats: resourceType === 'raw' ? ['pdf'] : ['mp4', 'mov', 'avi'],
-      },
-      (error, result) => {
+    const uploadOptions: any = {
+      resource_type: resourceType,
+      folder: "writing-ninja-stories",
+      use_filename: true,
+      unique_filename: true,
+      type: "upload",
+      access_mode: "public",
+    };
+
+    // For PDF files, use raw resource type to avoid delivery restrictions
+    if (file.type === "application/pdf") {
+      uploadOptions.resource_type = "raw";
+      uploadOptions.public_id = `${uploadOptions.folder}/${file.name.replace(/\.[^/.]+$/, "")}_${Date.now()}`;
+    } else if (resourceType === "video") {
+      uploadOptions.allowed_formats = ["mp4", "mov", "avi"];
+    }
+
+    cloudinary.uploader
+      .upload_stream(uploadOptions, (error, result) => {
         if (error) {
           reject(error);
         } else {
           resolve(result);
         }
-      }
-    ).end(bytes);
+      })
+      .end(bytes);
   });
 }
 

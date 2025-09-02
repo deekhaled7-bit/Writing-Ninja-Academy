@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   Eye,
   Heart,
@@ -37,6 +38,7 @@ interface Story {
   category: string;
   fileType: string;
   fileUrl: string;
+  coverImageUrl?: string;
   readCount: number;
   completedCount: number;
   likeCount: number;
@@ -219,6 +221,22 @@ export default function StoryDetails({
               <p className="text-ninja-gray text-lg leading-relaxed mb-6">
                 {story.description}
               </p>
+
+              {/* Cover Image */}
+              {story.coverImageUrl && (
+                <div className="mb-6">
+                  <div className="relative w-full max-w-md mx-auto">
+                    <Image
+                      src={story.coverImageUrl}
+                      alt={`Cover image for ${story.title}`}
+                      width={400}
+                      height={600}
+                      className="rounded-lg shadow-lg object-cover w-full h-auto"
+                      style={{ aspectRatio: '2/3' }}
+                    />
+                  </div>
+                </div>
+              )}
 
               {/* Author Info */}
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-ninja-gray border-opacity-20">
