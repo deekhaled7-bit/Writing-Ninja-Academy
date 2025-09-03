@@ -59,6 +59,7 @@
     "eslint-config-next": "^15.4.7",
     "framer-motion": "^12.23.12",
     "input-otp": "^1.2.4",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.540.0",
     "mongodb": "^6.16.0",
     "mongoose": "^8.17.1",
@@ -88,6 +89,7 @@
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
     "@babel/preset-react": "^7.22.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/uuid": "^10.0.0"
   }
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import userModel from "@/app/modals/userModel";
-import verificationsModel from "@/app/modals/sessionModel";
-import subscriptionsModel from "@/app/modals/subscriptionsModel";
+import userModel from "@/models/userModel";
+import verificationsModel from "@/models/sessionModel";
+import subscriptionsModel from "@/models/subscriptionsModel";
 import { ConnectDB } from "@/config/db";
 
 export async function GET(_request: NextRequest) {
