@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import Story from "@/models/Story";
 import UserModel from "@/models/userModel";
+import ClassModel from "@/models/ClassModel";
 import dbConnect from "@/lib/mongodb";
 import mongoose from 'mongoose';
 
@@ -101,7 +102,6 @@ export async function GET(req: NextRequest) {
 
     // Fetch class and grade information
     await dbConnect();
-    const ClassModel = mongoose.models.Class || mongoose.model('Class');
     const classes = await Promise.all(
       Array.from(classIds).map(async (classId: string) => {
         const classInfo = await ClassModel.findById(classId).populate('grade').lean();

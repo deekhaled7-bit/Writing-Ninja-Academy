@@ -7,8 +7,9 @@ import mongoose from "mongoose";
 import dbConnect from "@/lib/mongodb";
 
 // GET students in a class (only accessible by assigned teachers)
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = context.params;
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await context.params;
+  const { id } = resolvedParams;
   try {
     const session = await getServerSession(authOptions);
     

@@ -7,7 +7,7 @@ import { ConnectDB } from "@/config/db";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -31,7 +31,8 @@ export async function GET(
     const teacherId = session.user.id;
 
     // Validate class ID
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid class ID" }, { status: 400 });
     }

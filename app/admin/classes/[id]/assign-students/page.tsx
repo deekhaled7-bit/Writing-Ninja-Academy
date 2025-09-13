@@ -27,7 +27,15 @@ interface ClassData {
 
 export default function AssignStudentsPage({ params }: ClientPageProps) {
   const router = useRouter();
-  const classId = params.id;
+  const [classId, setClassId] = useState<string>('');
+  
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolvedParams = await params;
+      setClassId(resolvedParams.id);
+    };
+    resolveParams();
+  }, [params]);
 
   const [classData, setClassData] = useState<ClassData | null>(null);
   const [students, setStudents] = useState<Student[]>([]);
@@ -38,6 +46,8 @@ export default function AssignStudentsPage({ params }: ClientPageProps) {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!classId) return;
+      
       try {
         setLoading(true);
         

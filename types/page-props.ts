@@ -3,12 +3,28 @@
  */
 
 /**
+ * PageProps interface for Next.js internal type checking
+ * This is used by Next.js to validate page props
+ */
+export interface PageProps {
+  params: Promise<{ [key: string]: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+/**
  * PageProps interface for client components with dynamic routes
  * Use this for 'use client' components that receive route parameters
  */
-export interface ClientPageProps {
-  params: { [key: string]: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+export interface ClientPageProps extends PageProps {
+  params: Promise<{ [key: string]: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+/**
+ * RouteContext interface for API routes
+ */
+export interface RouteContext {
+  params: Promise<{ [key: string]: string }>;
 }
 
 /**
@@ -17,5 +33,5 @@ export interface ClientPageProps {
  */
 export interface ServerPageProps {
   params: Promise<{ [key: string]: string }>;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }

@@ -4,7 +4,7 @@ import { authOptions } from "../../../auth/[...nextauth]/authOptions";
 import dbConnect from "@/lib/mongodb";
 import Story from "@/models/Story";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -23,7 +23,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       );
     }
 
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
 
     await dbConnect();
 

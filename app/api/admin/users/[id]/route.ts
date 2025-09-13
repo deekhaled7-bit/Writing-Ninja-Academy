@@ -5,11 +5,12 @@ import mongoose from 'mongoose';
 import { hash } from 'bcryptjs';
 
 // GET /api/admin/users/[id] - Get a single user
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     await ConnectDB();
     
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
     
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -39,11 +40,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/admin/users/[id] - Update a user
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     await ConnectDB();
     
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
     const body = await request.json();
     
     // Validate ObjectId
@@ -100,11 +102,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/admin/users/[id] - Delete a user
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     await ConnectDB();
     
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
     
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {

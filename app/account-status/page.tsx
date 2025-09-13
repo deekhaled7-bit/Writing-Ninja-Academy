@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default function AccountStatusPage() {
+function AccountStatusContent() {
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -92,5 +92,13 @@ export default function AccountStatusPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AccountStatusPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AccountStatusContent />
+    </Suspense>
   );
 }

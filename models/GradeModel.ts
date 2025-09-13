@@ -15,7 +15,7 @@ const GradeSchema = new mongoose.Schema(
       required: true,
       min: 1,
       max: 12,
-      unique: true,
+      // Removed unique: true to avoid duplicate index
     },
     name: {
       type: String,

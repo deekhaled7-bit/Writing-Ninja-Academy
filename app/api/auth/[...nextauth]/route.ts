@@ -20,6 +20,9 @@ declare module "next-auth" {
       subscriptionExpiryDate?: Date | null;
       // loyaltyPoints?: number;
       sessionId?: string; // Add sessionId here
+      role?: string; // Add role for user type (admin, teacher, student)
+      active?: boolean; // Add active status for account access control
+      verified?: boolean; // Add verified status for account access control
     };
   }
 }

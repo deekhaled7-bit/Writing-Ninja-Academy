@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 import dbConnect from "@/lib/mongodb";
 
 // GET a single class by ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -22,7 +22,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     await dbConnect();
     
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
     
     // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PUT update a class by ID
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -85,7 +86,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     await dbConnect();
     
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
     
     // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -286,7 +288,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE a class by ID
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -300,7 +302,8 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     await dbConnect();
     
-    const { id } = params;
+    const resolvedParams = await context.params;
+    const { id } = resolvedParams;
     
     // Validate MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
