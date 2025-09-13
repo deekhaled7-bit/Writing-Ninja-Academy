@@ -90,12 +90,14 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center space-x-4">
             {status === "authenticated" && session?.user ? (
               <>
-                <Link href="/upload">
-                  <Button className="bg-ninja-coral hover:bg-ninja-crimson text-ninja-white">
-                    <PlusCircle className="h-4 w-4 mr-2" />
-                    Upload Story
-                  </Button>
-                </Link>
+                {session.user?.role !== "student" && (
+                  <Link href="/upload">
+                    <Button className="bg-ninja-coral hover:bg-ninja-crimson text-ninja-white">
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Upload Story
+                    </Button>
+                  </Link>
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -214,13 +216,15 @@ export default function Navbar() {
               ))}
               {status === "authenticated" && session?.user ? (
                 <>
-                  <Link
-                    href="/upload"
-                    className="block  py-2 text-ninja-white hover:text-ninja-peach font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Upload Story
-                  </Link>
+                  {session.user?.role !== "student" && (
+                    <Link
+                      href="/upload"
+                      className="block  py-2 text-ninja-white hover:text-ninja-peach font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Upload Story
+                    </Link>
+                  )}
                   <Link
                     href={
                       session.user?.role === "admin"

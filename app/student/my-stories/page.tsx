@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, Eye, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { toast } from '@/hooks/use-toast';
 
 type Story = {
   id: string;
@@ -24,61 +26,91 @@ type Story = {
 };
 
 export default function MyStoriesPage() {
+  const { data: session } = useSession();
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    // In a real application, you would fetch stories from your API
-    // For now, we'll use mock data
-    setTimeout(() => {
-      const mockStories: Story[] = [
-        {
-          id: '1',
-          title: 'The Adventure Begins',
-          status: 'published',
-          createdAt: '2023-04-15',
-          updatedAt: '2023-04-20',
-        },
-        {
-          id: '2',
-          title: 'Mystery of the Lost Key',
-          status: 'draft',
-          createdAt: '2023-05-01',
-          updatedAt: '2023-05-01',
-        },
-        {
-          id: '3',
-          title: 'The Magic Forest',
-          status: 'review',
-          createdAt: '2023-05-10',
-          updatedAt: '2023-05-12',
-        },
-        {
-          id: '4',
-          title: 'Space Explorers',
-          status: 'published',
-          createdAt: '2023-03-05',
-          updatedAt: '2023-03-15',
-        },
-        {
-          id: '5',
-          title: 'The Mysterious Island',
-          status: 'draft',
-          createdAt: '2023-05-18',
-          updatedAt: '2023-05-18',
-        },
-      ];
-      setStories(mockStories);
-      setLoading(false);
-    }, 1000);
-  }, []);
+    // Don't fetch if no session yet
+    if (!session) return;
+    
+    setLoading(true);
+    
+    // Fetch stories from the API
+    const fetchStories = async () => {
+      try {
+        // Build query parameters for filtering
+        const params = new URLSearchParams();
+        if (searchTerm) params.append('search', searchTerm);
+        if (statusFilter !== 'all') params.append('status', statusFilter);
+        
+        const response = await fetch(`/api/stories?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch stories');
+        }
+        
+        const data = await response.json();
+        
+        if (!data.stories || data.stories.length === 0) {
+          setStories([]);
+          return;
+        }
+        
+        // Transform the API response to match our Story type
+        const transformedStories: Story[] = data.stories
+          .filter((story: any) => story.author && story.author._id === session?.user?.id) // Only show stories by the current user
+          .map((story: any) => ({
+            id: story._id,
+            title: story.title,
+            status: story.isPublished ? 'published' : (story.status === 'waiting_revision' ? 'review' : 'draft'),
+            createdAt: new Date(story.createdAt).toISOString().split('T')[0],
+            updatedAt: new Date(story.updatedAt || story.createdAt).toISOString().split('T')[0],
+          }));
+        
+        setStories(transformedStories);
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to fetch your stories. Please try again.',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchStories();
+  }, [session, searchTerm, statusFilter]);
 
   const handleDeleteStory = async (storyId: string) => {
-    // In a real application, you would delete the story via API
-    // For now, we'll update the local state
-    setStories(stories.filter(story => story.id !== storyId));
+    try {
+      const response = await fetch(`/api/stories/${storyId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete story');
+      }
+
+      toast({
+        title: 'Story deleted',
+        description: 'Your story has been deleted successfully.',
+      });
+
+      // Update the UI by removing the deleted story
+      setStories(stories.filter((story) => story.id !== storyId));
+    } catch (error) {
+      console.error('Error deleting story:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to delete your story. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleViewStory = (storyId: string) => {
@@ -86,13 +118,13 @@ export default function MyStoriesPage() {
     console.log(`Viewing story ${storyId}`);
   };
 
-  // Filter stories based on search term and status filter
-  const filteredStories = stories.filter(story => {
-    const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || story.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // The useEffect will handle the fetching when searchTerm changes
+  };
+
+  // Stories are already filtered by the API
+  const filteredStories = stories;
 
   const getStatusBadge = (status: Story['status']) => {
     switch (status) {
@@ -119,11 +151,7 @@ export default function MyStoriesPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Stories</h1>
-        <Link href="/student/write">
-          <Button className="bg-ninja-crimson hover:bg-ninja-crimson/90">
-            Write New Story
-          </Button>
-        </Link>
+        {/* Removed Write New Story button to prevent students from creating new stories */}
       </div>
       
       <div className="flex flex-col md:flex-row gap-4 mb-6">

@@ -121,13 +121,6 @@ export default function TeacherLayout({
             <Users className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Students</span>
           </Link>
-          <Link
-            href="/teacher/settings"
-            className="flex items-center p-2 rounded-md hover:bg-gray-100"
-          >
-            <Settings className="mr-2 h-5 w-5" />
-            <span className="lg:inline hidden">Settings</span>
-          </Link>
         </nav>
 
         <div className="mt-auto pt-4 border-t">

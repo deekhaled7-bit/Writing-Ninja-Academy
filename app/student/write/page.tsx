@@ -1,14 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function WriteStoryPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  
+  // Redirect students away from this page
+  useEffect(() => {
+    if (session?.user?.role === "student") {
+      toast({
+        title: "Access Denied",
+        description: "Students are currently not allowed to create new stories.",
+        variant: "destructive",
+      });
+      router.push("/student/my-stories");
+    }
+  }, [session, router]);
   const [storyData, setStoryData] = useState({
     title: "",
     content: "",

@@ -3,9 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import Story from "@/models/Story";
 import UserModel from "@/models/userModel";
-import ClassModel from "@/models/ClassModel";
 import dbConnect from "@/lib/mongodb";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import ClassModel from "@/models/ClassModel";
+import GradeModel from "@/models/GradeModel";
 
 // GET stories from students in teacher's assigned classes
 export async function GET(req: NextRequest) {
@@ -42,18 +43,28 @@ export async function GET(req: NextRequest) {
 
     // Find the teacher's assigned classes
     const teacher = await UserModel.findById(teacherId);
-    
-    if (!teacher || !teacher.assignedClasses || teacher.assignedClasses.length === 0) {
-      return NextResponse.json({ stories: [], pagination: { currentPage: page, totalPages: 0, totalStories: 0 } }, { status: 200 });
+
+    if (
+      !teacher ||
+      !teacher.assignedClasses ||
+      teacher.assignedClasses.length === 0
+    ) {
+      return NextResponse.json(
+        {
+          stories: [],
+          pagination: { currentPage: page, totalPages: 0, totalStories: 0 },
+        },
+        { status: 200 }
+      );
     }
 
     // Find students in teacher's assigned classes
     const students = await UserModel.find({
       assignedClasses: { $in: teacher.assignedClasses },
-      role: "student"
+      role: "student",
     }).select("_id");
 
-    const studentIds = students.map(student => student._id);
+    const studentIds = students.map((student) => student._id);
 
     // Build query to find stories by these students
     const query: any = { author: { $in: studentIds } };
@@ -94,17 +105,26 @@ export async function GET(req: NextRequest) {
 
     // Get class information for each student
     const classIds = stories.reduce((ids: Set<string>, story: any) => {
-      if (story.author && story.author.assignedClasses && story.author.assignedClasses.length > 0) {
-        story.author.assignedClasses.forEach((classId: any) => ids.add(classId.toString()));
+      if (
+        story.author &&
+        story.author.assignedClasses &&
+        story.author.assignedClasses.length > 0
+      ) {
+        story.author.assignedClasses.forEach((classId: any) =>
+          ids.add(classId.toString())
+        );
       }
       return ids;
     }, new Set<string>());
 
     // Fetch class and grade information
-    await dbConnect();
+    const mongooseInstance = await dbConnect();
+    console.log("register" + GradeModel);
     const classes = await Promise.all(
       Array.from(classIds).map(async (classId: string) => {
-        const classInfo = await ClassModel.findById(classId).populate('grade').lean();
+        const classInfo = await ClassModel.findById(classId)
+          .populate("grade")
+          .lean();
         return classInfo;
       })
     );
@@ -115,40 +135,58 @@ export async function GET(req: NextRequest) {
       gradeName: string;
       gradeNumber: number | string;
     }
-    
+
     interface ClassMap {
       [key: string]: ClassInfo;
     }
-    
-    const classMap = classes.reduce<ClassMap>((map: ClassMap, classInfo: any) => {
-      if (classInfo) {
-        map[classInfo._id.toString()] = {
-          className: classInfo.className,
-          gradeName: classInfo.grade ? classInfo.grade.name : '',
-          gradeNumber: classInfo.grade ? classInfo.grade.gradeNumber : ''
-        };
-      }
-      return map;
-    }, {});
+
+    const classMap = classes.reduce<ClassMap>(
+      (map: ClassMap, classInfo: any) => {
+        if (classInfo) {
+          map[classInfo._id.toString()] = {
+            className: classInfo.className,
+            gradeName: classInfo.grade ? classInfo.grade.name : "",
+            gradeNumber: classInfo.grade ? classInfo.grade.gradeNumber : "",
+          };
+        }
+        return map;
+      },
+      {}
+    );
 
     // Format stories for response
-    const formattedStories = stories.map(story => {
+    const formattedStories = stories.map((story) => {
       // Find the class info for this student
-      let classGradeInfo = { className: '', gradeName: '' };
-      
-      if (story.author && story.author.assignedClasses && story.author.assignedClasses.length > 0) {
+      let classGradeInfo = { className: "", gradeName: "" };
+
+      if (
+        story.author &&
+        story.author.assignedClasses &&
+        story.author.assignedClasses.length > 0
+      ) {
         const studentClassId = story.author.assignedClasses[0].toString();
-        classGradeInfo = classMap[studentClassId] || { className: '', gradeName: '' };
+        classGradeInfo = classMap[studentClassId] || {
+          className: "",
+          gradeName: "",
+        };
       }
-      
+
       return {
         id: story._id,
         title: story.title,
-        student: story.authorName || (story.author ? `${story.author.firstName} ${story.author.lastName}` : 'Unknown'),
+        student:
+          story.authorName ||
+          (story.author
+            ? `${story.author.firstName} ${story.author.lastName}`
+            : "Unknown"),
         className: classGradeInfo.className,
         gradeName: classGradeInfo.gradeName,
-        status: story.isPublished ? 'published' : (story.status === 'waiting_revision' ? 'review' : 'draft'),
-        submittedAt: new Date(story.createdAt).toISOString().split('T')[0],
+        status: story.isPublished
+          ? "published"
+          : story.status === "waiting_revision"
+          ? "review"
+          : "draft",
+        submittedAt: new Date(story.createdAt).toISOString().split("T")[0],
       };
     });
 
