@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Search, ArrowLeft, Mail } from "lucide-react";
+import { ClientPageProps } from "@/types/page-props";
 
 interface Student {
   _id: string;
@@ -41,11 +42,7 @@ interface Class {
   students: Student[];
 }
 
-export default function ClassStudentsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function ClassStudentsPage({ params }: ClientPageProps) {
   const router = useRouter();
   const { id } = params;
 

@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { ClientPageProps } from '@/types/page-props';
 import {
   Table,
   TableBody,
@@ -46,7 +47,7 @@ interface Class {
   academicYear: string;
 }
 
-export default function AssignTeachersPage({ params }: { params: { id: string } }) {
+export default function AssignTeachersPage({ params }: ClientPageProps) {
   const router = useRouter();
   const { id } = params;
   

@@ -100,10 +100,11 @@ export async function GET(req: NextRequest) {
     }, new Set<string>());
 
     // Fetch class and grade information
-    const mongooseInstance = await dbConnect();
+    await dbConnect();
+    const ClassModel = mongoose.models.Class || mongoose.model('Class');
     const classes = await Promise.all(
       Array.from(classIds).map(async (classId: string) => {
-        const classInfo = await mongooseInstance.model('Class').findById(classId).populate('grade').lean();
+        const classInfo = await ClassModel.findById(classId).populate('grade').lean();
         return classInfo;
       })
     );

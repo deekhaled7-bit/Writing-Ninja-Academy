@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ClientPageProps } from '@/types/page-props';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Search } from 'lucide-react';
@@ -24,10 +25,9 @@ interface ClassData {
   students: Student[];
 }
 
-export default function AssignStudentsPage() {
-  const params = useParams();
+export default function AssignStudentsPage({ params }: ClientPageProps) {
   const router = useRouter();
-  const classId = params.id as string;
+  const classId = params.id;
 
   const [classData, setClassData] = useState<ClassData | null>(null);
   const [students, setStudents] = useState<Student[]>([]);

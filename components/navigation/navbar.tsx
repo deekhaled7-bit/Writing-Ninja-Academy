@@ -123,10 +123,22 @@ export default function Navbar() {
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <Link href={session.user?.role === "admin" ? "/admin" : session.user?.role === "teacher" ? "/teacher" : "/student"}>
+                    <Link
+                      href={
+                        session.user?.role === "admin"
+                          ? "/admin"
+                          : session.user?.role === "teacher"
+                          ? "/teacher"
+                          : "/student"
+                      }
+                    >
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
-                        {session.user?.role === "admin" ? "Admin Dashboard" : session.user?.role === "teacher" ? "Teacher Dashboard" : "Student Dashboard"}
+                        {session.user?.role === "admin"
+                          ? "Admin Dashboard"
+                          : session.user?.role === "teacher"
+                          ? "Teacher Dashboard"
+                          : "Student Dashboard"}
                       </DropdownMenuItem>
                     </Link>
                     <Link href="/my-stories">
@@ -138,7 +150,7 @@ export default function Navbar() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => signOut({ callbackUrl: "/signin" })}
-                      className="text-ninja-white hover:text-ninja-peach"
+                      className="text-ninja-black hover:text-ninja-peach"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
                       Sign out
@@ -210,18 +222,28 @@ export default function Navbar() {
                     Upload Story
                   </Link>
                   <Link
-                    href={session.user?.role === "admin" ? "/admin" : session.user?.role === "teacher" ? "/teacher" : "/student"}
+                    href={
+                      session.user?.role === "admin"
+                        ? "/admin"
+                        : session.user?.role === "teacher"
+                        ? "/teacher"
+                        : "/student"
+                    }
                     className="block  py-2 text-ninja-white hover:text-ninja-gold"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {session.user?.role === "admin" ? "Admin Dashboard" : session.user?.role === "teacher" ? "Teacher Dashboard" : "Student Dashboard"}
+                    {session.user?.role === "admin"
+                      ? "Admin Dashboard"
+                      : session.user?.role === "teacher"
+                      ? "Teacher Dashboard"
+                      : "Student Dashboard"}
                   </Link>
                   <button
                     onClick={() => {
                       signOut({ callbackUrl: "/signin" });
                       setIsMenuOpen(false);
                     }}
-                    className="block w-full text-left  py-2 text-ninja-white hover:text-ninja-peach"
+                    className="block w-full text-left  py-2 text-ninja-black hover:text-ninja-peach"
                   >
                     Sign Out
                   </button>

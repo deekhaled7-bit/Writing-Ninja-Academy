@@ -1,9 +1,6 @@
 import { notFound } from 'next/navigation';
 import StoryDetails from '@/components/stories/story-details';
-
-interface StoryPageProps {
-  params: Promise<{ id: string }>;
-}
+import { ServerPageProps } from '@/types/page-props';
 
 async function getStory(id: string) {
   try {
@@ -38,7 +35,7 @@ async function getComments(id: string) {
   }
 }
 
-export default async function StoryPage({ params }: StoryPageProps) {
+export default async function StoryPage({ params }: ServerPageProps) {
   const resolvedParams = await params;
   const [storyData, comments] = await Promise.all([
     getStory(resolvedParams.id),
