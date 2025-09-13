@@ -1,14 +1,19 @@
-// import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-// import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import UploadStoryForm from "@/components/upload/upload-story-form";
 
 export default async function UploadPage() {
-  // const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-  // if (!session) {
-  //   redirect('/auth/signin?callbackUrl=/upload');
-  // }
+  if (!session) {
+    redirect('/signin?callbackUrl=/upload');
+  }
+  
+  // Only allow teachers and admins to access this page
+  if (session.user.role !== 'teacher' && session.user.role !== 'admin') {
+    redirect('/');
+  }
 
   return (
     <div className="min-h-screen bg-ninja-light-gray py-8">

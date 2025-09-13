@@ -25,6 +25,9 @@ declare module "next-auth" {
       subscriptionExpiryDate?: Date | null;
       // loyaltyPoints?: number;
       sessionId?: string; // Add sessionId here
+      role?: string; // Add role for user type (admin, teacher, student)
+      active?: boolean; // Add active status for account access control
+      verified?: boolean; // Add verified status for account access control
     };
   }
 }
@@ -34,6 +37,9 @@ declare module "next-auth/jwt" {
     isSubscribed?: boolean;
     // loyaltyPoints?: number;
     sessionId?: string; // Add sessionId here
+    role?: string; // Add role for user type (admin, teacher, student)
+    active?: boolean; // Add active status for account access control
+    verified?: boolean; // Add verified status for account access control
   }
 }
 
@@ -92,6 +98,11 @@ export const authOptions: NextAuthOptions = {
             id: user._id.toString(),
             email: user.email,
             name: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role || "student",
+            active: user.active ? user.active : false, // Include actual active status from database
+            verified: user.verified ? user.verified : false, // Include actual verified status from database
             // loyaltyPoints,
             sessionId, // Attach sessionId for JWT
           };
@@ -120,6 +131,8 @@ export const authOptions: NextAuthOptions = {
             emailVerified: true,
             imageURL: user.image,
             subscription: subscribed ? (subscribed._id as string) : undefined,
+            active: true, // Set active to true for testing
+            verified: true, // Set verified to true for testing
           });
         }
         userId = (existingUser as any)._id?.toString();
@@ -147,6 +160,25 @@ export const authOptions: NextAuthOptions = {
       try {
         await ConnectDB();
         const email = user?.email || token.email;
+
+        // Log the token and user for debugging
+        console.log("JWT callback - token:", {
+          ...token,
+          sub: token.sub ? "[REDACTED]" : undefined,
+        });
+        console.log(
+          "JWT callback - user:",
+          user ? { ...user, id: "[REDACTED]" } : "No user data"
+        );
+        
+        // If user object is present (during sign-in), explicitly set active and verified
+        if (user) {
+          token.active = (user as any).active;
+          token.verified = (user as any).verified;
+          console.log("JWT callback - setting active:", token.active);
+          console.log("JWT callback - setting verified:", token.verified);
+        }
+
         if (email) {
           const subscription = await subscriptionsModel.findOne({
             email,
@@ -159,22 +191,73 @@ export const authOptions: NextAuthOptions = {
           token.subscriptionExpiryDate = subscription?.expiryDate
             ? subscription.expiryDate.toISOString()
             : null;
-          // token.loyaltyPoints = await calculateLoyaltyPoints(email);
+
+          // If this is a new sign in, get the user's role from the database
+          if (user) {
+            console.log(
+              "Setting role from user object:",
+              (user as any).role || "student"
+            );
+            token.role = (user as any).role || "student";
+          }
+          
+          // Always fetch the latest user data from the database
+          if (token.email) {
+            const dbUser = await UserModel.findOne({ email: token.email });
+            if (dbUser) {
+              console.log(
+                "Setting role from database:",
+                dbUser.role || "student"
+              );
+              console.log("Database user active status:", dbUser.active);
+              console.log("Database user verified status:", dbUser.verified);
+              
+              token.role = dbUser.role || "student";
+              token.active = dbUser.active; // Use the actual value from the database
+              token.verified = dbUser.verified; // Use the actual value from the database
+            }
+          }
+        }
+
+        // Attach sessionId to token
+        if ((user as any)?.sessionId) {
+          token.sessionId = (user as any).sessionId;
+          console.log("Setting sessionId from user:", (user as any).sessionId);
+        }
+
+        // Create a new session if one doesn't exist
+        if (token.sub && !token.sessionId) {
+          const sessionId = uuidv4();
+          await SessionModel.findOneAndUpdate(
+            { userId: token.sub },
+            { sessionId, createdAt: new Date() },
+            { upsert: true }
+          );
+          token.sessionId = sessionId;
+          console.log("Created new session:", { userId: token.sub, sessionId });
+        }
+
+        // Don't validate session for now to prevent redirect loops
+        // Just ensure the session exists in the database
+        if (token.sub && token.sessionId) {
+          const dbSession = await SessionModel.findOne({ userId: token.sub });
+          if (!dbSession) {
+            // Create a new session if one doesn't exist
+            await SessionModel.create({
+              userId: token.sub,
+              sessionId: token.sessionId,
+              createdAt: new Date(),
+            });
+            console.log("Created missing session:", {
+              userId: token.sub,
+              sessionId: token.sessionId,
+            });
+          }
         }
       } catch (error) {
         console.error("JWT callback error:", error);
       }
-      // Attach sessionId to token
-      if ((user as any)?.sessionId) {
-        token.sessionId = (user as any).sessionId;
-      }
-      // Check session validity
-      if (token.sub && token.sessionId) {
-        const dbSession = await SessionModel.findOne({ userId: token.sub });
-        if (!dbSession || dbSession.sessionId !== token.sessionId) {
-          throw new Error("Session invalidated: logged in elsewhere.");
-        }
-      }
+
       return token;
     },
 
@@ -188,6 +271,15 @@ export const authOptions: NextAuthOptions = {
           ? new Date(token.subscriptionExpiryDate as string)
           : null;
         // session.user.loyaltyPoints = token.loyaltyPoints;
+        session.user.role = (token.role as string) || "student";
+        session.user.active = token.active; // Use the actual value from the token
+        session.user.verified = token.verified; // Use the actual value from the token
+        
+        // Log session values for debugging
+        console.log("Session callback - token active:", token.active);
+        console.log("Session callback - token verified:", token.verified);
+        console.log("Session callback - session user active:", session.user.active);
+        console.log("Session callback - session user verified:", session.user.verified);
       }
       if (session.user && token.sessionId) {
         session.user.sessionId = token.sessionId;

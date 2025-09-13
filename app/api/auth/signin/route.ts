@@ -1,47 +1,62 @@
 import { NextRequest, NextResponse } from "next/server";
+import UserModel from "@/models/userModel";
+import bcrypt from "bcrypt";
+import { ConnectDB } from "@/config/db";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
     if (!email || !password) {
-      return NextResponse.json(
+      return Response.json(
         { error: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    // Mock authentication - In a real app, you would:
-    // 1. Hash the password and compare with stored hash
-    // 2. Query your database for the user
-    // 3. Generate a JWT token or session
-    // 4. Set secure cookies
+    // Connect to the database
+    await ConnectDB();
 
-    // For demo purposes, accept any email/password combination
-    const mockUser = {
-      id: "user_123",
-      email,
-      name: "Demo User",
-      createdAt: new Date().toISOString()
+    // Find the user by email
+    const user = await UserModel.findOne({ email });
+
+    // Check if user exists
+    if (!user) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
+
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 401 }
+      );
+    }
+
+    // Create user object without sensitive information
+    const userResponse = {
+      id: user._id.toString(),
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role || "student",
+      createdAt: user.createdAt,
     };
 
-    // In a real app, you would set secure HTTP-only cookies here
+    // Return successful response
     const response = NextResponse.json(
       {
         success: true,
         message: "Sign in successful",
-        user: mockUser
+        user: userResponse,
       },
       { status: 200 }
     );
-
-    // Mock session cookie (in production, use secure, HTTP-only cookies)
-    response.cookies.set("session", "mock_session_token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7 // 7 days
-    });
 
     return response;
   } catch (error) {

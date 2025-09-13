@@ -35,6 +35,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    active: {
+      type: Boolean,
+      default: false,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
     age: {
       type: Number,
       min: 5,
@@ -84,8 +92,17 @@ const UserSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "child",
+      default: "student",
+      enum: ["admin", "teacher", "student"],
       required: false,
+    },
+    assignedClasses: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
+    }],
+    grade: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Grade",
     },
   },
   {

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Upload, FileText, Video, CheckCircle, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,18 +39,98 @@ const ageGroups = [
 export default function UploadStoryForm() {
   const router = useRouter();
   const { toast } = useToast();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedCoverImage, setSelectedCoverImage] = useState<File | null>(null);
   const [coverImageDragActive, setCoverImageDragActive] = useState(false);
+  const [students, setStudents] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [selectedClass, setSelectedClass] = useState("");
+  const [loadingStudents, setLoadingStudents] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     ageGroup: "",
     category: "",
+    authorId: "",
   });
+  
+  // Fetch teacher's classes if user is a teacher
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role === "teacher") {
+      const fetchClasses = async () => {
+        try {
+          const response = await fetch("/api/teacher/classes/access");
+          if (response.ok) {
+            const data = await response.json();
+            setClasses(data.classes || []);
+          }
+        } catch (error) {
+          console.error("Error fetching classes:", error);
+          toast({
+            title: "Error",
+            description: "Failed to fetch your classes",
+            variant: "destructive",
+          });
+        }
+      };
+      
+      fetchClasses();
+    } else if (status === "authenticated" && session?.user?.role === "admin") {
+      // For admin, fetch all students directly
+      const fetchAllStudents = async () => {
+        setLoadingStudents(true);
+        try {
+          const response = await fetch("/api/admin/students");
+          if (response.ok) {
+            const data = await response.json();
+            setStudents(data.students || []);
+          }
+        } catch (error) {
+          console.error("Error fetching students:", error);
+          toast({
+            title: "Error",
+            description: "Failed to fetch students",
+            variant: "destructive",
+          });
+        } finally {
+          setLoadingStudents(false);
+        }
+      };
+      
+      fetchAllStudents();
+    }
+  }, [status, session, toast]);
+  
+  // Fetch students when a class is selected (for teachers)
+  useEffect(() => {
+    if (selectedClass && session?.user?.role === "teacher") {
+      const fetchStudents = async () => {
+        setLoadingStudents(true);
+        try {
+          const response = await fetch(`/api/teacher/classes/students?id=${selectedClass}`);
+          if (response.ok) {
+            const data = await response.json();
+            setStudents(data.students || []);
+          }
+        } catch (error) {
+          console.error("Error fetching students:", error);
+          toast({
+            title: "Error",
+            description: "Failed to fetch students for this class",
+            variant: "destructive",
+          });
+        } finally {
+          setLoadingStudents(false);
+        }
+      };
+      
+      fetchStudents();
+    }
+  }, [selectedClass, session, toast]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -170,11 +251,12 @@ export default function UploadStoryForm() {
       !formData.title ||
       !formData.description ||
       !formData.ageGroup ||
-      !formData.category
+      !formData.category ||
+      !formData.authorId
     ) {
       toast({
         title: "Missing information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in all required fields, including selecting an author.",
         variant: "destructive",
       });
       return;
@@ -198,6 +280,11 @@ export default function UploadStoryForm() {
       formDataToSend.append("ageGroup", formData.ageGroup);
       formDataToSend.append("category", formData.category);
       formDataToSend.append("file", selectedFile);
+      
+      // Add author ID if selected
+      if (formData.authorId) {
+        formDataToSend.append("authorId", formData.authorId);
+      }
       
       // Add cover image if selected
       if (selectedCoverImage) {
@@ -293,6 +380,68 @@ export default function UploadStoryForm() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Class selection for teachers */}
+          {session?.user?.role === "teacher" && (
+            <div className="space-y-2">
+              <Label
+                htmlFor="class"
+                className="text-ninja-black font-semibold"
+              >
+                Class *
+              </Label>
+              <Select
+                value={selectedClass}
+                onValueChange={(value) => {
+                  setSelectedClass(value);
+                  // Reset author selection when class changes
+                  setFormData({ ...formData, authorId: "" });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a class" />
+                </SelectTrigger>
+                <SelectContent>
+                  {classes.map((classItem) => (
+                    <SelectItem key={classItem._id} value={classItem._id}>
+                      {classItem.className} - {classItem.grade?.name || ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* Author selection */}
+          <div className="space-y-2">
+            <Label
+              htmlFor="authorId"
+              className="text-ninja-black font-semibold"
+            >
+              Author *
+            </Label>
+            <Select
+              value={formData.authorId}
+              onValueChange={(value) =>
+                setFormData({ ...formData, authorId: value })
+              }
+              disabled={session?.user?.role === "teacher" && !selectedClass}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={loadingStudents ? "Loading students..." : "Select an author"} />
+              </SelectTrigger>
+              <SelectContent>
+                {students.map((student) => (
+                  <SelectItem key={student._id} value={student._id}>
+                    {student.firstName} {student.lastName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {session?.user?.role === "teacher" && !selectedClass && (
+              <p className="text-sm text-ninja-gray">Please select a class first</p>
+            )}
+          </div>
+
           <div className="space-y-2">
             <Label
               htmlFor="category"

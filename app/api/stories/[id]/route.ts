@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Story from "@/models/Story";
 import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/authOptions";
 
 
 
@@ -96,6 +98,61 @@ export async function PATCH(
     console.error("Error updating story interaction:", error);
     return NextResponse.json(
       { error: "Failed to update interaction" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    // Check if user is authenticated and is an admin
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized. Authentication required." },
+        { status: 401 }
+      );
+    }
+
+    if (session.user.role !== "admin") {
+      return NextResponse.json(
+        { error: "Unauthorized. Admin access required." },
+        { status: 403 }
+      );
+    }
+
+    await dbConnect();
+    const { id } = await params;
+    
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { error: "Invalid story ID" },
+        { status: 400 }
+      );
+    }
+    
+    // Find and delete the story
+    const deletedStory = await Story.findByIdAndDelete(id);
+    
+    if (!deletedStory) {
+      return NextResponse.json(
+        { error: "Story not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ 
+      message: "Story deleted successfully"
+    });
+  } catch (error) {
+    console.error("Error deleting story:", error);
+    return NextResponse.json(
+      { error: "Failed to delete story" },
       { status: 500 }
     );
   }

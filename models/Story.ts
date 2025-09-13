@@ -63,9 +63,14 @@ const StorySchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  status: {
+    type: String,
+    enum: ['waiting_revision', 'published'],
+    default: 'waiting_revision',
+  },
   isPublished: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   tags: [{
     type: String,

@@ -1,88 +1,196 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { toast } from "sonner";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    role: "student",
+    gradeId: "",
+    classId: "",
   });
+  const [grades, setGrades] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [loadingGrades, setLoadingGrades] = useState(true);
+  const [loadingClasses, setLoadingClasses] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
+
+  // Fetch grades for student registration
+  useEffect(() => {
+    const fetchGrades = async () => {
+      try {
+        setLoadingGrades(true);
+        const response = await fetch("/api/grades");
+        if (response.ok) {
+          const data = await response.json();
+          setGrades(data.grades || []);
+        } else {
+          console.error("Failed to fetch grades");
+        }
+      } catch (error) {
+        console.error("Error fetching grades:", error);
+      } finally {
+        setLoadingGrades(false);
+      }
+    };
+
+    fetchGrades();
+  }, []);
+
+  // Fetch classes based on selected grade
+  useEffect(() => {
+    const fetchClasses = async () => {
+      if (!formData.gradeId) {
+        setClasses([]);
+        return;
+      }
+
+      try {
+        setLoadingClasses(true);
+        const response = await fetch(
+          `/api/classes?gradeId=${formData.gradeId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setClasses(data.classes || []);
+          // Reset classId when grade changes
+          setFormData((prev) => ({ ...prev, classId: "" }));
+        } else {
+          console.error("Failed to fetch classes");
+        }
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+      } finally {
+        setLoadingClasses(false);
+      }
+    };
+
+    fetchClasses();
+  }, [formData.gradeId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
+      toast.error("Passwords don't match");
       setIsLoading(false);
       return;
     }
-    
+
+    // Validate grade selection for students
+    if (formData.role === "student" && !formData.gradeId) {
+      toast.error("Please select a grade");
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate class selection for students
+    if (formData.role === "student" && !formData.classId) {
+      toast.error("Please select a class");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          role: formData.role,
+          classId: formData.classId,
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        // Success - redirect to home or show success message
-        alert(data.message || "Account created successfully!");
-        window.location.href = "/";
+        // Success - redirect to role-specific dashboard
+        toast.success(data.message || "Account created successfully!");
+        const { user } = data;
+        if (user && user.role) {
+          switch (user.role) {
+            case "admin":
+              window.location.href = "/admin";
+              break;
+            case "teacher":
+              window.location.href = "/teacher";
+              break;
+            case "student":
+              window.location.href = "/student";
+              break;
+            default:
+              window.location.href = "/";
+          }
+        } else {
+          window.location.href = "/";
+        }
       } else {
-        alert(data.error || "Sign up failed");
+        toast.error(data.error || "Sign up failed");
       }
     } catch (error) {
       console.error("Sign up error:", error);
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ninja-orange to-ninja-coral flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <div className="min-h-screen  bg-ninja-coral flex items-center justify-center ">
+      <div className="w-full max-lg:p-4 justify-center grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
         {/* Sign Up Form */}
         <motion.div
+          className="lg:col-span-2 w-full col-span-1"
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <Card className="w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm shadow-2xl">
+          <Card className="w-full  bg-white/95 backdrop-blur-sm shadow-2xl">
             <CardHeader className="text-center">
               <div className="lg:hidden mb-4">
                 <Image
                   src="/dee/16.png"
                   alt="Ninja Character"
-                  width={80}
-                  height={80}
+                  width={300}
+                  height={300}
                   className="mx-auto"
                 />
               </div>
               <CardTitle className="text-2xl font-oswald text-ninja-dark">
-                Join Ninja Bolt
+                Join The Writing Ninjas Academy
               </CardTitle>
               <CardDescription className="text-ninja-gray">
                 Create your account to start your ninja journey
@@ -106,7 +214,10 @@ export default function SignUpPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-ninja-dark font-oswald">
+                  <Label
+                    htmlFor="email"
+                    className="text-ninja-dark font-oswald"
+                  >
                     Email
                   </Label>
                   <Input
@@ -121,7 +232,10 @@ export default function SignUpPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-ninja-dark font-oswald">
+                  <Label
+                    htmlFor="password"
+                    className="text-ninja-dark font-oswald"
+                  >
                     Password
                   </Label>
                   <Input
@@ -136,7 +250,10 @@ export default function SignUpPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-ninja-dark font-oswald">
+                  <Label
+                    htmlFor="confirmPassword"
+                    className="text-ninja-dark font-oswald"
+                  >
                     Confirm Password
                   </Label>
                   <Input
@@ -150,9 +267,94 @@ export default function SignUpPage() {
                     className="font-oswald"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role" className="text-ninja-dark font-oswald">
+                    Account Type
+                  </Label>
+                  <select
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
+                  >
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                  </select>
+                </div>
+
+                <>
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="gradeId"
+                      className="text-ninja-dark font-oswald"
+                    >
+                      Select Grade
+                    </Label>
+                    <select
+                      id="gradeId"
+                      name="gradeId"
+                      value={formData.gradeId}
+                      onChange={handleChange}
+                      className="w-full p-2 border border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
+                      required={formData.role === "student"}
+                      disabled={loadingGrades}
+                    >
+                      <option value="">Select a grade</option>
+                      {grades.map((grade: any) => (
+                        <option key={grade._id} value={grade._id}>
+                          Grade {grade.gradeNumber} - {grade.name}
+                        </option>
+                      ))}
+                    </select>
+                    {loadingGrades && (
+                      <p className="text-sm text-ninja-gray">
+                        Loading grades...
+                      </p>
+                    )}
+                  </div>
+
+                  {formData.gradeId && (
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="classId"
+                        className="text-ninja-dark font-oswald"
+                      >
+                        Select Class
+                      </Label>
+                      <select
+                        id="classId"
+                        name="classId"
+                        value={formData.classId}
+                        onChange={handleChange}
+                        className="w-full p-2 border border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
+                        required={formData.role === "student"}
+                        disabled={loadingClasses}
+                      >
+                        <option value="">Select a class</option>
+                        {classes.map((classItem: any) => (
+                          <option key={classItem._id} value={classItem._id}>
+                            {classItem.className}
+                          </option>
+                        ))}
+                      </select>
+                      {loadingClasses && (
+                        <p className="text-sm text-ninja-gray">
+                          Loading classes...
+                        </p>
+                      )}
+                      {!loadingClasses && classes.length === 0 && (
+                        <p className="text-sm text-ninja-gray">
+                          No classes available for this grade
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </>
+
                 <Button
                   type="submit"
-                  className="w-full bg-ninja-orange hover:bg-ninja-coral text-white font-oswald"
+                  className="w-full bg-ninja-crimson hover:bg-ninja-coral text-white font-oswald"
                   disabled={isLoading}
                 >
                   {isLoading ? "Creating Account..." : "Sign Up"}
@@ -163,7 +365,7 @@ export default function SignUpPage() {
                   Already have an account?{" "}
                   <Link
                     href="/signin"
-                    className="text-ninja-orange hover:text-ninja-coral font-bold"
+                    className="text-ninja-orange underline hover:text-ninja-coral font-bold"
                   >
                     Sign in
                   </Link>

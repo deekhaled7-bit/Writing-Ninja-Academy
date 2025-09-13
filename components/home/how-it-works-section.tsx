@@ -81,7 +81,7 @@ export default function HowItWorksSection() {
                   <div
                     className={`w-20 h-20 bg-${step.color} rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300`}
                   >
-                    <Icon className="h-10 w-10 text-ninja-black" />
+                    <Icon className="h-5 w-5 text-ninja-black" />
                   </div>
 
                   {/* Connection Line (except last item) */}

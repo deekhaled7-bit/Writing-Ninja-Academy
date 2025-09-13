@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 import dbConnect from "@/lib/mongodb";
 import Story from "@/models/Story";
 import UserModel from "@/models/userModel";
+import ClassModel from "@/models/ClassModel";
+import { ConnectDB } from "@/config/db";
 
 // Mock stories data
 const mockStories = [
@@ -96,7 +100,7 @@ export async function GET(request: NextRequest) {
       query.$or = [
         { title: searchRegex },
         { description: searchRegex },
-        { authorName: searchRegex }
+        { authorName: searchRegex },
       ];
     }
 
@@ -106,7 +110,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch stories with pagination
     const stories = await Story.find(query)
-      .populate('author', 'firstName lastName username')
+      .populate("author", "firstName lastName username")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -133,7 +137,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await dbConnect();
+    await ConnectDB();
+
+    // Get session to check user role
+    const session = await getServerSession(authOptions);
+
+    // Only allow teachers and admins to upload stories
+    if (
+      !session ||
+      (session.user.role !== "teacher" && session.user.role !== "admin")
+    ) {
+      return NextResponse.json(
+        { error: "Unauthorized. Only teachers and admins can upload stories." },
+        { status: 403 }
+      );
+    }
 
     const formData = await request.formData();
     const title = formData.get("title") as string;
@@ -142,12 +160,58 @@ export async function POST(request: NextRequest) {
     const category = formData.get("category") as string;
     const file = formData.get("file") as File;
     const coverImage = formData.get("coverImage") as File | null;
+    const authorId = formData.get("authorId") as string;
 
-    if (!title || !description || !ageGroup || !category || !file) {
+    if (
+      !title ||
+      !description ||
+      !ageGroup ||
+      !category ||
+      !file ||
+      !authorId
+    ) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
+    }
+
+    // Verify that the author exists and is a student
+    const authorUser = await UserModel.findById(authorId);
+    if (!authorUser) {
+      return NextResponse.json(
+        { error: "Selected author does not exist" },
+        { status: 400 }
+      );
+    }
+
+    if (authorUser.role !== "student") {
+      return NextResponse.json(
+        { error: "Selected author must be a student" },
+        { status: 400 }
+      );
+    }
+
+    // For teachers, verify they have access to this student through their classes
+    if (session.user.role === "teacher") {
+      const teacherClasses = await ClassModel.find({
+        teachers: session.user.id,
+      });
+      // const teacherClassIds = teacherClasses.map((c) => c._id.toString());
+
+      // const studentClasses = await ClassModel.find({
+      //   _id: { $in: teacherClassIds },
+      //   students: authorId,
+      // });
+
+      // if (studentClasses.length === 0) {
+      //   return NextResponse.json(
+      //     {
+      //       error: "You do not have access to upload stories for this student",
+      //     },
+      //     { status: 403 }
+      //   );
+      // }
     }
 
     // Validate file type and size
@@ -176,21 +240,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create or get default author
-    let defaultAuthor = await UserModel.findOne({ email: "default@writingninja.com" });
-    
-    if (!defaultAuthor) {
-      defaultAuthor = new UserModel({
-        firstName: "Writing",
-        lastName: "Ninja",
-        username: "writingninja",
-        email: "default@writingninja.com",
-        password: "defaultpassword123", // This should be hashed in production
-        age: 25,
-        role: "admin"
-      });
-      await defaultAuthor.save();
-    }
+    // Get the selected author
+    const author = await UserModel.findById(authorId);
 
     // Upload file to Cloudinary
     let uploadResult;
@@ -219,7 +270,8 @@ export async function POST(request: NextRequest) {
       if (!allowedImageTypes.includes(coverImage.type)) {
         return NextResponse.json(
           {
-            error: "Invalid cover image type. Only JPEG, PNG, and WebP are allowed.",
+            error:
+              "Invalid cover image type. Only JPEG, PNG, and WebP are allowed.",
           },
           { status: 400 }
         );
@@ -249,22 +301,23 @@ export async function POST(request: NextRequest) {
     const newStory = new Story({
       title,
       description,
-      author: defaultAuthor._id,
-      authorName: `${defaultAuthor.firstName} ${defaultAuthor.lastName}`,
+      author: author._id,
+      authorName: `${author.firstName} ${author.lastName}`,
       ageGroup,
       category,
       fileType: file.type.startsWith("video/") ? "video" : "pdf",
       fileUrl: (uploadResult as any).secure_url,
       cloudinaryId: (uploadResult as any).public_id,
       coverImageUrl: coverImageUrl,
-      isPublished: true, // Auto-publish for now
+      isPublished: false, // Default to not published
+      status: "waiting_revision", // Default status for new stories
     });
 
     const savedStory = await newStory.save();
 
     // Update user's stories uploaded count
-    await UserModel.findByIdAndUpdate(defaultAuthor._id, {
-      $inc: { storiesUploaded: 1 }
+    await UserModel.findByIdAndUpdate(author._id, {
+      $inc: { storiesUploaded: 1 },
     });
 
     return NextResponse.json(
