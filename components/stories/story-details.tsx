@@ -297,7 +297,10 @@ export default function StoryDetails({
                 <VideoPlayer src={story.fileUrl} title={story.title} />
               ) : (
                 // <PDFViewer src={story.fileUrl} title={story.title} />
-                <FlipBook />
+                <FlipBook
+                  fileUrl={story.fileUrl}
+                  cover={story.coverImageUrl || ""}
+                />
               )}
 
               {/* Action Buttons */}

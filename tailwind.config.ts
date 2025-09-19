@@ -14,6 +14,7 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "ninja-pattern": "url('/ninja-pattern.svg')",
+        "books-pattern": "url('/images/whiteBoardBG.jpg')",
       },
       borderRadius: {
         lg: "var(--radius)",
