@@ -318,12 +318,12 @@ export default function UploadStoryForm() {
               .NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
             folder: "story-covers",
             resourceType: "image",
-            onProgress: (progress) => {
-              toast({
-                title: `Uploading cover: ${progress}%`,
-                description: "Please wait while we upload your cover image...",
-              });
-            },
+            // onProgress: (progress) => {
+            //   toast({
+            //     title: `Uploading cover: ${progress}%`,
+            //     description: "Please wait while we upload your cover image...",
+            //   });
+            // },
           }
         );
       }
