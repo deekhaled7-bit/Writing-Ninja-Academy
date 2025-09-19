@@ -38,8 +38,9 @@ export async function directCloudinaryUpload(
   } = options;
 
   // For PDFs, we need to use 'raw' resource type to avoid delivery restrictions
+  // file.type === "application/pdf" ? "auto" : "video";
   const actualResourceType =
-    file.type === "application/pdf" ? "raw" : resourceType;
+    file.type === "application/pdf" ? "auto" : resourceType;
 
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   if (!cloudName) {

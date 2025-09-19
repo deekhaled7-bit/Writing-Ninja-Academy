@@ -25,8 +25,14 @@ export async function uploadToCloudinary(
 
     // For PDF files, use raw resource type to avoid delivery restrictions
     if (file.type === "application/pdf") {
-      uploadOptions.resource_type = "raw";
-      uploadOptions.public_id = `${uploadOptions.folder}/${file.name.replace(/\.[^/.]+$/, "")}_${Date.now()}`;
+      // const resourceType = file.type === "application/pdf" ? "auto" : "video";
+
+      uploadOptions.resource_type =
+        file.type === "application/pdf" ? "auto" : "video";
+      uploadOptions.public_id = `${uploadOptions.folder}/${file.name.replace(
+        /\.[^/.]+$/,
+        ""
+      )}_${Date.now()}`;
     } else if (resourceType === "video") {
       uploadOptions.allowed_formats = ["mp4", "mov", "avi"];
     }
