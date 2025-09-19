@@ -6,8 +6,8 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Set up PDF.js worker
-if (typeof window !== 'undefined') {
-  pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+if (typeof window !== "undefined") {
+  pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 }
 
 interface PDFViewerProps {
@@ -30,19 +30,29 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
   function onDocumentLoadError(error: any) {
     console.error("PDF loading error:", error);
     let errorMessage = "Failed to load PDF. Please try again later.";
-    
+
     if (error?.message) {
-      if (error.message.includes('CORS')) {
+      if (error.message.includes("CORS")) {
         errorMessage = "PDF cannot be loaded due to CORS restrictions.";
-      } else if (error.message.includes('404') || error.message.includes('Not Found')) {
+      } else if (
+        error.message.includes("404") ||
+        error.message.includes("Not Found")
+      ) {
         errorMessage = "PDF file not found. Please check if the file exists.";
-      } else if (error.message.includes('network')) {
-        errorMessage = "Network error while loading PDF. Please check your connection.";
+      } else if (error.message.includes("network")) {
+        errorMessage =
+          "Network error while loading PDF. Please check your connection.";
+      } else if (
+        error.message.includes("401") ||
+        error.message.includes("Unauthorized")
+      ) {
+        errorMessage =
+          "Access to this PDF is restricted. The file may require authentication or have limited permissions.";
       } else {
         errorMessage = `PDF loading error: ${error.message}`;
       }
     }
-    
+
     setError(errorMessage);
     setLoading(false);
   }
@@ -153,10 +163,10 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
             onLoadError={onDocumentLoadError}
             loading=""
             options={{
-          cMapUrl: '/cmaps/',
-          standardFontDataUrl: '/standard_fonts/',
-          cMapPacked: true,
-        }}
+              cMapUrl: "/cmaps/",
+              standardFontDataUrl: "/standard_fonts/",
+              cMapPacked: true,
+            }}
           >
             <Page
               pageNumber={pageNumber}

@@ -42,9 +42,9 @@ export async function directCloudinaryUpload(
   const actualResourceType =
     file.type === "application/pdf" ? "raw" : resourceType;
 
-  // Add access control for PDFs
-  if (file.type === "application/pdf") {
-  }
+  // For PDFs, we use 'raw' resource type which allows them to be accessed
+  // without restrictions. The access_mode parameter is not compatible with
+  // unsigned upload presets and causes 400 Bad Request errors
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   if (!cloudName) {
     throw new Error("Cloudinary cloud name is not configured");
@@ -59,7 +59,8 @@ export async function directCloudinaryUpload(
 
       formData.append("file", file);
       formData.append("upload_preset", uploadPreset);
-      // formData.append("access_mode", "public");
+
+      // Note: access_mode parameter removed as it's not compatible with unsigned upload presets
 
       if (folder) formData.append("folder", folder);
 
@@ -77,12 +78,27 @@ export async function directCloudinaryUpload(
           const response = JSON.parse(xhr.responseText);
           resolve(response);
         } else {
-          reject(new Error("Upload failed"));
+          try {
+            const errorData = JSON.parse(xhr.responseText);
+            reject(
+              new Error(
+                `Upload failed: ${
+                  errorData.error?.message || JSON.stringify(errorData)
+                }`
+              )
+            );
+          } catch (e) {
+            reject(
+              new Error(
+                `Upload failed with status ${xhr.status}: ${xhr.statusText}`
+              )
+            );
+          }
         }
       };
 
       xhr.onerror = function () {
-        reject(new Error("Upload failed"));
+        reject(new Error("Network error during upload"));
       };
 
       xhr.send(formData);
@@ -92,6 +108,7 @@ export async function directCloudinaryUpload(
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", uploadPreset);
+    // Note: access_mode parameter removed as it's not compatible with unsigned upload presets
     if (folder) formData.append("folder", folder);
 
     const response = await fetch(url, {
@@ -100,7 +117,20 @@ export async function directCloudinaryUpload(
     });
 
     if (!response.ok) {
-      throw new Error("Upload failed");
+      // Get more detailed error information from the response
+      try {
+        const errorData = await response.json();
+        throw new Error(
+          `Upload failed: ${
+            errorData.error?.message || JSON.stringify(errorData)
+          }`
+        );
+      } catch (e) {
+        // If we can't parse the response as JSON, throw a generic error with status
+        throw new Error(
+          `Upload failed with status ${response.status}: ${response.statusText}`
+        );
+      }
     }
 
     return response.json();
