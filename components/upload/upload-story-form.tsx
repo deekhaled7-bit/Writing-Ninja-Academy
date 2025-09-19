@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { directCloudinaryUpload } from "@/utils/directCloudinaryUpload";
 
 const categories = [
   { value: "fantasy", label: "Fantasy" },
@@ -43,7 +44,9 @@ export default function UploadStoryForm() {
   const [loading, setLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedCoverImage, setSelectedCoverImage] = useState<File | null>(null);
+  const [selectedCoverImage, setSelectedCoverImage] = useState<File | null>(
+    null
+  );
   const [coverImageDragActive, setCoverImageDragActive] = useState(false);
   const [students, setStudents] = useState<any[]>([]);
   const [classes, setClasses] = useState<any[]>([]);
@@ -57,7 +60,7 @@ export default function UploadStoryForm() {
     category: "",
     authorId: "",
   });
-  
+
   // Fetch teacher's classes if user is a teacher
   useEffect(() => {
     if (status === "authenticated" && session?.user?.role === "teacher") {
@@ -77,7 +80,7 @@ export default function UploadStoryForm() {
           });
         }
       };
-      
+
       fetchClasses();
     } else if (status === "authenticated" && session?.user?.role === "admin") {
       // For admin, fetch all students directly
@@ -100,18 +103,20 @@ export default function UploadStoryForm() {
           setLoadingStudents(false);
         }
       };
-      
+
       fetchAllStudents();
     }
   }, [status, session, toast]);
-  
+
   // Fetch students when a class is selected (for teachers)
   useEffect(() => {
     if (selectedClass && session?.user?.role === "teacher") {
       const fetchStudents = async () => {
         setLoadingStudents(true);
         try {
-          const response = await fetch(`/api/teacher/classes/students?id=${selectedClass}`);
+          const response = await fetch(
+            `/api/teacher/classes/students?id=${selectedClass}`
+          );
           if (response.ok) {
             const data = await response.json();
             setStudents(data.students || []);
@@ -127,7 +132,7 @@ export default function UploadStoryForm() {
           setLoadingStudents(false);
         }
       };
-      
+
       fetchStudents();
     }
   }, [selectedClass, session, toast]);
@@ -214,12 +219,7 @@ export default function UploadStoryForm() {
       return;
     }
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-      "image/webp",
-    ];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       toast({
         title: "Invalid image type",
@@ -256,7 +256,8 @@ export default function UploadStoryForm() {
     ) {
       toast({
         title: "Missing information",
-        description: "Please fill in all required fields, including selecting an author.",
+        description:
+          "Please fill in all required fields, including selecting an author.",
         variant: "destructive",
       });
       return;
@@ -274,26 +275,98 @@ export default function UploadStoryForm() {
     setLoading(true);
 
     try {
+      // Upload the main file directly to Cloudinary
+      toast({
+        title: "Uploading story file",
+        description: "Please wait while we upload your file...",
+      });
+
+      // Determine resource type based on file type
+      const resourceType = selectedFile.type.includes("pdf")
+        ? "raw"
+        : selectedFile.type.includes("video")
+        ? "video"
+        : "auto";
+
+      // Upload main file to Cloudinary
+      const fileUploadResult = await directCloudinaryUpload(selectedFile, {
+        uploadPreset: process.env
+          .NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
+        folder: "stories",
+        resourceType: resourceType as any,
+        // onProgress: (progress) => {
+        //   toast({
+        //     title: `Uploading: ${progress}%`,
+        //     description: "Please wait while we upload your file...",
+        //   });
+        // },
+      });
+
+      // Upload cover image if provided
+      let coverImageUploadResult = null;
+      if (selectedCoverImage) {
+        toast({
+          title: "Uploading cover image",
+          description: "Please wait while we upload your cover image...",
+        });
+
+        coverImageUploadResult = await directCloudinaryUpload(
+          selectedCoverImage,
+          {
+            uploadPreset: process.env
+              .NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
+            folder: "story-covers",
+            resourceType: "image",
+            onProgress: (progress) => {
+              toast({
+                title: `Uploading cover: ${progress}%`,
+                description: "Please wait while we upload your cover image...",
+              });
+            },
+          }
+        );
+      }
+
+      // Create story data with Cloudinary URLs
       const formDataToSend = new FormData();
       formDataToSend.append("title", formData.title);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("ageGroup", formData.ageGroup);
       formDataToSend.append("category", formData.category);
-      formDataToSend.append("file", selectedFile);
-      
-      // Add author ID if selected
-      if (formData.authorId) {
-        formDataToSend.append("authorId", formData.authorId);
-      }
-      
-      // Add cover image if selected
-      if (selectedCoverImage) {
-        formDataToSend.append("coverImage", selectedCoverImage);
+      formDataToSend.append("authorId", formData.authorId);
+      formDataToSend.append("fileUrl", fileUploadResult.secure_url);
+      formDataToSend.append(
+        "fileType",
+        selectedFile.type.includes("pdf") ? "pdf" : "video"
+      );
+      formDataToSend.append("publicId", fileUploadResult.public_id);
+
+      if (coverImageUploadResult) {
+        formDataToSend.append(
+          "coverImageUrl",
+          coverImageUploadResult.secure_url
+        );
+        formDataToSend.append(
+          "coverImagePublicId",
+          coverImageUploadResult.public_id
+        );
       }
 
+      // Log what we're about to send
+      console.log(
+        "Sending form data with fields:",
+        [...formDataToSend.entries()].map(
+          ([key, value]) =>
+            `${key}: ${value instanceof File ? value.name : value}`
+        )
+      );
+
+      // Send story data to API
       const response = await fetch("/api/stories", {
         method: "POST",
         body: formDataToSend,
+        // Don't set Content-Type header when sending FormData
+        // The browser will automatically set the correct multipart/form-data header with boundary
       });
 
       const data = await response.json();
@@ -383,10 +456,7 @@ export default function UploadStoryForm() {
           {/* Class selection for teachers */}
           {session?.user?.role === "teacher" && (
             <div className="space-y-2">
-              <Label
-                htmlFor="class"
-                className="text-ninja-black font-semibold"
-              >
+              <Label htmlFor="class" className="text-ninja-black font-semibold">
                 Class *
               </Label>
               <Select
@@ -427,7 +497,11 @@ export default function UploadStoryForm() {
               disabled={session?.user?.role === "teacher" && !selectedClass}
             >
               <SelectTrigger>
-                <SelectValue placeholder={loadingStudents ? "Loading students..." : "Select an author"} />
+                <SelectValue
+                  placeholder={
+                    loadingStudents ? "Loading students..." : "Select an author"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {students.map((student) => (
@@ -438,7 +512,9 @@ export default function UploadStoryForm() {
               </SelectContent>
             </Select>
             {session?.user?.role === "teacher" && !selectedClass && (
-              <p className="text-sm text-ninja-gray">Please select a class first</p>
+              <p className="text-sm text-ninja-gray">
+                Please select a class first
+              </p>
             )}
           </div>
 
@@ -497,7 +573,7 @@ export default function UploadStoryForm() {
           <Label className="text-ninja-black font-semibold">
             Cover Image (Optional)
           </Label>
-          
+
           {selectedCoverImage ? (
             <div className="border-2 border-ninja-green rounded-lg p-4 bg-ninja-green/5">
               <div className="flex items-center justify-between">

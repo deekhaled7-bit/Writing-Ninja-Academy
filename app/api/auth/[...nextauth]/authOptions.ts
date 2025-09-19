@@ -162,21 +162,21 @@ export const authOptions: NextAuthOptions = {
         const email = user?.email || token.email;
 
         // Log the token and user for debugging
-        console.log("JWT callback - token:", {
-          ...token,
-          sub: token.sub ? "[REDACTED]" : undefined,
-        });
-        console.log(
-          "JWT callback - user:",
-          user ? { ...user, id: "[REDACTED]" } : "No user data"
-        );
-        
+        // console.log("JWT callback - token:", {
+        //   ...token,
+        //   sub: token.sub ? "[REDACTED]" : undefined,
+        // });
+        // console.log(
+        //   "JWT callback - user:",
+        //   user ? { ...user, id: "[REDACTED]" } : "No user data"
+        // );
+
         // If user object is present (during sign-in), explicitly set active and verified
         if (user) {
           token.active = (user as any).active;
           token.verified = (user as any).verified;
-          console.log("JWT callback - setting active:", token.active);
-          console.log("JWT callback - setting verified:", token.verified);
+          // console.log("JWT callback - setting active:", token.active);
+          // console.log("JWT callback - setting verified:", token.verified);
         }
 
         if (email) {
@@ -200,7 +200,7 @@ export const authOptions: NextAuthOptions = {
             );
             token.role = (user as any).role || "student";
           }
-          
+
           // Always fetch the latest user data from the database
           if (token.email) {
             const dbUser = await UserModel.findOne({ email: token.email });
@@ -211,7 +211,7 @@ export const authOptions: NextAuthOptions = {
               );
               console.log("Database user active status:", dbUser.active);
               console.log("Database user verified status:", dbUser.verified);
-              
+
               token.role = dbUser.role || "student";
               token.active = dbUser.active; // Use the actual value from the database
               token.verified = dbUser.verified; // Use the actual value from the database
@@ -274,12 +274,12 @@ export const authOptions: NextAuthOptions = {
         session.user.role = (token.role as string) || "student";
         session.user.active = token.active; // Use the actual value from the token
         session.user.verified = token.verified; // Use the actual value from the token
-        
+
         // Log session values for debugging
-        console.log("Session callback - token active:", token.active);
-        console.log("Session callback - token verified:", token.verified);
-        console.log("Session callback - session user active:", session.user.active);
-        console.log("Session callback - session user verified:", session.user.verified);
+        // console.log("Session callback - token active:", token.active);
+        // console.log("Session callback - token verified:", token.verified);
+        // console.log("Session callback - session user active:", session.user.active);
+        // console.log("Session callback - session user verified:", session.user.verified);
       }
       if (session.user && token.sessionId) {
         session.user.sessionId = token.sessionId;

@@ -154,12 +154,24 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
+    console.log(
+      "Form data received:",
+      [...formData.entries()].map(
+        ([key, value]) =>
+          `${key}: ${value instanceof File ? `File: ${value.name}` : value}`
+      )
+    );
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const ageGroup = formData.get("ageGroup") as string;
     const category = formData.get("category") as string;
-    const file = formData.get("file") as File;
-    const coverImage = formData.get("coverImage") as File | null;
+    const fileUrl = formData.get("fileUrl") as string;
+    const fileType = formData.get("fileType") as string;
+    const publicId = formData.get("publicId") as string;
+    const coverImageUrl = formData.get("coverImageUrl") as string | null;
+    const coverImagePublicId = formData.get("coverImagePublicId") as
+      | string
+      | null;
     const authorId = formData.get("authorId") as string;
 
     if (
@@ -167,7 +179,9 @@ export async function POST(request: NextRequest) {
       !description ||
       !ageGroup ||
       !category ||
-      !file ||
+      !fileUrl ||
+      !fileType ||
+      !publicId ||
       !authorId
     ) {
       return NextResponse.json(
@@ -214,87 +228,23 @@ export async function POST(request: NextRequest) {
       // }
     }
 
-    // Validate file type and size
-    const allowedTypes = [
-      "application/pdf",
-      "video/mp4",
-      "video/mov",
-      "video/avi",
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(
-        {
-          error:
-            "Invalid file type. Only PDF and video files (MP4, MOV, AVI) are allowed.",
-        },
-        { status: 400 }
-      );
-    }
-
-    const maxSize = 50 * 1024 * 1024; // 50MB
-    if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: "File size too large. Maximum size is 50MB." },
-        { status: 400 }
-      );
-    }
-
     // Get the selected author
     const author = await UserModel.findById(authorId);
 
-    // Upload file to Cloudinary
-    let uploadResult;
-    try {
-      const resourceType = file.type === "application/pdf" ? "auto" : "video";
-      uploadResult = await uploadToCloudinary(file, resourceType);
-    } catch (uploadError) {
-      console.error("Cloudinary upload error:", uploadError);
+    // We now receive fileUrl, fileType, and publicId directly from the form
+    // No need to handle file upload here as it's done client-side with Cloudinary
+
+    // File validation and upload is now handled client-side
+
+    // Cover image is now uploaded client-side, we just use the URL from the form data
+
+    // publicId is already declared above, so we don't need to declare it again
+
+    if (!publicId) {
       return NextResponse.json(
-        { error: "Failed to upload file to cloud storage" },
-        { status: 500 }
+        { error: "Missing Cloudinary public ID" },
+        { status: 400 }
       );
-    }
-
-    // Upload cover image to Cloudinary if provided
-    let coverImageUrl = null;
-    if (coverImage) {
-      // Validate cover image
-      const allowedImageTypes = [
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/webp",
-      ];
-
-      if (!allowedImageTypes.includes(coverImage.type)) {
-        return NextResponse.json(
-          {
-            error:
-              "Invalid cover image type. Only JPEG, PNG, and WebP are allowed.",
-          },
-          { status: 400 }
-        );
-      }
-
-      const maxImageSize = 10 * 1024 * 1024; // 10MB
-      if (coverImage.size > maxImageSize) {
-        return NextResponse.json(
-          { error: "Cover image size too large. Maximum size is 10MB." },
-          { status: 400 }
-        );
-      }
-
-      try {
-        const coverImageResult = await uploadToCloudinary(coverImage, "auto");
-        coverImageUrl = (coverImageResult as any).secure_url;
-      } catch (uploadError) {
-        console.error("Cover image upload error:", uploadError);
-        return NextResponse.json(
-          { error: "Failed to upload cover image to cloud storage" },
-          { status: 500 }
-        );
-      }
     }
 
     // Create and save story to database
@@ -305,9 +255,9 @@ export async function POST(request: NextRequest) {
       authorName: `${author.firstName} ${author.lastName}`,
       ageGroup,
       category,
-      fileType: file.type.startsWith("video/") ? "video" : "pdf",
-      fileUrl: (uploadResult as any).secure_url,
-      cloudinaryId: (uploadResult as any).public_id,
+      fileType: fileType, // Use the fileType from form data
+      fileUrl: fileUrl, // Use the fileUrl from form data
+      cloudinaryId: publicId, // Use the publicId from form data
       coverImageUrl: coverImageUrl,
       isPublished: false, // Default to not published
       status: "waiting_revision", // Default status for new stories
