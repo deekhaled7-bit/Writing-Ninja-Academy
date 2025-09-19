@@ -20,8 +20,19 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import PDFViewer from "@/components/stories/pdf-viewer";
+import dynamic from 'next/dynamic';
 import VideoPlayer from "@/components/stories/video-player";
+
+// Dynamically import PDFViewer with no SSR to avoid DOM API issues
+const PDFViewer = dynamic(() => import('@/components/stories/pdf-viewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="text-center py-16">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-ninja-crimson mx-auto mb-4"></div>
+      <p className="text-ninja-gray">Loading PDF viewer...</p>
+    </div>
+  )
+});
 
 interface Story {
   _id: string;

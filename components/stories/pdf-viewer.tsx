@@ -1,12 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Set up PDF.js worker
+// Add TypeScript declarations for the polyfill
+declare global {
+  interface Window {
+    WebKitCSSMatrix?: any;
+    MSCSSMatrix?: any;
+    CSSMatrix?: any;
+  }
+}
+
+// Set up PDF.js worker and polyfills
 if (typeof window !== "undefined") {
+  // Polyfill for DOMMatrix if not available
+  if (!window.DOMMatrix) {
+    window.DOMMatrix = window.WebKitCSSMatrix || window.MSCSSMatrix || window.CSSMatrix;
+  }
+  
   pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 }
 
@@ -21,6 +35,12 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
   const [scale, setScale] = useState<number>(1.0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const pdfOptions = useMemo(() => ({
+    cMapUrl: "/cmaps/",
+    standardFontDataUrl: "/standard_fonts/",
+    cMapPacked: true,
+  }), []);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
@@ -162,11 +182,7 @@ export default function PDFViewer({ src, title }: PDFViewerProps) {
             onLoadSuccess={onDocumentLoadSuccess}
             onLoadError={onDocumentLoadError}
             loading=""
-            options={{
-              cMapUrl: "/cmaps/",
-              standardFontDataUrl: "/standard_fonts/",
-              cMapPacked: true,
-            }}
+            options={pdfOptions}
           >
             <Page
               pageNumber={pageNumber}
