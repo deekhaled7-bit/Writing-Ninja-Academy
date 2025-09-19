@@ -28,7 +28,7 @@ export async function uploadToCloudinary(
       // const resourceType = file.type === "application/pdf" ? "auto" : "video";
 
       uploadOptions.resource_type =
-        file.type === "application/pdf" ? "auto" : "video";
+        file.type === "application/pdf" ? "raw" : "video";
       uploadOptions.public_id = `${uploadOptions.folder}/${file.name.replace(
         /\.[^/.]+$/,
         ""

@@ -292,8 +292,9 @@ export default function UploadStoryForm() {
       const fileUploadResult = await directCloudinaryUpload(selectedFile, {
         uploadPreset: process.env
           .NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string,
-        folder: "stories",
-        resourceType: resourceType as any,
+        folder: "writing-ninja-stories",
+        resourceType: "raw",
+        // resourceType: resourceType as any,
         // onProgress: (progress) => {
         //   toast({
         //     title: `Uploading: ${progress}%`,

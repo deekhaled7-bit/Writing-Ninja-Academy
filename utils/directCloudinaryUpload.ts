@@ -32,7 +32,7 @@ export async function directCloudinaryUpload(
 ): Promise<CloudinaryUploadResult> {
   const {
     uploadPreset,
-    folder = "stories",
+    folder = "writing-ninja-stories",
     resourceType = "auto",
     onProgress,
   } = options;
@@ -40,8 +40,11 @@ export async function directCloudinaryUpload(
   // For PDFs, we need to use 'raw' resource type to avoid delivery restrictions
   // file.type === "application/pdf" ? "auto" : "video";
   const actualResourceType =
-    file.type === "application/pdf" ? "auto" : resourceType;
+    file.type === "application/pdf" ? "raw" : resourceType;
 
+  // Add access control for PDFs
+  if (file.type === "application/pdf") {
+  }
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   if (!cloudName) {
     throw new Error("Cloudinary cloud name is not configured");
@@ -56,6 +59,8 @@ export async function directCloudinaryUpload(
 
       formData.append("file", file);
       formData.append("upload_preset", uploadPreset);
+      // formData.append("access_mode", "public");
+
       if (folder) formData.append("folder", folder);
 
       xhr.open("POST", url, true);
