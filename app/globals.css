@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 /* Local Bangers Font */
 @font-face {
   font-family: "Bangers";
@@ -20,6 +18,12 @@
   font-weight: 200 700;
   font-style: normal;
   font-display: swap;
+}
+
+.page-content {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
 }
 
 :root {
@@ -102,7 +106,7 @@
   * {
     font-family: "Oswald", sans-serif;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     font-family: "Oswald", sans-serif;
