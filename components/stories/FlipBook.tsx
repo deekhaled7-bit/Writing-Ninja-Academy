@@ -65,7 +65,7 @@ const FlipBook = ({ fileUrl, cover }: { fileUrl: string; cover: string }) => {
       disableFlipByClick={false}
     >
       {/* Cover page */}
-      <div className="page-content pdf-page">
+      <div className=" pdf-page">
         <img
           src={cover}
           alt="Cover"
