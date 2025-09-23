@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { convertPdfToImages } from "../../utils/pdfToImages";
 
-const FlipBook = ({ fileUrl, cover }: { fileUrl: string; cover: string }) => {
+const FlipBook = ({ fileUrl, cover, storyId, onProgress }: { fileUrl: string; cover: string; storyId: string; onProgress?: (currentPage: number, totalPages: number) => void }) => {
   const [pageImages, setPageImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const lastSentRef = useRef<{ page: number; ts: number } | null>(null);
+  const [startPage, setStartPage] = useState<number>(0);
+  const bookRef = useRef<any>(null);
 
   useEffect(() => {
     const loadPdfImages = async () => {
@@ -29,6 +32,51 @@ const FlipBook = ({ fileUrl, cover }: { fileUrl: string; cover: string }) => {
     loadPdfImages();
   }, [fileUrl]);
 
+  useEffect(() => {
+    // Fetch existing progress if any
+    const loadProgress = async () => {
+      try {
+        if (!storyId) return;
+        const res = await fetch(`/api/reading-progress?storyId=${storyId}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data?.progress?.currentPage && typeof data.progress.currentPage === "number") {
+          // HTMLFlipBook uses 0-based page index; our DB stores 1-based including cover
+          const start = Math.max(0, (data.progress.currentPage as number) - 1);
+          setStartPage(start);
+        }
+      } catch {}
+    };
+    loadProgress();
+  }, [storyId]);
+
+  // When pages are loaded or startPage changes, emit initial progress
+  useEffect(() => {
+    const total = pageImages.length + 1; // cover + images
+    if (total > 0) {
+      const currentOneBased = Math.min(total, Math.max(1, startPage + 1));
+      console.log("currentBasedOne"+currentOneBased)
+      onProgress?.(currentOneBased, total);
+    }
+  }, [pageImages.length, startPage]);
+
+  const sendProgress = async (currentPage: number, totalPages: number) => {
+    try {
+      const now = Date.now();
+      if (lastSentRef.current && now - lastSentRef.current.ts < 1000 && lastSentRef.current.page === currentPage) {
+        return;
+      }
+      lastSentRef.current = { page: currentPage, ts: now };
+      await fetch(`/api/reading-progress`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storyId, currentPage, totalPages }),
+      });
+    } catch (e) {
+      // Silently ignore to avoid interrupting reading
+    }
+  };
+
   if (loading) {
     return <div className="loading-indicator">Loading PDF pages...</div>;
   }
@@ -39,6 +87,7 @@ const FlipBook = ({ fileUrl, cover }: { fileUrl: string; cover: string }) => {
 
   return (
     <HTMLFlipBook
+      ref={bookRef}
       width={300}
       height={500}
       className="flipBook bg-books-pattern"
@@ -56,13 +105,39 @@ const FlipBook = ({ fileUrl, cover }: { fileUrl: string; cover: string }) => {
       showCover={true}
       mobileScrollSupport={true}
       style={{}}
-      startPage={0}
+      startPage={startPage}
       swipeDistance={30}
       clickEventForward={true}
       useMouseEvents={true}
       renderOnlyPageLengthChange={false}
       showPageCorners={true}
       disableFlipByClick={false}
+      onFlip={(e: any) => {
+        const total = pageImages.length + 1; // cover + images
+        const apply = (zeroIndex: number) => {
+          const currentOneBased = Math.min(total, Math.max(1, zeroIndex + 1));
+          if (storyId) {
+            sendProgress(currentOneBased, total);
+          }
+          console.log(currentOneBased)
+          onProgress?.(currentOneBased, total);
+        };
+
+        if (e && typeof e.data?.page === "number") {
+          // Prefer the event-provided target page index
+          apply(e.data.page);
+        } else {
+          // Read on next tick to ensure flipbook updates its internal index
+          setTimeout(() => {
+            try {
+              const api = bookRef.current?.pageFlip?.();
+              if (api && typeof api.getCurrentPageIndex === "function") {
+                apply(api.getCurrentPageIndex());
+              }
+            } catch {}
+          }, 0);
+        }
+      }}
     >
       {/* Cover page */}
       <div className=" pdf-page">

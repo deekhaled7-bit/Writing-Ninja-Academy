@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 import { uploadToCloudinary } from "@/lib/cloudinary";
-import dbConnect from "@/lib/mongodb";
 import Story from "@/models/Story";
 import UserModel from "@/models/userModel";
 import ClassModel from "@/models/ClassModel";
@@ -82,7 +81,7 @@ export async function GET(request: NextRequest) {
   const skip = (page - 1) * limit;
 
   try {
-    await dbConnect();
+    await ConnectDB();
 
     // Build query filters
     const query: any = { isPublished: true };

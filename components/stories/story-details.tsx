@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import dynamic from "next/dynamic";
 import VideoPlayer from "@/components/stories/video-player";
 import FlipBook from "./FlipBook";
+import { Progress } from "@/components/ui/progress";
 
 // Dynamically import PDFViewer with no SSR to avoid DOM API issues
 const PDFViewer = dynamic(() => import("@/components/stories/pdf-viewer"), {
@@ -88,6 +89,8 @@ export default function StoryDetails({
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState("");
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     // Track read when component mounts
@@ -298,9 +301,26 @@ export default function StoryDetails({
               ) : (
                 // <PDFViewer src={story.fileUrl} title={story.title} />
                 <FlipBook
+                storyId={story._id}
                   fileUrl={story.fileUrl}
                   cover={story.coverImageUrl || ""}
+                  onProgress={(cur, total) => {
+                    setCurrentPage(cur);
+                    setTotalPages(total);
+                  }}
                 />
+              )}
+
+              {totalPages > 0 && (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between mb-2 text-sm text-ninja-gray">
+                    <span>
+                      Page {currentPage} / {totalPages}
+                    </span>
+                    <span>{Math.round((currentPage / totalPages) * 100)}%</span>
+                  </div>
+                  <Progress value={(currentPage / totalPages) * 100} className="h-2" />
+                </div>
               )}
 
               {/* Action Buttons */}
