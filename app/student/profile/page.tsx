@@ -280,7 +280,7 @@ export default function ProfilePage() {
       return;
     }
 
-    if (newPassword.length < 8) {
+    if (newPassword.length < 6) {
       toast({
         title: "Error",
         description: "New password must be at least 8 characters long.",
@@ -497,7 +497,7 @@ export default function ProfilePage() {
 
                 <Button
                   type="submit"
-                  className="bg-ninja-crimson hover:bg-ninja-crimson/90"
+                  className="bg-ninja-peach text-ninja-black hover:bg-ninja-peach/90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Updating..." : "Update Password"}
