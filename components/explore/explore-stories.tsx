@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,210 +30,19 @@ interface PaginationInfo {
   total: number;
 }
 
-// Mock data for demonstration
-const mockStories: Story[] = [
-  {
-    _id: "1",
-    title: "The Dragon's Secret Garden",
-    description:
-      "A young girl discovers a hidden garden where a friendly dragon grows magical flowers that can heal any wound.",
-    authorName: "Emma Chen",
-    ageGroup: "5-8",
-    category: "fantasy",
-    readCount: 1247,
-    likeCount: 89,
-    createdAt: "2024-01-15T10:30:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/dragon-garden.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "2",
-    title: "Space Pirates of Nebula Seven",
-    description:
-      "Captain Alex and their crew must outsmart alien pirates to save their home planet from destruction.",
-    authorName: "Marcus Rodriguez",
-    ageGroup: "9-12",
-    category: "science-fiction",
-    readCount: 2156,
-    likeCount: 134,
-    createdAt: "2024-01-12T14:20:00Z",
-    fileType: "video",
-    coverImageUrl: "/stories/space-pirates.svg",
-    fileUrl:
-      "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-  },
-  {
-    _id: "3",
-    title: "The Mystery of the Missing Homework",
-    description:
-      "When homework starts disappearing from lockers, detective duo Sam and Riley must solve the case before the big test.",
-    authorName: "Zoe Williams",
-    ageGroup: "9-12",
-    category: "mystery",
-    readCount: 987,
-    likeCount: 67,
-    createdAt: "2024-01-10T09:15:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/time-backpack.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "4",
-    title: "Bella the Brave Bunny",
-    description:
-      "A little bunny learns to overcome her fears when she must rescue her friends from the dark forest.",
-    authorName: "Lily Thompson",
-    ageGroup: "5-8",
-    category: "animals",
-    readCount: 1543,
-    likeCount: 112,
-    createdAt: "2024-01-08T16:45:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/brave-bunny.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "5",
-    title: "The Time-Traveling Backpack",
-    description:
-      "When Jake finds an old backpack in his attic, he discovers it can transport him to any time period in history.",
-    authorName: "David Park",
-    ageGroup: "9-12",
-    category: "adventure",
-    readCount: 1876,
-    likeCount: 145,
-    createdAt: "2024-01-05T11:30:00Z",
-    fileType: "video",
-    coverImageUrl: "/stories/time-backpack.svg",
-    fileUrl:
-      "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-  },
-  {
-    _id: "6",
-    title: "My Robot Best Friend",
-    description:
-      "A lonely teenager builds a robot companion, but things get complicated when the robot develops feelings.",
-    authorName: "Sarah Kim",
-    ageGroup: "13-17",
-    category: "science-fiction",
-    readCount: 2341,
-    likeCount: 189,
-    createdAt: "2024-01-03T13:20:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/robot-friend.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "7",
-    title: "The Laughing Potion",
-    description:
-      "A young wizard's spell goes wrong, making everyone in the village laugh uncontrollably. Can he reverse it?",
-    authorName: "Oliver Johnson",
-    ageGroup: "5-8",
-    category: "humor",
-    readCount: 1234,
-    likeCount: 98,
-    createdAt: "2024-01-01T08:00:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/dragon-garden.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "8",
-    title: "Family Game Night Gone Wild",
-    description:
-      "What starts as a simple board game night turns into an epic adventure when the game pieces come to life.",
-    authorName: "Maya Patel",
-    ageGroup: "9-12",
-    category: "family",
-    readCount: 1654,
-    likeCount: 123,
-    createdAt: "2023-12-28T19:30:00Z",
-    fileType: "video",
-    coverImageUrl: "/stories/space-pirates.svg",
-    fileUrl:
-      "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-  },
-  {
-    _id: "9",
-    title: "The New Kid's Superpower",
-    description:
-      "Starting at a new school is hard, but it's even harder when you accidentally reveal you can read minds.",
-    authorName: "Jordan Smith",
-    ageGroup: "13-17",
-    category: "school",
-    readCount: 2987,
-    likeCount: 234,
-    createdAt: "2023-12-25T15:45:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/brave-bunny.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "10",
-    title: "The Friendship Bracelet Magic",
-    description:
-      "Two best friends discover that their handmade bracelets have the power to grant wishes, but only when they work together.",
-    authorName: "Isabella Garcia",
-    ageGroup: "5-8",
-    category: "friendship",
-    readCount: 1432,
-    likeCount: 156,
-    createdAt: "2023-12-22T12:15:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/time-backpack.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "11",
-    title: "Quest for the Golden Compass",
-    description:
-      "A group of young explorers must navigate treacherous mountains and solve ancient riddles to find a legendary treasure.",
-    authorName: "Ethan Brown",
-    ageGroup: "13-17",
-    category: "adventure",
-    readCount: 3456,
-    likeCount: 278,
-    createdAt: "2023-12-20T10:00:00Z",
-    fileType: "video",
-    coverImageUrl: "/stories/robot-friend.svg",
-    fileUrl:
-      "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-  },
-  {
-    _id: "12",
-    title: "The Singing Whale's Message",
-    description:
-      "A marine biologist's daughter discovers she can understand whale songs and learns about an underwater crisis.",
-    authorName: "Chloe Anderson",
-    ageGroup: "9-12",
-    category: "animals",
-    readCount: 1789,
-    likeCount: 134,
-    createdAt: "2023-12-18T14:30:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/dragon-garden.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-];
+// Removed mockStories; fetching real stories from API
 
-export default function ExploreStories() {
-  const [allStories] = useState<Story[]>(mockStories);
+function ExploreStories() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [ageGroup, setAgeGroup] = useState("all");
-  const [category, setCategory] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState<string>(searchParams.get("search") ?? "");
+  const [ageGroup, setAgeGroup] = useState<string>(searchParams.get("ageGroup") ?? "all");
+  const [category, setCategory] = useState<string>(searchParams.get("category") ?? "all");
+  const [currentPage, setCurrentPage] = useState<number>(parseInt(searchParams.get("page") || "1", 10));
   const [pagination, setPagination] = useState<PaginationInfo>({
     current: 1,
     pages: 1,
@@ -260,57 +70,69 @@ export default function ExploreStories() {
     { value: "13-17", label: "13-17 years" },
   ];
 
-  const filterStories = () => {
-    let filtered = [...allStories];
+  const fetchStories = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.set("limit", "12");
+      params.set("page", String(currentPage));
+      if (searchTerm) params.set("search", searchTerm);
+      if (ageGroup && ageGroup !== "all") params.set("ageGroup", ageGroup);
+      if (category && category !== "all") params.set("category", category);
 
-    // Apply search filter
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (story) =>
-          story.title.toLowerCase().includes(searchLower) ||
-          story.description.toLowerCase().includes(searchLower) ||
-          story.authorName.toLowerCase().includes(searchLower)
-      );
+      const res = await fetch(`/api/stories?${params.toString()}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Failed to fetch stories");
+      const data = await res.json();
+      setStories(data.stories as Story[]);
+      setPagination({
+        current: data.pagination.currentPage,
+        pages: data.pagination.totalPages,
+        total: data.pagination.totalStories,
+      });
+    } catch (err) {
+      console.error(err);
+      setStories([]);
+      setPagination({ current: 1, pages: 1, total: 0 });
+    } finally {
+      setLoading(false);
     }
-
-    // Apply age group filter
-    if (ageGroup !== "all") {
-      filtered = filtered.filter((story) => story.ageGroup === ageGroup);
-    }
-
-    // Apply category filter
-    if (category !== "all") {
-      filtered = filtered.filter((story) => story.category === category);
-    }
-
-    // Calculate pagination
-    const limit = 12;
-    const total = filtered.length;
-    const pages = Math.ceil(total / limit);
-    const startIndex = (currentPage - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedStories = filtered.slice(startIndex, endIndex);
-
-    setStories(paginatedStories);
-    setPagination({
-      current: currentPage,
-      pages,
-      total,
-    });
   };
 
   useEffect(() => {
-    filterStories();
-  }, [searchTerm, ageGroup, category, currentPage, allStories]);
+    fetchStories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, ageGroup, category, currentPage]);
+
+  const updateQuery = (updates: Partial<{ search: string; ageGroup: string; category: string; page: number }>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (updates.search !== undefined) {
+      if (updates.search) params.set("search", updates.search); else params.delete("search");
+    }
+    if (updates.ageGroup !== undefined) {
+      if (updates.ageGroup && updates.ageGroup !== "all") params.set("ageGroup", updates.ageGroup); else params.delete("ageGroup");
+    }
+    if (updates.category !== undefined) {
+      if (updates.category && updates.category !== "all") params.set("category", updates.category); else params.delete("category");
+    }
+    if (updates.page !== undefined) {
+      if (updates.page > 1) params.set("page", String(updates.page)); else params.delete("page");
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
+    updateQuery({ search: searchTerm, page: 1 });
   };
 
   const handleFilterChange = () => {
     setCurrentPage(1);
+    updateQuery({ ageGroup, category, page: 1 });
   };
 
   return (
@@ -350,6 +172,7 @@ export default function ExploreStories() {
               value={ageGroup}
               onValueChange={(value) => {
                 setAgeGroup(value);
+                // Delay ensures state updates before filtering
                 handleFilterChange();
               }}
             >
@@ -431,7 +254,9 @@ export default function ExploreStories() {
                       onClick={(e) => {
                         e.preventDefault();
                         if (pagination.current > 1) {
-                          setCurrentPage(pagination.current - 1);
+                          const newPage = pagination.current - 1;
+                          setCurrentPage(newPage);
+                          updateQuery({ page: newPage });
                         }
                       }}
                       className={
@@ -452,6 +277,7 @@ export default function ExploreStories() {
                         onClick={(e) => {
                           e.preventDefault();
                           setCurrentPage(page);
+                          updateQuery({ page });
                         }}
                         isActive={page === pagination.current}
                       >
@@ -466,7 +292,9 @@ export default function ExploreStories() {
                       onClick={(e) => {
                         e.preventDefault();
                         if (pagination.current < pagination.pages) {
-                          setCurrentPage(pagination.current + 1);
+                          const newPage = pagination.current + 1;
+                          setCurrentPage(newPage);
+                          updateQuery({ page: newPage });
                         }
                       }}
                       className={
@@ -509,4 +337,10 @@ export default function ExploreStories() {
       </div>
     </div>
   );
+}
+
+export default function ExploreStoriesWrapper() {
+  return <Suspense fallback={<div>Loading...</div>}>
+    <ExploreStories />
+  </Suspense>
 }
