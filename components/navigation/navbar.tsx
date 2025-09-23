@@ -105,7 +105,8 @@ export default function Navbar() {
                       className="relative h-12 w-12 rounded-full"
                     >
                       <Avatar className="h-12 w-12">
-                        <AvatarImage className="bg-ninja-white"
+                        <AvatarImage
+                          className="bg-ninja-white"
                           src={session.user?.profilePicture || ""}
                           alt={session.user?.name || ""}
                         />
@@ -143,7 +144,15 @@ export default function Navbar() {
                           : "Student Dashboard"}
                       </DropdownMenuItem>
                     </Link>
-                    <Link href="/my-stories">
+                    <Link
+                      href={
+                        session.user?.role === "admin"
+                          ? "/admin/stories"
+                          : session.user?.role === "teacher"
+                          ? "/teacher/stories"
+                          : "/student/my-stories"
+                      }
+                    >
                       <DropdownMenuItem>
                         <BookOpen className="mr-2 h-4 w-4" />
                         My Stories
@@ -266,7 +275,7 @@ export default function Navbar() {
                       ? "Teacher Dashboard"
                       : "Student Dashboard"}
                   </Link>
-                  
+
                   <button
                     onClick={() => {
                       signOut({ callbackUrl: "/signin" });
