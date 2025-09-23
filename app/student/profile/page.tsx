@@ -300,9 +300,23 @@ export default function ProfilePage() {
 
     setIsSubmitting(true);
 
-    // In a real application, you would update the password via API
-    // For now, we'll simulate a successful update
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/user/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to update password");
+      }
+
       toast({
         title: "Password Updated",
         description: "Your password has been changed successfully.",
@@ -310,8 +324,15 @@ export default function ProfilePage() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update password.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   if (loading) {
