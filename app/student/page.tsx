@@ -121,7 +121,7 @@ export default function StudentDashboard() {
         <div className="flex items-center mb-6">
           <div className="mr-4 relative group">
             <Link href="/student/profile">
-              <Avatar className="h-32 w-32 border-4 border-ninja-crimson cursor-pointer hover:opacity-80 transition-opacity">
+              <Avatar className="h-32 w-32 border-4 border-ninja-crimson cursor-pointer hover:opacity-80 bg-ninja-white transition-opacity">
                 <AvatarImage
                   src={
                     session?.user?.image || session?.user?.profilePicture || ""
@@ -204,7 +204,7 @@ export default function StudentDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Drafts</CardTitle>
             <Clock className="h-4 w-4 text-ninja-white" />
@@ -213,7 +213,7 @@ export default function StudentDashboard() {
             <div className="text-2xl font-bold">{stats.drafts}</div>
             <p className="text-xs text-ninja-white">Stories in progress</p>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Quick Actions */}

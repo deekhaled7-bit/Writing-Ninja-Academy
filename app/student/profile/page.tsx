@@ -327,7 +327,7 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+      {/* <h1 className="text-2xl font-bold mb-6">My Profile</h1> */}
 
       <Tabs defaultValue="profile">
         <TabsList className="mb-4">

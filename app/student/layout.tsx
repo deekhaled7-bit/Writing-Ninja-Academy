@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ export default function StudentLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     console.log("Student layout - Session status:", status);
@@ -74,8 +75,8 @@ export default function StudentLayout({
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="lg:w-64 w-16 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex flex-col">
+      {/* Sidebar (hidden on small screens) */}
+      <div className="hidden md:flex md:w-64 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex-col">
         <div className="mb-8 mt-4">
           {/* <h1 className="text-xl font-bold text-ninja-crimson lg:block hidden">
             Student Dashboard
@@ -88,14 +89,14 @@ export default function StudentLayout({
         <nav className="flex-1 space-y-2">
           <Link
             href="/student"
-            className="flex items-center justify-center p-2 rounded-md hover:bg-ninja-crimson"
+            className={`flex items-center justify-center p-2 rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname === "/student" ? "bg-ninja-crimson text-ninja-white" : ""}`}
           >
             <Home className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Dashboard</span>
           </Link>
           <Link
             href="/student/my-stories"
-            className="flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson"
+            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname.startsWith("/student/my-stories") ? "bg-ninja-crimson text-ninja-white" : ""}`}
           >
             <BookOpen className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Stories</span>
@@ -103,7 +104,7 @@ export default function StudentLayout({
           {/* Write Story option removed for students */}
           <Link
             href="/student/profile"
-            className="flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson"
+            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname.startsWith("/student/profile") ? "bg-ninja-crimson text-ninja-white" : ""}`}
           >
             <User className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Profile</span>

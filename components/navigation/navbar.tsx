@@ -66,7 +66,7 @@ export default function Navbar() {
             href="/"
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
-            {/* <Sword className="h-8 w-8 text-ninja-crimson" /> */}
+            {/* <Sword className="h-12 w-12 text-ninja-crimson" /> */}
             <Image src="/logo/logo1.png" alt="logo" width={80} height={80} />
             <span className="hidden md:block font-oswald text-2xl text-ninja-white">
               The Writing Ninjas Academy
@@ -102,11 +102,11 @@ export default function Navbar() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="relative h-8 w-8 rounded-full"
+                      className="relative h-12 w-12 rounded-full"
                     >
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={session.user?.image || ""}
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage className="bg-ninja-white"
+                          src={session.user?.profilePicture || ""}
                           alt={session.user?.name || ""}
                         />
                         <AvatarFallback className="bg-ninja-peach text-ninja-black">
@@ -149,6 +149,30 @@ export default function Navbar() {
                         My Stories
                       </DropdownMenuItem>
                     </Link>
+                    {/* Student quick links for small screens */}
+                    {session.user?.role === "student" && (
+                      <>
+                        <DropdownMenuSeparator className="md:hidden" />
+                        <Link href="/student" className="md:hidden">
+                          <DropdownMenuItem>
+                            <User className="mr-2 h-4 w-4" />
+                            Dashboard
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/student/my-stories" className="md:hidden">
+                          <DropdownMenuItem>
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            My Stories
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/student/profile" className="md:hidden">
+                          <DropdownMenuItem>
+                            <User className="mr-2 h-4 w-4" />
+                            My Profile
+                          </DropdownMenuItem>
+                        </Link>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => signOut({ callbackUrl: "/signin" })}
@@ -242,6 +266,7 @@ export default function Navbar() {
                       ? "Teacher Dashboard"
                       : "Student Dashboard"}
                   </Link>
+                  
                   <button
                     onClick={() => {
                       signOut({ callbackUrl: "/signin" });
