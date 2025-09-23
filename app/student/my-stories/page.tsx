@@ -1,6 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Search, Eye, Edit, Trash2, Grid, List } from 'lucide-react';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { toast } from '@/hooks/use-toast';
+import StoryCard from '@/components/stories/story-card';
+import { Story as StoryInterface } from '@/app/interfaces/interface';
 import {
   Table,
   TableBody,
@@ -9,13 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, Eye, Edit, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { toast } from '@/hooks/use-toast';
 
 type Story = {
   id: string;
@@ -23,6 +25,15 @@ type Story = {
   status: 'published' | 'draft' | 'review';
   createdAt: string;
   updatedAt: string;
+  description?: string;
+  authorName?: string;
+  ageGroup?: string;
+  category?: string;
+  readCount?: number;
+  likeCount?: number;
+  coverImageUrl?: string;
+  fileType?: string;
+  fileUrl?: string;
 };
 
 export default function MyStoriesPage() {
@@ -31,6 +42,7 @@ export default function MyStoriesPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
     // Don't fetch if no session yet
@@ -64,10 +76,20 @@ export default function MyStoriesPage() {
           .filter((story: any) => story.author && story.author._id === session?.user?.id) // Only show stories by the current user
           .map((story: any) => ({
             id: story._id,
+            _id: story._id, // Add _id for StoryCard compatibility
             title: story.title,
+            description: story.description || 'No description available',
+            authorName: session?.user?.name || 'You',
+            ageGroup: story.ageGroup || '5-8',
+            category: story.category || 'other',
+            readCount: story.readCount || 0,
+            likeCount: story.likeCount || 0,
             status: story.isPublished ? 'published' : (story.status === 'waiting_revision' ? 'review' : 'draft'),
-            createdAt: new Date(story.createdAt).toISOString().split('T')[0],
+            createdAt: new Date(story.createdAt).toISOString(),
             updatedAt: new Date(story.updatedAt || story.createdAt).toISOString().split('T')[0],
+            coverImageUrl: story.coverImageUrl || 'https://via.placeholder.com/300x400/e5e7eb/6b7280?text=No+Image',
+            fileType: story.fileType || 'pdf',
+            fileUrl: story.fileUrl || '',
           }));
         
         setStories(transformedStories);
@@ -114,8 +136,8 @@ export default function MyStoriesPage() {
   };
 
   const handleViewStory = (storyId: string) => {
-    // In a real application, you would navigate to the story detail page
-    console.log(`Viewing story ${storyId}`);
+    // Navigate to the story detail page
+    window.location.href = `/stories/${storyId}`;
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -147,11 +169,46 @@ export default function MyStoriesPage() {
     );
   }
 
+  // Function to convert our Story type to StoryInterface for StoryCard component
+  const convertToStoryInterface = (story: Story): StoryInterface => {
+    return {
+      _id: story.id,
+      title: story.title,
+      description: story.description || 'No description available',
+      authorName: story.authorName || 'You',
+      ageGroup: story.ageGroup || '5-8',
+      category: story.category || 'other',
+      readCount: story.readCount || 0,
+      likeCount: story.likeCount || 0,
+      createdAt: story.createdAt,
+      coverImageUrl: story.coverImageUrl || 'https://via.placeholder.com/300x400/e5e7eb/6b7280?text=No+Image',
+      fileType: story.fileType || 'pdf',
+      fileUrl: story.fileUrl || '',
+    };
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Stories</h1>
-        {/* Removed Write New Story button to prevent students from creating new stories */}
+        <div className="flex gap-2">
+          <Button
+            variant={viewMode === 'grid' ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => setViewMode('grid')}
+            title="Grid view"
+          >
+            <Grid className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === 'list' ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => setViewMode('list')}
+            title="List view"
+          >
+            <List className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
       
       <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -177,64 +234,125 @@ export default function MyStoriesPage() {
         </select>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Last Updated</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredStories.length > 0 ? (
-              filteredStories.map((story) => (
-                <TableRow key={story.id}>
-                  <TableCell className="font-medium">{story.title}</TableCell>
-                  <TableCell>{getStatusBadge(story.status)}</TableCell>
-                  <TableCell>{story.createdAt}</TableCell>
-                  <TableCell>{story.updatedAt}</TableCell>
-                  <TableCell className="text-right">
+      {viewMode === 'grid' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredStories.length > 0 ? (
+            filteredStories.map((story) => (
+              <div key={story.id} className="relative group">
+                <StoryCard story={convertToStoryInterface(story)} />
+                
+                {/* Status Badge */}
+                <div className="absolute top-2 right-2 z-10">
+                  {getStatusBadge(story.status)}
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="absolute bottom-2 right-2 z-10 flex gap-1 bg-white bg-opacity-80 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleViewStory(story.id);
+                    }}
+                    title="View story"
+                    className="h-8 w-8"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                  {story.status !== 'published' && (
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleViewStory(story.id)}
-                      title="View story"
+                      title="Edit story"
+                      className="h-8 w-8"
                     >
-                      <Eye className="h-4 w-4" />
+                      <Edit className="h-4 w-4" />
                     </Button>
-                    {story.status !== 'published' && (
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDeleteStory(story.id);
+                    }}
+                    title="Delete story"
+                    className="h-8 w-8"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-10 bg-gray-50 rounded-lg">
+              <p className="text-gray-500">No stories found</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead>Last Updated</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredStories.length > 0 ? (
+                filteredStories.map((story) => (
+                  <TableRow key={story.id}>
+                    <TableCell className="font-medium">{story.title}</TableCell>
+                    <TableCell>{getStatusBadge(story.status)}</TableCell>
+                    <TableCell>{story.createdAt.split('T')[0]}</TableCell>
+                    <TableCell>{story.updatedAt}</TableCell>
+                    <TableCell className="text-right">
                       <Button
                         variant="ghost"
                         size="icon"
-                        title="Edit story"
+                        onClick={() => handleViewStory(story.id)}
+                        title="View story"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Eye className="h-4 w-4" />
                       </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteStory(story.id)}
-                      title="Delete story"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                      {story.status !== 'published' && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="Edit story"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteStory(story.id)}
+                        title="Delete story"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-4">
+                    No stories found
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-4">
-                  No stories found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 }

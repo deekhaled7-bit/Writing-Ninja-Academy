@@ -75,41 +75,35 @@ export default function StudentLayout({
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="lg:w-64 w-16 bg-white shadow-md px-2  lg:px-8 py-2 lg:py-8 flex flex-col">
+      <div className="lg:w-64 w-16 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex flex-col">
         <div className="mb-8 mt-4">
-          <h1 className="text-xl font-bold text-ninja-crimson lg:block hidden">
+          {/* <h1 className="text-xl font-bold text-ninja-crimson lg:block hidden">
             Student Dashboard
-          </h1>
-          <p className="text-sm text-gray-500 lg:block hidden">
+          </h1> */}
+          {/* <p className="text-sm text-gray-500 lg:block hidden">
             Welcome, {session?.user?.firstName || "Student"}
-          </p>
+          </p> */}
         </div>
 
         <nav className="flex-1 space-y-2">
           <Link
             href="/student"
-            className="flex items-center justify-center p-2 rounded-md hover:bg-gray-100"
+            className="flex items-center justify-center p-2 rounded-md hover:bg-ninja-crimson"
           >
             <Home className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Dashboard</span>
           </Link>
           <Link
             href="/student/my-stories"
-            className="flex items-center  p-2 justify-center rounded-md hover:bg-gray-100"
+            className="flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson"
           >
             <BookOpen className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Stories</span>
           </Link>
-          <Link
-            href="/student/write"
-            className="flex items-center  p-2 justify-center rounded-md hover:bg-gray-100"
-          >
-            <PenTool className="mr-2 h-5 w-5" />
-            <span className="lg:inline hidden">Write Story</span>
-          </Link>
+          {/* Write Story option removed for students */}
           <Link
             href="/student/profile"
-            className="flex items-center  p-2 justify-center rounded-md hover:bg-gray-100"
+            className="flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson"
           >
             <User className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Profile</span>
@@ -130,13 +124,13 @@ export default function StudentLayout({
 
       {/* Main Content */}
       <div className="flex-1 p-8">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="mb-6">
+        <div className="bg-ninja-cream rounded-lg shadow-sm p-6">
+          {/* <div className="mb-6">
             <h2 className="text-xl font-semibold">Student Portal</h2>
             <p className="text-sm text-gray-500">
               Create and manage your stories
             </p>
-          </div>
+          </div> */}
           {children}
         </div>
       </div>

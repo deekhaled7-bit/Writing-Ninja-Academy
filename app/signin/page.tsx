@@ -57,13 +57,13 @@ export default function SignInPage() {
             window.location.href = "/account-status?reason=inactive";
             return;
           }
-          
+
           if (!data.user.verified) {
             console.log("Account is unverified, redirecting to account-status");
             window.location.href = "/account-status?reason=unverified";
             return;
           }
-          
+
           // Redirect based on role
           switch (data.user.role) {
             case "admin":
@@ -135,11 +135,11 @@ export default function SignInPage() {
                   className=""
                 />
               </div>
-              <CardTitle className="text-2xl font-oswald text-ninja-dark">
+              <CardTitle className="text-2xl font-oswald text-ninja-gray">
                 Welcome Back
               </CardTitle>
               <CardDescription className="text-ninja-gray">
-                Sign in to your Ninja Bolt account
+                Sign in to your Ninjas account
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -147,7 +147,7 @@ export default function SignInPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="email"
-                    className="text-ninja-dark font-oswald"
+                    className="text-ninja-gray font-oswald"
                   >
                     Email
                   </Label>
@@ -164,7 +164,7 @@ export default function SignInPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="password"
-                    className="text-ninja-dark font-oswald"
+                    className="text-ninja-gray font-oswald"
                   >
                     Password
                   </Label>

@@ -189,7 +189,7 @@ export default function SignUpPage() {
                   className="mx-auto"
                 />
               </div>
-              <CardTitle className="text-2xl font-oswald text-ninja-dark">
+              <CardTitle className="text-2xl font-oswald text-ninja-gray">
                 Join The Writing Ninjas Academy
               </CardTitle>
               <CardDescription className="text-ninja-gray">
@@ -199,7 +199,7 @@ export default function SignUpPage() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-ninja-dark font-oswald">
+                  <Label htmlFor="name" className="text-ninja-gray font-oswald">
                     Full Name
                   </Label>
                   <Input
@@ -216,7 +216,7 @@ export default function SignUpPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="email"
-                    className="text-ninja-dark font-oswald"
+                    className="text-ninja-gray font-oswald"
                   >
                     Email
                   </Label>
@@ -234,7 +234,7 @@ export default function SignUpPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="password"
-                    className="text-ninja-dark font-oswald"
+                    className="text-ninja-gray font-oswald"
                   >
                     Password
                   </Label>
@@ -252,7 +252,7 @@ export default function SignUpPage() {
                 <div className="space-y-2">
                   <Label
                     htmlFor="confirmPassword"
-                    className="text-ninja-dark font-oswald"
+                    className="text-ninja-gray font-oswald"
                   >
                     Confirm Password
                   </Label>
@@ -268,7 +268,7 @@ export default function SignUpPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role" className="text-ninja-dark font-oswald">
+                  <Label htmlFor="role" className="text-ninja-gray font-oswald">
                     Account Type
                   </Label>
                   <select
@@ -287,7 +287,7 @@ export default function SignUpPage() {
                   <div className="space-y-2">
                     <Label
                       htmlFor="gradeId"
-                      className="text-ninja-dark font-oswald"
+                      className="text-ninja-gray font-oswald"
                     >
                       Select Grade
                     </Label>
@@ -318,7 +318,7 @@ export default function SignUpPage() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="classId"
-                        className="text-ninja-dark font-oswald"
+                        className="text-ninja-gray font-oswald"
                       >
                         Select Class
                       </Label>

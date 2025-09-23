@@ -21,6 +21,8 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
+      profilePicture?: string | null; // Add profilePicture field
+      ninjaLevel?: number; // Add ninjaLevel field
       isSubscribed: boolean;
       subscriptionExpiryDate?: Date | null;
       // loyaltyPoints?: number;
@@ -40,6 +42,8 @@ declare module "next-auth/jwt" {
     role?: string; // Add role for user type (admin, teacher, student)
     active?: boolean; // Add active status for account access control
     verified?: boolean; // Add verified status for account access control
+    profilePicture?: string | null; // Add profilePicture field
+    ninjaLevel?: number; // Add ninjaLevel field
   }
 }
 
@@ -215,6 +219,8 @@ export const authOptions: NextAuthOptions = {
               token.role = dbUser.role || "student";
               token.active = dbUser.active; // Use the actual value from the database
               token.verified = dbUser.verified; // Use the actual value from the database
+              token.profilePicture = dbUser.profilePicture; // Add profilePicture to token
+              token.ninjaLevel = dbUser.ninjaLevel; // Add ninjaLevel to token
             }
           }
         }
@@ -274,6 +280,8 @@ export const authOptions: NextAuthOptions = {
         session.user.role = (token.role as string) || "student";
         session.user.active = token.active; // Use the actual value from the token
         session.user.verified = token.verified; // Use the actual value from the token
+        session.user.profilePicture = token.profilePicture as string || null; // Add profilePicture to session
+        session.user.ninjaLevel = token.ninjaLevel as number || 1; // Add ninjaLevel to session with default value 1
 
         // Log session values for debugging
         // console.log("Session callback - token active:", token.active);
