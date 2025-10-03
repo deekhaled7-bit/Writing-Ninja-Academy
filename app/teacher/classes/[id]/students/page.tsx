@@ -44,8 +44,8 @@ interface Class {
 
 export default function ClassStudentsPage({ params }: ClientPageProps) {
   const router = useRouter();
-  const [id, setId] = useState<string>('');
-  
+  const [id, setId] = useState<string>("");
+
   useEffect(() => {
     const resolveParams = async () => {
       const resolvedParams = await params;
@@ -62,7 +62,7 @@ export default function ClassStudentsPage({ params }: ClientPageProps) {
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return; // Only fetch data when id is available
-      
+
       try {
         setLoading(true);
 
@@ -162,9 +162,11 @@ export default function ClassStudentsPage({ params }: ClientPageProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-ninja-white">Name</TableHead>
+                  <TableHead className="text-ninja-white">Email</TableHead>
+                  <TableHead className="text-right text-ninja-white">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -176,14 +178,15 @@ export default function ClassStudentsPage({ params }: ClientPageProps) {
                     <TableCell>{student.email}</TableCell>
                     <TableCell className="text-right">
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
-                        onClick={() =>
-                          (window.location.href = `mailto:${student.email}`)
+                        onClick={
+                          () => {}
+                          // (window.location.href = `mailto:${student.email}`)
                         }
                       >
                         <Mail className="mr-2 h-4 w-4" />
-                        Contact
+                        Assign a reading
                       </Button>
                     </TableCell>
                   </TableRow>

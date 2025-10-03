@@ -5,6 +5,7 @@ import ClassModel from "@/models/ClassModel";
 import UserModel from "@/models/userModel";
 import dbConnect from "@/lib/mongodb";
 import mongoose, { Types } from "mongoose";
+import GradeModel from "@/models/GradeModel";
 
 // Define interface for teacher document
 interface TeacherDocument {
@@ -59,11 +60,13 @@ export async function GET(req: NextRequest) {
     }
 
     // Get the classes from the teacher's assignedClasses
+    console.log("registering gradeModel" + GradeModel);
     const classes = await ClassModel.find({
       _id: { $in: teacher.assignedClasses },
-    })
-      // .populate("grade", "gradeNumber name")
-      .sort({ grade: 1 });
+    }).populate({ 
+      path: "grade",
+      strictPopulate: false,
+    });
 
     return NextResponse.json({ classes }, { status: 200 });
   } catch (error: any) {

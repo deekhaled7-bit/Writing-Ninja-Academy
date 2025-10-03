@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -9,18 +9,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from '@/hooks/use-toast';
-import { Search, Users } from 'lucide-react';
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+import { Search, Users } from "lucide-react";
 
 interface Teacher {
   _id: string;
@@ -32,7 +32,6 @@ interface Teacher {
 interface Class {
   _id: string;
   className: string;
-  section?: string;
   grade: {
     _id: string;
     gradeNumber: number;
@@ -48,26 +47,26 @@ export default function TeacherClassesPage() {
   const router = useRouter();
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/teacher/classes/access');
-        
+        const response = await fetch("/api/teacher/classes/access");
+
         if (!response.ok) {
-          throw new Error('Failed to fetch classes');
+          throw new Error("Failed to fetch classes");
         }
-        
+
         const data = await response.json();
         setClasses(data.classes);
       } catch (error) {
-        console.error('Error fetching classes:', error);
+        console.error("Error fetching classes:", error);
         toast({
-          title: 'Error',
-          description: 'Failed to load classes. Please try again.',
-          variant: 'destructive',
+          title: "Error",
+          description: "Failed to load classes. Please try again.",
+          variant: "destructive",
         });
       } finally {
         setLoading(false);
@@ -78,10 +77,13 @@ export default function TeacherClassesPage() {
   }, []);
 
   // Filter classes based on search term
-  const filteredClasses = classes.filter(classItem =>
-    classItem.className.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    classItem.grade.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    `Grade ${classItem.grade.gradeNumber}`.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredClasses = classes.filter(
+    (classItem) =>
+      classItem.className.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      classItem.grade.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `Grade ${classItem.grade.gradeNumber}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -118,35 +120,48 @@ export default function TeacherClassesPage() {
           {filteredClasses.length === 0 ? (
             <div className="text-center py-6">
               <p className="text-muted-foreground">
-                {searchTerm ? 'No classes match your search' : 'You have not been assigned to any classes yet'}
+                {searchTerm
+                  ? "No classes match your search"
+                  : "You have not been assigned to any classes yet"}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Class Name</TableHead>
-                  <TableHead>Grade</TableHead>
-                  <TableHead>Section</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="text-ninja-white">
+                  <TableHead className="text-ninja-white">
+                    {" "}
+                    Class Name
+                  </TableHead>
+                  <TableHead className="text-ninja-white">Grade</TableHead>
+                  <TableHead className="text-right text-ninja-white">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredClasses.map((classItem) => (
                   <TableRow key={classItem._id}>
-                    <TableCell className="font-medium">{classItem.className}</TableCell>
-                    <TableCell>Grade {classItem.grade.gradeNumber} - {classItem.grade.name}</TableCell>
-                    <TableCell>{classItem.section || 'N/A'}</TableCell>
+                    <TableCell className="font-medium">
+                      {classItem.className}
+                    </TableCell>
+                    <TableCell>
+                      Grade {classItem.grade.gradeNumber} -{" "}
+                      {classItem.grade.name}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
-                        onClick={() => router.push(`/teacher/classes/${classItem._id}/students`)}
+                        onClick={() =>
+                          router.push(
+                            `/teacher/classes/${classItem._id}/students`
+                          )
+                        }
                       >
                         <Users className="mr-2 h-4 w-4" />
                         Students
                       </Button>
-
                     </TableCell>
                   </TableRow>
                 ))}
