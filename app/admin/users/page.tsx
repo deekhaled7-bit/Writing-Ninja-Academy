@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,11 +8,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -21,9 +27,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { toast } from '@/hooks/use-toast';
-import { Search, Edit, Trash2, Plus, AlertCircle } from 'lucide-react';
+} from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "@/hooks/use-toast";
+import { Search, Edit, Trash2, Plus, AlertCircle } from "lucide-react";
 
 interface User {
   _id: string;
@@ -42,21 +49,21 @@ interface User {
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRole, setSelectedRole] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRole, setSelectedRole] = useState<string>("all");
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  
+
   // Form states
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    email: '',
-    password: '',
-    role: 'student',
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+    role: "student",
     active: false,
     verified: false,
   });
@@ -64,35 +71,35 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      let url = '/api/admin/users';
-      
+      let url = "/api/admin/users";
+
       // Add query parameters if filters are applied
       const params = new URLSearchParams();
-      if (selectedRole !== 'all') {
-        params.append('role', selectedRole);
+      if (selectedRole !== "all") {
+        params.append("role", selectedRole);
       }
       if (searchTerm) {
-        params.append('search', searchTerm);
+        params.append("search", searchTerm);
       }
-      
+
       if (params.toString()) {
         url += `?${params.toString()}`;
       }
-      
+
       const response = await fetch(url);
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error("Failed to fetch users");
       }
-      
+
       const data = await response.json();
       setUsers(data.users);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to load users. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load users. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -105,21 +112,21 @@ export default function UsersPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const resetForm = () => {
     setFormData({
-      firstName: '',
-      lastName: '',
-      username: '',
-      email: '',
-      password: '',
-      role: 'student',
+      firstName: "",
+      lastName: "",
+      username: "",
+      email: "",
+      password: "",
+      role: "student",
       active: false,
       verified: false,
     });
@@ -127,33 +134,33 @@ export default function UsersPage() {
 
   const handleCreateUser = async () => {
     try {
-      const response = await fetch('/api/admin/users', {
-        method: 'POST',
+      const response = await fetch("/api/admin/users", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create user');
+        throw new Error(errorData.error || "Failed to create user");
       }
 
       toast({
-        title: 'Success',
-        description: 'User created successfully',
+        title: "Success",
+        description: "User created successfully",
       });
 
       setOpenCreateDialog(false);
       resetForm();
       fetchUsers();
     } catch (error: any) {
-      console.error('Error creating user:', error);
+      console.error("Error creating user:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to create user',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to create user",
+        variant: "destructive",
       });
     }
   };
@@ -169,32 +176,32 @@ export default function UsersPage() {
       }
 
       const response = await fetch(`/api/admin/users/${currentUser._id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(dataToSend),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update user');
+        throw new Error(errorData.error || "Failed to update user");
       }
 
       toast({
-        title: 'Success',
-        description: 'User updated successfully',
+        title: "Success",
+        description: "User updated successfully",
       });
 
       setOpenEditDialog(false);
       resetForm();
       fetchUsers();
     } catch (error: any) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to update user',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to update user",
+        variant: "destructive",
       });
     }
   };
@@ -204,27 +211,27 @@ export default function UsersPage() {
 
     try {
       const response = await fetch(`/api/admin/users/${currentUser._id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete user');
+        throw new Error(errorData.error || "Failed to delete user");
       }
 
       toast({
-        title: 'Success',
-        description: 'User deleted successfully',
+        title: "Success",
+        description: "User deleted successfully",
       });
 
       setOpenDeleteDialog(false);
       fetchUsers();
     } catch (error: any) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to delete user',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to delete user",
+        variant: "destructive",
       });
     }
   };
@@ -236,7 +243,7 @@ export default function UsersPage() {
       lastName: user.lastName,
       username: user.username,
       email: user.email,
-      password: '', // Don't populate password
+      password: "", // Don't populate password
       role: user.role,
       active: user.active,
       verified: user.verified,
@@ -250,29 +257,32 @@ export default function UsersPage() {
   };
 
   // Filter users based on search term and selected role (client-side filtering as backup)
-  const filteredUsers = users.filter(user => {
+  const filteredUsers = users.filter((user) => {
     // This is a backup filter in case the API filtering doesn't work
     // The primary filtering should happen on the server side
-    if (selectedRole !== 'all' && user.role !== selectedRole) {
+    if (selectedRole !== "all" && user.role !== selectedRole) {
       return false;
     }
-    
-    if (searchTerm && !(
-      user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.username.toLowerCase().includes(searchTerm.toLowerCase())
-    )) {
+
+    if (
+      searchTerm &&
+      !(
+        user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    ) {
       return false;
     }
-    
+
     return true;
   });
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-ninja-crimson"></div>
+        <div className="animate-spin  rounded-full h-12 w-12 border-t-2 border-b-2 border-ninja-crimson"></div>
       </div>
     );
   }
@@ -353,7 +363,7 @@ export default function UsersPage() {
                 <Label htmlFor="role">Role</Label>
                 <Select
                   value={formData.role}
-                  onValueChange={(value) => handleSelectChange('role', value)}
+                  onValueChange={(value) => handleSelectChange("role", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Role" />
@@ -373,7 +383,12 @@ export default function UsersPage() {
                       id="active"
                       name="active"
                       checked={formData.active}
-                      onChange={(e) => setFormData(prev => ({ ...prev, active: e.target.checked }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          active: e.target.checked,
+                        }))
+                      }
                       className="h-4 w-4 rounded border-gray-300 text-ninja-crimson focus:ring-ninja-coral"
                     />
                     <Label htmlFor="active">Active</Label>
@@ -386,7 +401,12 @@ export default function UsersPage() {
                       id="verified"
                       name="verified"
                       checked={formData.verified}
-                      onChange={(e) => setFormData(prev => ({ ...prev, verified: e.target.checked }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          verified: e.target.checked,
+                        }))
+                      }
                       className="h-4 w-4 rounded border-gray-300 text-ninja-crimson focus:ring-ninja-coral"
                     />
                     <Label htmlFor="verified">Verified</Label>
@@ -395,13 +415,23 @@ export default function UsersPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpenCreateDialog(false)}>Cancel</Button>
-              <Button className="bg-ninja-crimson hover:bg-ninja-coral" onClick={handleCreateUser}>Create</Button>
+              <Button
+                variant="outline"
+                onClick={() => setOpenCreateDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-ninja-crimson hover:bg-ninja-coral"
+                onClick={handleCreateUser}
+              >
+                Create
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -412,12 +442,9 @@ export default function UsersPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="w-full md:w-48">
-          <Select
-            value={selectedRole}
-            onValueChange={setSelectedRole}
-          >
+          <Select value={selectedRole} onValueChange={setSelectedRole}>
             <SelectTrigger>
               <SelectValue placeholder="Filter by role" />
             </SelectTrigger>
@@ -435,6 +462,7 @@ export default function UsersPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Profile</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
@@ -448,6 +476,18 @@ export default function UsersPage() {
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <TableRow key={user._id}>
+                  <TableCell>
+                    <Avatar className="h-10 w-10 bg-ninja-white border-ninja-crimson border-2">
+                      <AvatarImage
+                        src={user.profilePicture || ""}
+                        alt={`${user.firstName} ${user.lastName}`}
+                      />
+                      <AvatarFallback className="bg-ninja-peach text-ninja-black font-semibold">
+                        {user.firstName?.[0]?.toUpperCase()}
+                        {user.lastName?.[0]?.toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </TableCell>
                   <TableCell className="font-medium">
                     {user.firstName} {user.lastName}
                   </TableCell>
@@ -456,15 +496,29 @@ export default function UsersPage() {
                   <TableCell>{user.role}</TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
-                      <span className={`text-xs px-2 py-1 rounded-full inline-flex items-center w-fit ${user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {user.active ? 'Active' : 'Inactive'}
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full inline-flex items-center w-fit ${
+                          user.active
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {user.active ? "Active" : "Inactive"}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded-full inline-flex items-center w-fit ${user.verified ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-                        {user.verified ? 'Verified' : 'Unverified'}
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full inline-flex items-center w-fit ${
+                          user.verified
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {user.verified ? "Verified" : "Unverified"}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
@@ -487,7 +541,7 @@ export default function UsersPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-4">
+                <TableCell colSpan={8} className="text-center py-4">
                   No users found
                 </TableCell>
               </TableRow>
@@ -501,9 +555,7 @@ export default function UsersPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>
-              Update user information.
-            </DialogDescription>
+            <DialogDescription>Update user information.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
@@ -546,7 +598,9 @@ export default function UsersPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit-password">Password (leave blank to keep current)</Label>
+              <Label htmlFor="edit-password">
+                Password (leave blank to keep current)
+              </Label>
               <Input
                 id="edit-password"
                 name="password"
@@ -560,7 +614,7 @@ export default function UsersPage() {
               <Label htmlFor="edit-role">Role</Label>
               <Select
                 value={formData.role}
-                onValueChange={(value) => handleSelectChange('role', value)}
+                onValueChange={(value) => handleSelectChange("role", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Role" />
@@ -580,7 +634,12 @@ export default function UsersPage() {
                     id="edit-active"
                     name="active"
                     checked={formData.active}
-                    onChange={(e) => setFormData(prev => ({ ...prev, active: e.target.checked }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        active: e.target.checked,
+                      }))
+                    }
                     className="h-4 w-4 rounded border-gray-300 text-ninja-crimson focus:ring-ninja-coral"
                   />
                   <Label htmlFor="edit-active">Active</Label>
@@ -593,7 +652,12 @@ export default function UsersPage() {
                     id="edit-verified"
                     name="verified"
                     checked={formData.verified}
-                    onChange={(e) => setFormData(prev => ({ ...prev, verified: e.target.checked }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        verified: e.target.checked,
+                      }))
+                    }
                     className="h-4 w-4 rounded border-gray-300 text-ninja-crimson focus:ring-ninja-coral"
                   />
                   <Label htmlFor="edit-verified">Verified</Label>
@@ -602,8 +666,15 @@ export default function UsersPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenEditDialog(false)}>Cancel</Button>
-            <Button className="bg-ninja-crimson hover:bg-ninja-coral" onClick={handleEditUser}>Update</Button>
+            <Button variant="outline" onClick={() => setOpenEditDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-ninja-crimson hover:bg-ninja-coral"
+              onClick={handleEditUser}
+            >
+              Update
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -614,7 +685,8 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete {currentUser?.firstName} {currentUser?.lastName}? This action cannot be undone.
+              Are you sure you want to delete {currentUser?.firstName}{" "}
+              {currentUser?.lastName}? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center space-x-2 py-4">
@@ -624,8 +696,15 @@ export default function UsersPage() {
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenDeleteDialog(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteUser}>Delete</Button>
+            <Button
+              variant="outline"
+              onClick={() => setOpenDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteUser}>
+              Delete
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

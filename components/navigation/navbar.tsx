@@ -155,7 +155,10 @@ export default function Navbar() {
                     >
                       <DropdownMenuItem>
                         <BookOpen className="mr-2 h-4 w-4" />
-                        My Stories
+                        {session.user?.role === "admin" ||
+                        session.user?.role === "teacher"
+                          ? "Stories"
+                          : "My Stories"}{" "}
                       </DropdownMenuItem>
                     </Link>
                     {/* Student quick links for small screens */}

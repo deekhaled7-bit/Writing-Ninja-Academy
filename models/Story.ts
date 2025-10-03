@@ -47,6 +47,10 @@ const StorySchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  coverImage: {
+    type: String,
+    default: '',
+  },
   readCount: {
     type: Number,
     default: 0,

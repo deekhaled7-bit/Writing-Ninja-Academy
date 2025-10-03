@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ export default function AdminLayout({
   const router = useRouter();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     console.log("Session status:", status);
@@ -69,56 +70,78 @@ export default function AdminLayout({
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="lg:w-64 w-16 bg-white shadow-md px-2  lg:px-8 py-2 lg:py-8 flex flex-col">
-        {/* <div className="mb-8 mt-4">
-          <h1 className="text-xl font-bold text-ninja-crimson lg:block hidden">
+      {/* Sidebar (hidden on small screens) */}
+      <div className="hidden md:flex md:w-64 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex-col">
+        <div className="mb-8 mt-4">
+          {/* <h1 className="text-xl font-bold text-ninja-crimson lg:block hidden">
             Admin Dashboard
-          </h1>
-        </div> */}
-        <nav className="flex-1 justify-start space-y-2">
+          </h1> */}
+        </div>
+        <nav className="flex-1 space-y-2">
           <Link
             href="/admin"
-            className="flex items-center p-2  justify-start rounded-md hover:bg-gray-100"
+            className={`flex items-center justify-center p-2 rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname === "/admin" ? "bg-ninja-crimson text-ninja-white" : ""
+            }`}
           >
             <BarChart3 className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Dashboard</span>
           </Link>
           <Link
             href="/admin/users"
-            className="flex items-center p-2  justify-start rounded-md hover:bg-gray-100"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/admin/users")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <Users className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Users</span>
           </Link>
           <Link
             href="/admin/grades"
-            className="flex items-center p-2  justify-start rounded-md hover:bg-gray-100"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/admin/grades")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <GraduationCap className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Grades</span>
           </Link>
           <Link
             href="/admin/classes"
-            className="flex items-center p-2  justify-start rounded-md hover:bg-gray-100"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/admin/classes")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <School className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Classes</span>
           </Link>
           <Link
             href="/admin/stories"
-            className="flex items-center p-2  justify-start rounded-md hover:bg-gray-100"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/admin/stories")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <BookOpen className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Stories</span>
           </Link>
-          <Link
+          {/* <Link
             href="/admin/settings"
-            className="flex items-center p-2  justify-start rounded-md hover:bg-gray-100"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/admin/settings")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <Settings className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Settings</span>
-          </Link>
+          </Link> */}
         </nav>
         <div className="mt-auto pt-4 border-t">
           <Button
@@ -139,7 +162,7 @@ export default function AdminLayout({
 
       {/* Main content */}
       <div className="flex-1 p-8">
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-ninja-cream rounded-lg shadow-sm p-6">
           {/* <div className="mb-6">
             <h2 className="text-xl font-semibold">Admin Portal</h2>
             <p className="text-sm text-gray-500">

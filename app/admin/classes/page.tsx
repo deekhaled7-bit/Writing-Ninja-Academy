@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -26,20 +26,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { toast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, AlertCircle, Users } from 'lucide-react';
+} from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, AlertCircle, Users } from "lucide-react";
 
 interface Grade {
   _id: string;
@@ -76,30 +76,30 @@ export default function ClassesPage() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [currentClass, setCurrentClass] = useState<Class | null>(null);
-  
+
   // Form states
   const [formData, setFormData] = useState({
-    className: '',
-    grade: ''
+    className: "",
+    grade: "",
   });
 
   const fetchClasses = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/classes');
-      
+      const response = await fetch("/api/admin/classes");
+
       if (!response.ok) {
-        throw new Error('Failed to fetch classes');
+        throw new Error("Failed to fetch classes");
       }
-      
+
       const data = await response.json();
       setClasses(data.classes);
     } catch (error) {
-      console.error('Error fetching classes:', error);
+      console.error("Error fetching classes:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to load classes. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load classes. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -108,20 +108,20 @@ export default function ClassesPage() {
 
   const fetchGrades = async () => {
     try {
-      const response = await fetch('/api/admin/grades');
-      
+      const response = await fetch("/api/admin/grades");
+
       if (!response.ok) {
-        throw new Error('Failed to fetch grades');
+        throw new Error("Failed to fetch grades");
       }
-      
+
       const data = await response.json();
       setGrades(data.grades);
     } catch (error) {
-      console.error('Error fetching grades:', error);
+      console.error("Error fetching grades:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to load grades. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load grades. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -130,53 +130,55 @@ export default function ClassesPage() {
     Promise.all([fetchClasses(), fetchGrades()]);
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Switch handler removed as isActive field is no longer needed
 
   const resetForm = () => {
     setFormData({
-      className: '',
-      grade: ''
+      className: "",
+      grade: "",
     });
   };
 
   const handleCreateClass = async () => {
     try {
-      const response = await fetch('/api/admin/classes', {
-        method: 'POST',
+      const response = await fetch("/api/admin/classes", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create class');
+        throw new Error(errorData.error || "Failed to create class");
       }
 
       toast({
-        title: 'Success',
-        description: 'Class created successfully',
+        title: "Success",
+        description: "Class created successfully",
       });
 
       setOpenCreateDialog(false);
       resetForm();
       fetchClasses();
     } catch (error: any) {
-      console.error('Error creating class:', error);
+      console.error("Error creating class:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to create class',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to create class",
+        variant: "destructive",
       });
     }
   };
@@ -186,32 +188,32 @@ export default function ClassesPage() {
 
     try {
       const response = await fetch(`/api/admin/classes/${currentClass._id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update class');
+        throw new Error(errorData.error || "Failed to update class");
       }
 
       toast({
-        title: 'Success',
-        description: 'Class updated successfully',
+        title: "Success",
+        description: "Class updated successfully",
       });
 
       setOpenEditDialog(false);
       resetForm();
       fetchClasses();
     } catch (error: any) {
-      console.error('Error updating class:', error);
+      console.error("Error updating class:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to update class',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to update class",
+        variant: "destructive",
       });
     }
   };
@@ -221,27 +223,27 @@ export default function ClassesPage() {
 
     try {
       const response = await fetch(`/api/admin/classes/${currentClass._id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to delete class');
+        throw new Error(errorData.error || "Failed to delete class");
       }
 
       toast({
-        title: 'Success',
-        description: 'Class deleted successfully',
+        title: "Success",
+        description: "Class deleted successfully",
       });
 
       setOpenDeleteDialog(false);
       fetchClasses();
     } catch (error: any) {
-      console.error('Error deleting class:', error);
+      console.error("Error deleting class:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to delete class',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to delete class",
+        variant: "destructive",
       });
     }
   };
@@ -250,7 +252,7 @@ export default function ClassesPage() {
     setCurrentClass(classItem);
     setFormData({
       className: classItem.className,
-      grade: classItem.grade._id
+      grade: classItem.grade._id,
     });
     setOpenEditDialog(true);
   };
@@ -304,7 +306,7 @@ export default function ClassesPage() {
                 <Label htmlFor="grade">Grade</Label>
                 <Select
                   value={formData.grade}
-                  onValueChange={(value) => handleSelectChange('grade', value)}
+                  onValueChange={(value) => handleSelectChange("grade", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Grade" />
@@ -320,8 +322,18 @@ export default function ClassesPage() {
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpenCreateDialog(false)}>Cancel</Button>
-              <Button className="bg-ninja-crimson hover:bg-ninja-coral" onClick={handleCreateClass}>Create</Button>
+              <Button
+                variant="outline"
+                onClick={() => setOpenCreateDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-ninja-crimson hover:bg-ninja-coral"
+                onClick={handleCreateClass}
+              >
+                Create
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -330,29 +342,36 @@ export default function ClassesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Classes</CardTitle>
-          <CardDescription>
-            Manage all classes in the system.
-          </CardDescription>
+          <CardDescription>Manage all classes in the system.</CardDescription>
         </CardHeader>
         <CardContent>
           {classes.length === 0 ? (
             <div className="text-center py-6">
-              <p className="text-muted-foreground">No classes found. Create your first class to get started.</p>
+              <p className="text-muted-foreground">
+                No classes found. Create your first class to get started.
+              </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Class Name</TableHead>
-                  <TableHead>Grade</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-ninja-white">Class Name</TableHead>
+                  <TableHead className="text-ninja-white">Grade</TableHead>
+                  <TableHead className="text-ninja-white text-right">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {classes.map((classItem) => (
                   <TableRow key={classItem._id}>
-                    <TableCell className="font-medium">{classItem.className}</TableCell>
-                    <TableCell>Grade {classItem.grade.gradeNumber} - {classItem.grade.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {classItem.className}
+                    </TableCell>
+                    <TableCell>
+                      Grade {classItem.grade.gradeNumber} -{" "}
+                      {classItem.grade.name}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
@@ -360,7 +379,7 @@ export default function ClassesPage() {
                         onClick={() => navigateToAssignTeachers(classItem._id)}
                         title="Assign Teachers"
                       >
-                        <Users className="h-4 w-4 text-blue-500" />
+                        <Users className="h-4 w-4 text-ninja-white" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -376,7 +395,7 @@ export default function ClassesPage() {
                         onClick={() => openDeleteModal(classItem)}
                         title="Delete Class"
                       >
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <Trash2 className="h-4 w-4 text-ninja-white" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -392,9 +411,7 @@ export default function ClassesPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Class</DialogTitle>
-            <DialogDescription>
-              Update class information.
-            </DialogDescription>
+            <DialogDescription>Update class information.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
@@ -410,7 +427,7 @@ export default function ClassesPage() {
               <Label htmlFor="edit-grade">Grade</Label>
               <Select
                 value={formData.grade}
-                onValueChange={(value) => handleSelectChange('grade', value)}
+                onValueChange={(value) => handleSelectChange("grade", value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Grade" />
@@ -420,14 +437,21 @@ export default function ClassesPage() {
                     <SelectItem key={grade._id} value={grade._id}>
                       {grade.name} (Grade {grade.gradeNumber})
                     </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+          </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenEditDialog(false)}>Cancel</Button>
-            <Button className="bg-ninja-crimson hover:bg-ninja-coral" onClick={handleEditClass}>Update</Button>
+            <Button variant="outline" onClick={() => setOpenEditDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-ninja-crimson hover:bg-ninja-coral"
+              onClick={handleEditClass}
+            >
+              Update
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -438,18 +462,27 @@ export default function ClassesPage() {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete {currentClass?.className}? This action cannot be undone.
+              Are you sure you want to delete {currentClass?.className}? This
+              action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center space-x-2 py-4">
             <AlertCircle className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-500">
-              Warning: Deleting a class will remove all teacher and student assignments.
+              Warning: Deleting a class will remove all teacher and student
+              assignments.
             </p>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenDeleteDialog(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDeleteClass}>Delete</Button>
+            <Button
+              variant="outline"
+              onClick={() => setOpenDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteClass}>
+              Delete
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
