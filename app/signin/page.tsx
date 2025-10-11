@@ -110,7 +110,7 @@ export default function SignInPage() {
           className="hidden lg:flex justify-center"
         >
           <Image
-            src="/logo/logo1.png"
+            src="/dee/twoChar.png"
             alt="Ninja Bolt Logo"
             width={400}
             height={400}
@@ -128,7 +128,7 @@ export default function SignInPage() {
             <CardHeader className="text-center">
               <div className="lg:hidden md:mb-4 flex justify-center w-full">
                 <Image
-                  src="/logo/logo1.png"
+                  src="/dee/twoChar.png"
                   alt="signIn"
                   width={300}
                   height={300}

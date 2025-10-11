@@ -34,14 +34,13 @@ const HeroSection2 = () => {
                 LEARN HOW TO WRITE LIKE A{" "}
                 <span className="text-ninja-crimson">NINJA</span>
               </h1> */}
-             
-             <div className="md:hidden tracking-wider">
 
-              <h1 className="text-3xl  lg:text-5xl font-bold text-ninja-black text-center leading-wide  mx-auto">
-              WRITING NINJAS 
-              </h1>
-              <h2>ACADEMY</h2>
-             </div>
+              <div className="md:hidden tracking-wider">
+                <h1 className="text-3xl  lg:text-5xl font-bold text-ninja-black text-center leading-wide  mx-auto">
+                  WRITING NINJAS
+                </h1>
+                <h2>ACADEMY</h2>
+              </div>
               <h1 className="text-3xl lg:text-5xl font-bold text-ninja-black text-center leading-wide  mx-auto">
                 A safe and inspiring digital reading platform where kids write
                 the books — and everyone gets to read them.
@@ -75,7 +74,7 @@ const HeroSection2 = () => {
               {/* <div className="relative bg-gradient-to-br from-ninja-black via-ninja-gray to-ninja-black p-8 rounded-full shadow-2xl border border-red-500/30"> */}
               <div className="w-[450px] lg:w-[600px]  lg:h-[600px] h-[450px] relative">
                 <img
-                  src="/logo/logo1.png"
+                  src="/dee/twoChar.png"
                   alt="Ninja Logo"
                   width={600}
                   height={600}
