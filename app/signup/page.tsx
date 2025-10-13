@@ -137,8 +137,17 @@ export default function SignUpPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Success - redirect to role-specific dashboard
+        // Success - show success message
         toast.success(data.message || "Account created successfully!");
+
+        // Check if there's a redirectUrl in the response
+        if (data.redirectUrl) {
+          // Redirect to the verification page
+          window.location.href = data.redirectUrl;
+          return;
+        }
+
+        // Fallback to role-specific dashboard if no redirectUrl
         const { user } = data;
         if (user && user.role) {
           switch (user.role) {
@@ -276,7 +285,7 @@ export default function SignUpPage() {
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
+                    className="w-full p-2 border text-ninja-gray border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
                   >
                     <option value="student">Student</option>
                     <option value="teacher">Teacher</option>
@@ -296,7 +305,7 @@ export default function SignUpPage() {
                       name="gradeId"
                       value={formData.gradeId}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
+                      className="w-full p-2 border text-ninja-gray border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
                       required={formData.role === "student"}
                       disabled={loadingGrades}
                     >
@@ -327,7 +336,7 @@ export default function SignUpPage() {
                         name="classId"
                         value={formData.classId}
                         onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
+                        className="w-full text-ninja-gray p-2 border border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
                         required={formData.role === "student"}
                         disabled={loadingClasses}
                       >
@@ -383,7 +392,7 @@ export default function SignUpPage() {
           className="hidden lg:flex justify-center"
         >
           <Image
-            src="/dee/16.png"
+            src="/dee/writing.png"
             alt="Ninja Character"
             width={400}
             height={400}

@@ -1,5 +1,6 @@
 export const resetPasswordEmailTemplate = (resetLink: string) => {
   return `
+<!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 
 <head>
@@ -140,7 +141,7 @@ export const resetPasswordEmailTemplate = (resetLink: string) => {
 														<tr>
 															<td class="pad" style="width:100%;">
 																<div class="alignment" align="center">
-																	<div style="max-width: 584px;"><img src="https://259071beb2.imgdist.com/pub/bfra/ai5ijq1c/6dz/70v/i4v/Wifey%20for%20Lifey%20Primary%20Logo%20with%20Slogan%20Red.png" style="display: block; height: auto; border: 0; width: 100%;" width="584" alt title height="auto"></div>
+																	<div style="max-width: 584px;"><img src="https://259071beb2.imgdist.com/pub/bfra/ai5ijq1c/bxc/q5i/h57/slogan.png" style="display: block; height: auto; border: 0; width: 100%;" width="584" alt title height="auto"></div>
 																</div>
 															</td>
 														</tr>
@@ -157,7 +158,7 @@ export const resetPasswordEmailTemplate = (resetLink: string) => {
 						<tbody>
 							<tr>
 								<td>
-									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #a797ff; border-radius: 0; color: #000000; width: 680px; margin: 0 auto;" width="680">
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fbf3e0; border-radius: 0; color: #000000; width: 680px; margin: 0 auto;" width="680">
 										<tbody>
 											<tr>
 												<td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top;">
@@ -165,7 +166,7 @@ export const resetPasswordEmailTemplate = (resetLink: string) => {
 														<tr>
 															<td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
 																<div class="alignment" align="center">
-																	<div class="fullWidth" style="max-width: 680px;"><img src="https://259071beb2.imgdist.com/pub/bfra/ai5ijq1c/k7k/0pg/0it/partners.png" style="display: block; height: auto; border: 0; width: 100%;" width="680" alt="An open email illustration" title="An open email illustration" height="auto"></div>
+																	<div class="fullWidth" style="max-width: 680px;"><img src="https://259071beb2.imgdist.com/pub/bfra/ai5ijq1c/ru3/9cx/x37/23.png" style="display: block; height: auto; border: 0; width: 100%;" width="680" alt="An open email illustration" title="An open email illustration" height="auto"></div>
 																</div>
 															</td>
 														</tr>
@@ -189,15 +190,15 @@ export const resetPasswordEmailTemplate = (resetLink: string) => {
 													<table class="heading_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
 														<tr>
 															<td class="pad" style="padding-top:12px;text-align:center;width:100%;">
-																<h1 style="margin: 0; color: #d32333; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 32px; font-weight: 700; letter-spacing: normal; line-height: 1.2; text-align: left; margin-top: 0; margin-bottom: 0; mso-line-height-alt: 38px;"><span class="tinyMce-placeholder" style="word-break: break-word;">Bestieee , Forgot Your Password !</span></h1>
+																<h1 style="margin: 0; color: #000000; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 32px; font-weight: 700; letter-spacing: normal; line-height: 1.2; text-align: left; margin-top: 0; margin-bottom: 0; mso-line-height-alt: 38px;"><span class="tinyMce-placeholder" style="word-break: break-word;">Forgot Your Password !</span></h1>
 															</td>
 														</tr>
 													</table>
 													<table class="paragraph_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
 														<tr>
 															<td class="pad" style="padding-bottom:10px;padding-top:10px;">
-																<div style="color:#d32333;direction:ltr;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:1.2;text-align:left;mso-line-height-alt:19px;">
-																	<p style="margin: 0;">We knew this 'll happen it's just normal thing in this hustle 😅.<br>Don't worry we got your back 😎👌.<br>Please click the button below it'll redirect you to reset password page.</p>
+																<div style="color:#000000;direction:ltr;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0px;line-height:1.2;text-align:left;mso-line-height-alt:19px;">
+																	<p style="margin: 0;">please click the button below it 'll redirects you to a page to create your new password.</p>
 																</div>
 															</td>
 														</tr>
@@ -205,13 +206,13 @@ export const resetPasswordEmailTemplate = (resetLink: string) => {
 													<table class="button_block block-3" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
 														<tr>
 															<td class="pad" style="padding-top:24px;text-align:center;">
-																<div class="alignment" align="center"><a href=${resetLink} target="_blank" style="color:#fbf3e0;text-decoration:none;"><!--[if mso]>
-<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"  href="http://www.example.com/"  style="height:48px;width:73px;v-text-anchor:middle;" arcsize="17%" fillcolor="#d32333">
-<v:stroke dashstyle="Solid" weight="0px" color="#d32333"/>
+																<div class="alignment" align="center"><a href="${resetLink}" target="_blank" style="color:#fbf3e0;text-decoration:none;"><!--[if mso]>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"  href="${resetLink}"  style="height:47px;width:73px;v-text-anchor:middle;" arcsize="18%" fillcolor="#ff8d7b">
+<v:stroke dashstyle="Solid" weight="0px" color="#ff8d7b"/>
 <w:anchorlock/>
 <v:textbox inset="0px,0px,0px,0px">
 <center dir="false" style="color:#fbf3e0;font-family:sans-serif;font-size:16px">
-<![endif]--><span class="button" style="background-color: #d32333; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 8px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #fbf3e0; display: inline-block; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; mso-border-alt: none; padding-bottom: 8px; padding-top: 8px; padding-left: 16px; padding-right: 16px; text-align: center; width: auto; word-break: keep-all; letter-spacing: normal;"><span style="word-break: break-word; line-height: 32px;">Reset</span></span><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></a></div>
+<![endif]--><span class="button" style="background-color: #ff8d7b; mso-shading: transparent; border-bottom: 0px solid transparent; border-left: 0px solid transparent; border-radius: 8px; border-right: 0px solid transparent; border-top: 0px solid transparent; color: #fbf3e0; display: inline-block; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; mso-border-alt: none; padding-bottom: 8px; padding-top: 8px; padding-left: 16px; padding-right: 16px; text-align: center; width: auto; word-break: keep-all; letter-spacing: normal;"><span style="word-break: break-word; line-height: 32px;">Reset</span></span><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></a></div>
 															</td>
 														</tr>
 													</table>

@@ -62,6 +62,12 @@ function AccountStatusContent() {
         <div className="p-4 bg-amber-50 border border-amber-200 rounded-md">
           <p className="text-center text-amber-800">{statusMessage}</p>
         </div>
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-md">
+          <p className="text-center text-amber-800">
+            if you are recenetly registered the account could take about 24
+            hours for activation.
+          </p>
+        </div>
 
         <div className="flex flex-col space-y-4">
           <Button

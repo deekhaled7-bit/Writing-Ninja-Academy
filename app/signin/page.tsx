@@ -177,6 +177,14 @@ export default function SignInPage() {
                     required
                     className="font-oswald"
                   />
+                  <div className="text-right mt-1">
+                    <Link
+                      href="/signin/forgot-password"
+                      className="text-sm text-ninja-coral hover:text-ninja-orange font-oswald"
+                    >
+                      Forgot your password?
+                    </Link>
+                  </div>
                 </div>
                 <Button
                   type="submit"

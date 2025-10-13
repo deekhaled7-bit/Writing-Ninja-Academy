@@ -4,6 +4,10 @@ import UserModel from "@/models/userModel";
 import ClassModel from "@/models/ClassModel";
 import { hash } from "bcryptjs";
 import mongoose from "mongoose";
+import { sendMail } from "@/lib/email";
+import verificationsModel from "@/models/sessionModel";
+import { SubscriprtionMail } from "@/utils/subscriptionMail";
+import { verificationEmailTemplate } from "@/utils/verificationEmailTempelate";
 
 export async function POST(request: NextRequest) {
   try {
@@ -93,18 +97,21 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       role, // Use the provided role or default to "student"
-      emailVerified: true, // Skip email verification for now
+      emailVerified: false, // Skip email verification for now
       assignedClasses: role === "student" && classId ? [classId] : [],
     };
 
     const newUser = await UserModel.create(userData);
+    await verificationsModel.create({ userID: newUser.id });
+    console.log("here" + newUser.id);
+    //    const token = await bcrypt.hash(savedUser._id.toString(), saltRounds);
 
     // If student, update class to include this student
-    if (role === "student" && classId) {
-      await ClassModel.findByIdAndUpdate(classId, {
-        $addToSet: { students: newUser._id },
-      });
-    }
+    // if (role === "student" && classId) {
+    //   await ClassModel.findByIdAndUpdate(classId, {
+    //     $addToSet: { students: newUser._id },
+    //   });
+    // }
 
     // Create response with user data (excluding password)
     const userResponse = {
@@ -116,12 +123,24 @@ export async function POST(request: NextRequest) {
       role: newUser.role,
       createdAt: newUser.createdAt,
     };
+    const verificationLink = `${process.env.baseUrl}api/auth/verification/${newUser.id}`;
+    await sendMail({
+      to: email,
+      name: "wiiga",
+      subject: "Please click on link to verify your account",
+      body: `${verificationEmailTemplate(verificationLink)}`,
+      from: "auth@thewritingninjasacademy.org",
+      // body: `<a href=${verificationLink}> click here to verify your account</a>`,
+      //   body: compileWelcomeTemplate("Vahid", "youtube.com/@sakuradev"),
+    });
 
+    // Return JSON with success message and redirect URL for the frontend to handle
     const response = NextResponse.json(
       {
         success: true,
-        message: "Account created successfully! Welcome to Ninja Bolt!",
+        message: "Account created successfully! Please check your email for verification.",
         user: userResponse,
+        redirectUrl: '/verify-email'
       },
       { status: 201 }
     );

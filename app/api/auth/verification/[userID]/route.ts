@@ -13,7 +13,7 @@ export async function GET(_request: NextRequest) {
 
     if (!userID) {
       // If userID is missing, redirect to sign-up page
-      return NextResponse.redirect(new URL("/register", _request.url));
+      return NextResponse.redirect(new URL("/signup", _request.url));
     }
 
     // Fetch session based on userID
@@ -23,22 +23,22 @@ export async function GET(_request: NextRequest) {
 
     if (getSession) {
       try {
-        const subscription = await subscriptionsModel.findOne({
-          email: data?.email,
-          subscribed: true,
-        });
+        // const subscription = await subscriptionsModel.findOne({
+        //   email: data?.email,
+        //   subscribed: true,
+        // });
         // Update the user's emailVerified status
-        if (subscription) {
-          await userModel.findByIdAndUpdate(userID, {
-            emailVerified: true,
-            subscription: subscription._id,
-          });
-        } else {
-          await userModel.findByIdAndUpdate(userID, { emailVerified: true });
-        }
+        // if (subscription) {
+        //   await userModel.findByIdAndUpdate(userID, {
+        //     emailVerified: true,
+        //     subscription: subscription._id,
+        //   });
+        // } else {
+        await userModel.findByIdAndUpdate(userID, { verified: true });
+        // }
 
         // Redirect to the login page for the user to sign in with NextAuth
-        return NextResponse.redirect(new URL("/login", _request.url));
+        return NextResponse.redirect(new URL("/signin", _request.url));
       } catch (err: any) {
         console.error("Error in updating user:", err);
         return NextResponse.json({ error: err.message }, { status: 500 });
