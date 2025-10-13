@@ -107,7 +107,7 @@ export default function WhyChooseSection() {
           >
             <div className="relative w-full h-96 md:h-[750px]  ">
               <Image
-                src="/dee/20.png"
+                src="/highResolution/idea.png"
                 alt="Why Choose The Writing Ninjas Academy"
                 fill
                 className="object-contain"

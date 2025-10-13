@@ -34,7 +34,7 @@ export default function WelcomeSection() {
             <div className="relative w-64 h-64 md:w-80 md:h-80 aspect-square rounded-full border-4 border-ninja-coral bg-ninja-white overflow-hidden">
               <Image
                 fill
-                src="/dee/13.png"
+                src="/highResolution/hey.png"
                 alt="welcome"
                 className="w-full h-full object-cover rounded-full  scale-120 object-top"
               />

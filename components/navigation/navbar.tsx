@@ -67,7 +67,7 @@ export default function Navbar() {
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
             {/* <Sword className="h-12 w-12 text-ninja-crimson" /> */}
-            <Image src="/logo/logo1.png" alt="logo" width={80} height={80} />
+            <Image src="/dee/twoChar.png" alt="logo" width={70} height={70} />
             <span className="hidden md:block font-oswald text-2xl text-ninja-white">
               The Writing Ninjas Academy
             </span>

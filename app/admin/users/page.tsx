@@ -41,6 +41,8 @@ interface User {
   role: string;
   active: boolean;
   verified: boolean;
+  gradeId?: string;
+  assignedClasses?: { className: string; _id: string }[];
   profilePicture?: string;
   createdAt: string;
   updatedAt: string;
@@ -66,7 +68,16 @@ export default function UsersPage() {
     role: "student",
     active: false,
     verified: false,
+    gradeId: "" as string | undefined,
+    assignedClasses: [] as string[],
+    classId: "",
   });
+
+  // States for grades and classes
+  const [grades, setGrades] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [loadingGrades, setLoadingGrades] = useState(false);
+  const [loadingClasses, setLoadingClasses] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -93,6 +104,11 @@ export default function UsersPage() {
       }
 
       const data = await response.json();
+      // data.users.map((user: User, index: Number) => {
+      //   if (user.gradeId) {
+      //     console.log("testID" + user.gradeId);
+      //   }
+      // });
       setUsers(data.users);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -106,16 +122,69 @@ export default function UsersPage() {
     }
   };
 
+  // Fetch grades for student registration
+  const fetchGrades = async () => {
+    try {
+      setLoadingGrades(true);
+      const response = await fetch("/api/admin/grades");
+      if (response.ok) {
+        const data = await response.json();
+        setGrades(data.grades || []);
+      } else {
+        console.error("Failed to fetch grades");
+      }
+    } catch (error) {
+      console.error("Error fetching grades:", error);
+    } finally {
+      setLoadingGrades(false);
+    }
+  };
+
+  // Fetch classes based on selected grade
+  const fetchClasses = async (grade: string) => {
+    if (!grade) {
+      setClasses([]);
+      return;
+    }
+
+    try {
+      setLoadingClasses(true);
+      const response = await fetch(`/api/admin/classes?grade=${grade}`);
+      if (response.ok) {
+        const data = await response.json();
+        setClasses(data.classes || []);
+      } else {
+        console.error("Failed to fetch classes");
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    } finally {
+      setLoadingClasses(false);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, [selectedRole, searchTerm]);
+
+  // Fetch grades when component mounts
+  useEffect(() => {
+    fetchGrades();
+  }, []);
+
+  // Fetch classes when grade changes
+  useEffect(() => {
+    if (formData.role === "student" && formData.gradeId) {
+      fetchClasses(formData.gradeId);
+    }
+  }, [formData.gradeId, formData.role]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | string[]) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -129,6 +198,9 @@ export default function UsersPage() {
       role: "student",
       active: false,
       verified: false,
+      gradeId: "",
+      assignedClasses: [],
+      classId: "",
     });
   };
 
@@ -236,9 +308,15 @@ export default function UsersPage() {
     }
   };
 
-  const openEditModal = (user: User) => {
+  const openEditModal = async (user: User, e?: React.MouseEvent) => {
+    // Prevent the email from being set as search term
+    e?.preventDefault();
+    e?.stopPropagation();
+
     setCurrentUser(user);
-    setFormData({
+
+    // Initialize form data with user information
+    const initialFormData = {
       firstName: user.firstName,
       lastName: user.lastName,
       username: user.username,
@@ -247,7 +325,36 @@ export default function UsersPage() {
       role: user.role,
       active: user.active,
       verified: user.verified,
-    });
+      gradeId: user.gradeId || undefined,
+      assignedClasses: [] as string[],
+      classId: "" as string,
+    };
+
+    // If user is a student, fetch their grade and class information
+    if (user.role === "student") {
+      try {
+        // const response = await fetch(`/api/admin/users/${user._id}/details`);
+        // if (response.ok) {
+        //   const data = await response.json();
+        // Update form data with grade and class information
+        initialFormData.gradeId = user.gradeId || undefined;
+        initialFormData.classId =
+          user.assignedClasses && user.assignedClasses.length > 0
+            ? user.assignedClasses[0]._id
+            : "";
+        // alert(initialFormData.classId);
+        // alert(formData.classId);
+
+        // Fetch classes for the selected grade
+        if (initialFormData.gradeId) {
+          fetchClasses(initialFormData.gradeId);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    }
+
+    setFormData(initialFormData);
     setOpenEditDialog(true);
   };
 
@@ -297,7 +404,7 @@ export default function UsersPage() {
               <Plus className="mr-2 h-4 w-4" /> Add User
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-scroll">
             <DialogHeader>
               <DialogTitle>Create New User</DialogTitle>
               <DialogDescription>
@@ -375,6 +482,77 @@ export default function UsersPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {formData.role === "student" && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="gradeId">Grade</Label>
+                    <Select
+                      value={formData.gradeId || undefined}
+                      onValueChange={(value) =>
+                        handleSelectChange("gradeId", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Grade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loadingGrades ? (
+                          <SelectItem value="loading" disabled>
+                            Loading...
+                          </SelectItem>
+                        ) : grades.length === 0 ? (
+                          <SelectItem value="no-grades" disabled>
+                            No grades available
+                          </SelectItem>
+                        ) : (
+                          grades.map((grade) => (
+                            <SelectItem key={grade._id} value={grade._id}>
+                              Grade {grade.gradeNumber}: {grade.name}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {formData.gradeId && (
+                    <div className="space-y-2">
+                      <Label htmlFor="assignedClasses">Class</Label>
+                      <Select
+                        value={formData.classId}
+                        onValueChange={(value) =>
+                          handleSelectChange("assignedClasses", [value])
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Class" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {loadingClasses ? (
+                            <SelectItem value="loading-classes" disabled>
+                              Loading...
+                            </SelectItem>
+                          ) : classes.length === 0 ? (
+                            <SelectItem value="no-classes" disabled>
+                              No classes available for this grade
+                            </SelectItem>
+                          ) : (
+                            classes.map((classItem) => (
+                              <SelectItem
+                                key={classItem._id}
+                                value={classItem._id}
+                              >
+                                {classItem.className}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </>
+              )}
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2">
@@ -461,7 +639,7 @@ export default function UsersPage() {
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="hover:bg-ninja-peach/20">
               <TableHead>Profile</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Username</TableHead>
@@ -475,7 +653,7 @@ export default function UsersPage() {
           <TableBody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <TableRow key={user._id}>
+                <TableRow key={user._id} className="hover:bg-ninja-peach/20 ">
                   <TableCell>
                     <Avatar className="h-10 w-10 bg-ninja-white border-ninja-crimson border-2">
                       <AvatarImage
@@ -519,22 +697,22 @@ export default function UsersPage() {
                   <TableCell>
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right space-x-2">
                     <Button
-                      variant="ghost"
+                      variant="default"
                       size="icon"
-                      onClick={() => openEditModal(user)}
+                      onClick={(e) => openEditModal(user, e)}
                       title="Edit User"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-4 w-4 hover:text-ninja-peach" />
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="default"
                       size="icon"
                       onClick={() => openDeleteModal(user)}
                       title="Delete User"
                     >
-                      <Trash2 className="h-4 w-4 text-red-500" />
+                      <Trash2 className="h-4 w-4 hover:text-ninja-peach" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -552,7 +730,7 @@ export default function UsersPage() {
 
       {/* Edit Dialog */}
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-scroll">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>Update user information.</DialogDescription>
@@ -626,6 +804,81 @@ export default function UsersPage() {
                 </SelectContent>
               </Select>
             </div>
+
+            {formData.role === "student" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-grade">Grade</Label>
+                  <Select
+                    value={formData.gradeId || undefined}
+                    onValueChange={(value) =>
+                      handleSelectChange("gradeId", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loadingGrades ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
+                        </SelectItem>
+                      ) : grades.length === 0 ? (
+                        <SelectItem value="no-grades" disabled>
+                          No grades available
+                        </SelectItem>
+                      ) : (
+                        grades.map((grade) => (
+                          <SelectItem key={grade._id} value={grade._id}>
+                            Grade {grade.gradeNumber}: {grade.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {formData.gradeId && (
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-assignedClasses">Class</Label>
+                    <Select
+                      value={
+                        formData.classId && formData.classId.length > 0
+                          ? formData.classId
+                          : undefined
+                      }
+                      onValueChange={(value) =>
+                        handleSelectChange("assignedClasses", [value])
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Class" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loadingClasses ? (
+                          <SelectItem value="loading-classes" disabled>
+                            Loading...
+                          </SelectItem>
+                        ) : classes.length === 0 ? (
+                          <SelectItem value="no-classes" disabled>
+                            No classes available for this grade
+                          </SelectItem>
+                        ) : (
+                          classes.map((classItem) => (
+                            <SelectItem
+                              key={classItem._id}
+                              value={classItem._id}
+                            >
+                              {classItem.className}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </>
+            )}
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">

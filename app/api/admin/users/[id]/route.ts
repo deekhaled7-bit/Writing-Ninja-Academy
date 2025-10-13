@@ -81,10 +81,23 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ id:
       body.password = await hash(body.password, 10);
     }
     
+    // Extract grade and class data for students
+    const { gradeId, assignedClasses, ...userData } = body;
+    
+    // Prepare update data
+    const updateData = {
+      ...userData,
+      // Add grade and assignedClasses only for students
+      ...(userData.role === 'student' && {
+        grade: gradeId,
+        assignedClasses: assignedClasses || []
+      })
+    };
+    
     // Update user
     const updatedUser = await UserModel.findByIdAndUpdate(
       id,
-      { $set: body },
+      { $set: updateData },
       { new: true, runValidators: true }
     ).select('-password');
     

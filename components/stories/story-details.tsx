@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -15,6 +15,8 @@ import {
   Video,
   ChevronLeft,
   Send,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -91,6 +93,7 @@ export default function StoryDetails({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     // Track read when component mounts
@@ -292,36 +295,88 @@ export default function StoryDetails({
 
             {/* Story Content */}
             <div className="ninja-scroll p-8 mb-8">
-              <h2 className="font-oswald text-2xl text-ninja-black mb-4">
-                Read the Story
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-oswald text-2xl text-ninja-black">
+                  Read the Story
+                </h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsFullScreen(!isFullScreen)}
+                  className="flex items-center gap-1"
+                >
+                  {isFullScreen ? (
+                    <>
+                      <Minimize2 className="h-4 w-4" />
+                      Exit Full Screen
+                    </>
+                  ) : (
+                    <>
+                      <Maximize2 className="h-4 w-4" />
+                      Full Screen
+                    </>
+                  )}
+                </Button>
+              </div>
 
-              {story.fileType === "video" ? (
-                <VideoPlayer src={story.fileUrl} title={story.title} />
-              ) : (
-                // <PDFViewer src={story.fileUrl} title={story.title} />
-                <FlipBook
-                storyId={story._id}
-                  fileUrl={story.fileUrl}
-                  cover={story.coverImageUrl || ""}
-                  onProgress={(cur, total) => {
-                    setCurrentPage(cur);
-                    setTotalPages(total);
-                  }}
-                />
-              )}
-
-              {totalPages > 0 && (
-                <div className="mt-4">
-                  <div className="flex items-center justify-between mb-2 text-sm text-ninja-gray">
-                    <span>
-                      Page {currentPage} / {totalPages}
-                    </span>
-                    <span>{Math.round((currentPage / totalPages) * 100)}%</span>
+              <div
+                className={
+                  isFullScreen
+                    ? "fixed inset-0 z-50 bg-white flex flex-col p-4"
+                    : ""
+                }
+              >
+                {isFullScreen && (
+                  <div className="flex justify-end mb-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsFullScreen(false)}
+                      className="flex items-center gap-1"
+                    >
+                      <Minimize2 className="h-4 w-4" />
+                      Exit Full Screen
+                    </Button>
                   </div>
-                  <Progress value={(currentPage / totalPages) * 100} className="h-2" />
+                )}
+
+                <div
+                  className={
+                    isFullScreen
+                      ? "flex-1 flex items-center justify-center"
+                      : ""
+                  }
+                >
+                  <FlipBook
+                    storyId={story._id}
+                    fileUrl={story.fileUrl}
+                    cover={story.coverImageUrl || ""}
+                    onProgress={(cur, total) => {
+                      setCurrentPage(cur);
+                      setTotalPages(total);
+                    }}
+                  />
                 </div>
-              )}
+
+                {totalPages > 0 && (
+                  <div
+                    className={`mt-4 ${isFullScreen ? "max-w-xl mx-aut" : ""}`}
+                  >
+                    <div className="flex items-center justify-between mb-2 text-sm text-ninja-gray">
+                      <span>
+                        Page {currentPage} / {totalPages}
+                      </span>
+                      <span>
+                        {Math.round((currentPage / totalPages) * 100)}%
+                      </span>
+                    </div>
+                    <Progress
+                      value={(currentPage / totalPages) * 100}
+                      className="h-2"
+                    />
+                  </div>
+                )}
+              </div>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-4 mt-6">

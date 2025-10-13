@@ -74,7 +74,7 @@ const HeroSection2 = () => {
               {/* <div className="relative bg-gradient-to-br from-ninja-black via-ninja-gray to-ninja-black p-8 rounded-full shadow-2xl border border-red-500/30"> */}
               <div className="w-[450px] lg:w-[600px]  lg:h-[600px] h-[450px] relative">
                 <img
-                  src="/dee/twoChar.png"
+                  src="/highResolution/CharactersWithoutBackground.png"
                   alt="Ninja Logo"
                   width={600}
                   height={600}
