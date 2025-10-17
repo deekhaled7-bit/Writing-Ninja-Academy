@@ -47,9 +47,17 @@ export async function GET(req: NextRequest) {
     const url = new URL(req.url);
 
     // Find the teacher user with their assigned classes
-    const teacher = (await UserModel.findById(
-      teacherId
-    ).lean()) as TeacherDocument;
+    const teacher = await UserModel.findById(teacherId).populate({
+      path: "assignedClasses",
+      model: "Class",
+      select: "_id name grade students",
+      populate: {
+        path: "grade",
+        model: "Grade",
+        select: "name level"
+      },
+      strictPopulate: false,
+    });
     console.log("assignedClasses" + JSON.stringify(teacher));
     if (
       !teacher ||
@@ -63,7 +71,7 @@ export async function GET(req: NextRequest) {
     console.log("registering gradeModel" + GradeModel);
     const classes = await ClassModel.find({
       _id: { $in: teacher.assignedClasses },
-    }).populate({ 
+    }).populate({
       path: "grade",
       strictPopulate: false,
     });
