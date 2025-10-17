@@ -322,7 +322,10 @@ export default function StudentDashboard() {
                 .filter((assignment) => !assignment.isCompleted)
                 .slice(0, 3)
                 .map((assignment) => (
-                  <Card key={assignment._id} className="overflow-hidden">
+                  <Card
+                    key={assignment._id}
+                    className="overflow-hidden bg-ninja-light-gray"
+                  >
                     <div className="relative h-40 w-full">
                       <Image
                         src={
@@ -336,12 +339,26 @@ export default function StudentDashboard() {
                     </div>
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-center">
-                        <CardTitle className="text-lg">
+                        <CardTitle className="text-lg text-ninja-black">
                           {assignment.title}
                         </CardTitle>
+                        {/* <Badge
+                            variant="outline"
+                            className="flex items-center gap-1"
+                          >
+                            <Calendar className="h-3 w-3" />
+                            {assignment.dueDate
+                              ? new Date(
+                                  assignment.dueDate
+                                ).toLocaleDateString()
+                              : "No due date"}
+                          </Badge> */}
                       </div>
+                      <p className="text-sm text-ninja-coral">
+                        Assigned by: {assignment.teacher.name}
+                      </p>
                     </CardHeader>
-                    <CardContent className="space-y-3">
+                    <CardContent className="space-y-3 text-ninja-gray">
                       <div className="space-y-1">
                         <div className="flex justify-between text-sm">
                           <span>Reading Progress</span>
@@ -353,11 +370,41 @@ export default function StudentDashboard() {
                         />
                       </div>
 
-                      <Link href={`/stories/${assignment.story._id}`}>
-                        <Button variant="secondary" className="w-full">
-                          Continue Reading
-                        </Button>
-                      </Link>
+                      <div className="flex flex-col gap-2">
+                        <Link
+                          className="text-white"
+                          href={`/stories/${assignment.story._id}?assignmentId=${assignment._id}`}
+                        >
+                          <Button variant="destructive" className="w-full">
+                            Continue Reading
+                          </Button>
+                        </Link>
+
+                        {/* <div className="grid grid-cols-2 gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                updateReadingProgress(
+                                  assignment._id,
+                                  Math.min(100, assignment.readingProgress + 25)
+                                )
+                              }
+                            >
+                              Update Progress (+25%)
+                            </Button>
+
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() =>
+                                updateReadingProgress(assignment._id, 100, true)
+                              }
+                            >
+                              Mark Complete
+                            </Button>
+                          </div> */}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
