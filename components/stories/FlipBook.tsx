@@ -1,8 +1,40 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { convertPdfToImages } from "../../utils/pdfToImages";
+import { useSearchParams } from "next/navigation";
 
-const FlipBook = ({ fileUrl, cover, storyId, onProgress }: { fileUrl: string; cover: string; storyId: string; onProgress?: (currentPage: number, totalPages: number) => void }) => {
+// Client-side wrapper component to safely handle searchParams
+const ClientFlipBook = ({ fileUrl, cover, storyId, onProgress }: { fileUrl: string; cover: string; storyId: string; onProgress?: (currentPage: number, totalPages: number) => void }) => {
+  const searchParams = useSearchParams();
+  const assignmentId = searchParams.get('assignmentId');
+  
+  return (
+    <FlipBook 
+      fileUrl={fileUrl} 
+      cover={cover} 
+      storyId={storyId} 
+      onProgress={onProgress} 
+      assignmentId={assignmentId} 
+    />
+  );
+};
+
+// Main FlipBook component that doesn't directly use searchParams
+const FlipBook = ({ 
+  fileUrl, 
+  cover, 
+  storyId, 
+  onProgress, 
+  assignmentId 
+}: { 
+  fileUrl: string; 
+  cover: string; 
+  storyId: string; 
+  onProgress?: (currentPage: number, totalPages: number) => void;
+  assignmentId?: string | null;
+}) => {
   const [pageImages, setPageImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +99,24 @@ const FlipBook = ({ fileUrl, cover, storyId, onProgress }: { fileUrl: string; co
         return;
       }
       lastSentRef.current = { page: currentPage, ts: now };
+      
+      // Calculate progress percentage
+      const progress = Math.round((currentPage / totalPages) * 100);
+      
+      // If we have an assignmentId, update the assignment progress
+      if (assignmentId) {
+        await fetch(`/api/student/assigned-books`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            assignmentId, 
+            progress,
+            isCompleted: progress >= 100
+          }),
+        });
+      }
+      
+      // Always update general reading progress
       await fetch(`/api/reading-progress`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -74,6 +124,7 @@ const FlipBook = ({ fileUrl, cover, storyId, onProgress }: { fileUrl: string; co
       });
     } catch (e) {
       // Silently ignore to avoid interrupting reading
+      console.error("Error updating progress:", e);
     }
   };
 
@@ -175,4 +226,4 @@ const FlipBook = ({ fileUrl, cover, storyId, onProgress }: { fileUrl: string; co
   );
 };
 
-export default FlipBook;
+export default ClientFlipBook;

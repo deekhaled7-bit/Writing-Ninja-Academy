@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BookOpen, PenTool, User, LogOut, Home } from "lucide-react";
+import { BookOpen, PenTool, User, LogOut, Home, BookMarked } from "lucide-react";
 
 export default function StudentLayout({
   children,
@@ -100,6 +100,13 @@ export default function StudentLayout({
           >
             <BookOpen className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Stories</span>
+          </Link>
+          <Link
+            href="/student/assigned-books"
+            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname.startsWith("/student/assigned-books") ? "bg-ninja-crimson text-ninja-white" : ""}`}
+          >
+            <BookMarked className="mr-2 h-5 w-5" />
+            <span className="lg:inline hidden">Assigned Books</span>
           </Link>
           {/* Write Story option removed for students */}
           <Link

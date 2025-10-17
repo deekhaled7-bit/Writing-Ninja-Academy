@@ -4,6 +4,8 @@ import BookAssignment from "@/models/BookAssignment";
 import mongoose from "mongoose";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { ConnectDB } from "@/config/db";
+import Story from "@/models/Story";
+import UserModel from "@/models/userModel";
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,68 +22,50 @@ export async function GET(req: NextRequest) {
     const studentId = session.user.id;
 
     // Find all assignments for this student or their class
-    const assignments = await BookAssignment.aggregate([
-      {
-        $match: {
-          $or: [
-            { studentId: new mongoose.Types.ObjectId(studentId) },
-            {
-              classId: { $in: (session.user as any).classes || [] },
-              studentId: null, // Class-wide assignments have null studentId
-            },
-          ],
+    console.log("resgisteringModels" + Story + UserModel);
+    const assignments = await BookAssignment.find({
+      $or: [
+        { studentId: studentId },
+        {
+          classId: { $in: (session.user as any).classes || [] },
+          studentId: null, // Class-wide assignments have null studentId
         },
-      },
-      {
-        $lookup: {
-          from: "stories",
-          localField: "storyId",
-          foreignField: "_id",
-          as: "story",
-        },
-      },
-      {
-        $unwind: {
-          path: "$story",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "teacherId",
-          foreignField: "_id",
-          as: "teacher",
-        },
-      },
-      {
-        $unwind: {
-          path: "$teacher",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          title: 1,
-          assignedDate: 1,
-          dueDate: 1,
-          isCompleted: 1,
-          readingProgress: 1,
-          lastReadDate: 1,
-          "story._id": 1,
-          "story.title": 1,
-          "story.coverImage": 1,
-          "teacher._id": 1,
-          "teacher.name": 1,
-        },
-      },
-      {
-        $sort: { assignedDate: -1 },
-      },
-    ]);
+      ],
+    })
+      .populate({
+        path: "storyId",
+        select: "_id title coverImageUrl",
+        model: "Story",
+      })
+      .populate({
+        path: "teacherId",
+        select: "_id firstName lastName",
+        model: "User",
+      })
+      .sort({ assignedDate: -1 });
 
-    return NextResponse.json({ assignments });
+    // Transform the data to match the expected BookAssignment type
+    const formattedAssignments = assignments.map((assignment) => ({
+      _id: assignment._id.toString(),
+      title: assignment.title,
+      assignedDate: assignment.assignedDate,
+      dueDate: assignment.dueDate,
+      isCompleted: assignment.isCompleted,
+      readingProgress: assignment.readingProgress,
+      lastReadDate: assignment.lastReadDate,
+      story: {
+        _id: assignment.storyId._id.toString(),
+        title: assignment.storyId.title,
+        coverImage: assignment.storyId.coverImageUrl,
+      },
+      teacher: {
+        _id: assignment.teacherId._id.toString(),
+        name:
+          assignment.teacherId.firstName + " " + assignment.teacherId.lastName,
+      },
+    }));
+    console.log("test" + formattedAssignments[0].story.coverImage);
+    return NextResponse.json({ assignments: formattedAssignments });
   } catch (error) {
     console.error("Error fetching assigned books:", error);
     return NextResponse.json(

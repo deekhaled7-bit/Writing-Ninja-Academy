@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Star, Clock, User, BookMarked, Calendar, CheckCircle } from "lucide-react";
+import {
+  BookOpen,
+  Star,
+  Clock,
+  User,
+  BookMarked,
+  Calendar,
+  CheckCircle,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
@@ -106,7 +114,9 @@ export default function StudentDashboard() {
           }
 
           // Fetch assigned books
-          const assignmentsResponse = await fetch("/api/student/assigned-books");
+          const assignmentsResponse = await fetch(
+            "/api/student/assigned-books"
+          );
           if (assignmentsResponse.ok) {
             const assignmentsData = await assignmentsResponse.json();
             setAssignments(assignmentsData.assignments || []);
@@ -123,9 +133,13 @@ export default function StudentDashboard() {
 
     fetchUserData();
   }, [status, session]);
-  
+
   // Update reading progress
-  const updateReadingProgress = async (assignmentId: string, progress: number, isCompleted: boolean = false) => {
+  const updateReadingProgress = async (
+    assignmentId: string,
+    progress: number,
+    isCompleted: boolean = false
+  ) => {
     try {
       const response = await fetch("/api/student/assigned-books", {
         method: "POST",
@@ -138,23 +152,27 @@ export default function StudentDashboard() {
           isCompleted,
         }),
       });
-      
+
       if (response.ok) {
         // Update the local state
-        setAssignments(prevAssignments => 
-          prevAssignments.map(assignment => 
-            assignment._id === assignmentId 
-              ? { 
-                  ...assignment, 
+        setAssignments((prevAssignments) =>
+          prevAssignments.map((assignment) =>
+            assignment._id === assignmentId
+              ? {
+                  ...assignment,
                   readingProgress: progress,
                   isCompleted: isCompleted || progress >= 100,
-                  lastReadDate: new Date().toISOString()
-                } 
+                  lastReadDate: new Date().toISOString(),
+                }
               : assignment
           )
         );
-        
-        toast.success(isCompleted ? "Book marked as completed!" : "Reading progress updated!");
+
+        toast.success(
+          isCompleted
+            ? "Book marked as completed!"
+            : "Reading progress updated!"
+        );
       } else {
         toast.error("Failed to update reading progress");
       }
@@ -287,136 +305,68 @@ export default function StudentDashboard() {
       </div>
 
       {/* Assigned Books Section */}
-       <div className="mt-8">
-         <h2 className="text-2xl font-bold tracking-tight">Assigned Books</h2>
-         <div className="mt-4">
-           <Tabs defaultValue="active" className="w-full">
-             <TabsList className="mb-4">
-               <TabsTrigger value="active">Active Assignments</TabsTrigger>
-               <TabsTrigger value="completed">Completed</TabsTrigger>
-             </TabsList>
-             
-             <TabsContent value="active">
-               {assignments.filter(a => !a.isCompleted).length > 0 ? (
-                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                   {assignments
-                     .filter(assignment => !assignment.isCompleted)
-                     .map(assignment => (
-                       <Card key={assignment._id} className="overflow-hidden">
-                         <div className="relative h-40 w-full">
-                           <Image
-                             src={assignment.story.coverImage || "/placeholder-cover.jpg"}
-                             alt={assignment.title}
-                             fill
-                             style={{ objectFit: "cover" }}
-                           />
-                         </div>
-                         <CardHeader className="pb-2">
-                           <div className="flex justify-between items-center">
-                             <CardTitle className="text-lg">{assignment.title}</CardTitle>
-                             <Badge variant="outline" className="flex items-center gap-1">
-                               <Calendar className="h-3 w-3" />
-                               {assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : "No due date"}
-                             </Badge>
-                           </div>
-                           <p className="text-sm text-muted-foreground">
-                             Assigned by: {assignment.teacher.name}
-                           </p>
-                         </CardHeader>
-                         <CardContent className="space-y-3">
-                           <div className="space-y-1">
-                             <div className="flex justify-between text-sm">
-                               <span>Reading Progress</span>
-                               <span>{assignment.readingProgress}%</span>
-                             </div>
-                             <Progress value={assignment.readingProgress} className="h-2" />
-                           </div>
-                           
-                           <div className="flex flex-col gap-2">
-                             <Link href={`/stories/${assignment.story._id}`}>
-                               <Button variant="secondary" className="w-full">
-                                 Continue Reading
-                               </Button>
-                             </Link>
-                             
-                             <div className="grid grid-cols-2 gap-2">
-                               <Button 
-                                 variant="outline" 
-                                 size="sm"
-                                 onClick={() => updateReadingProgress(
-                                   assignment._id, 
-                                   Math.min(100, assignment.readingProgress + 25)
-                                 )}
-                               >
-                                 Update Progress (+25%)
-                               </Button>
-                               
-                               <Button 
-                                 variant="default" 
-                                 size="sm"
-                                 onClick={() => updateReadingProgress(assignment._id, 100, true)}
-                               >
-                                 Mark Complete
-                               </Button>
-                             </div>
-                           </div>
-                         </CardContent>
-                       </Card>
-                     ))}
-                 </div>
-               ) : (
-                 <p className="text-muted-foreground">No active assignments</p>
-               )}
-             </TabsContent>
-             
-             <TabsContent value="completed">
-               {assignments.filter(a => a.isCompleted).length > 0 ? (
-                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                   {assignments
-                     .filter(assignment => assignment.isCompleted)
-                     .map(assignment => (
-                       <Card key={assignment._id} className="overflow-hidden">
-                         <div className="relative h-40 w-full">
-                           <Image
-                             src={assignment.story.coverImage || "/placeholder-cover.jpg"}
-                             alt={assignment.title}
-                             fill
-                             style={{ objectFit: "cover" }}
-                           />
-                           <div className="absolute top-2 right-2">
-                             <Badge className="bg-green-500">
-                               <CheckCircle className="h-3 w-3 mr-1" /> Completed
-                             </Badge>
-                           </div>
-                         </div>
-                         <CardHeader className="pb-2">
-                           <CardTitle className="text-lg">{assignment.title}</CardTitle>
-                           <p className="text-sm text-muted-foreground">
-                             Assigned by: {assignment.teacher.name}
-                           </p>
-                         </CardHeader>
-                         <CardContent>
-                           <div className="flex justify-between text-sm mb-2">
-                             <span>Completed on:</span>
-                             <span>{assignment.lastReadDate ? new Date(assignment.lastReadDate).toLocaleDateString() : "Unknown"}</span>
-                           </div>
-                           
-                           <Link href={`/stories/${assignment.story._id}`}>
-                             <Button variant="outline" className="w-full">
-                               Read Again
-                             </Button>
-                           </Link>
-                         </CardContent>
-                       </Card>
-                     ))}
-                 </div>
-               ) : (
-                 <p className="text-muted-foreground">No completed assignments</p>
-               )}
-             </TabsContent>
-           </Tabs>
-         </div>
-       </div>
+      <div className="mt-8">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold tracking-tight">Assigned Books</h2>
+          <Link href="/student/assigned-books">
+            <Button variant="outline" size="sm">
+              <BookMarked className="mr-2 h-4 w-4" />
+              View All Assignments
+            </Button>
+          </Link>
+        </div>
+        <div className="mt-4">
+          {assignments.filter((a) => !a.isCompleted).length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {assignments
+                .filter((assignment) => !assignment.isCompleted)
+                .slice(0, 3)
+                .map((assignment) => (
+                  <Card key={assignment._id} className="overflow-hidden">
+                    <div className="relative h-40 w-full">
+                      <Image
+                        src={
+                          assignment.story.coverImage ||
+                          "/placeholder-cover.jpg"
+                        }
+                        alt={assignment.title}
+                        fill
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-center">
+                        <CardTitle className="text-lg">
+                          {assignment.title}
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span>Reading Progress</span>
+                          <span>{assignment.readingProgress}%</span>
+                        </div>
+                        <Progress
+                          value={assignment.readingProgress}
+                          className="h-2"
+                        />
+                      </div>
+
+                      <Link href={`/stories/${assignment.story._id}`}>
+                        <Button variant="secondary" className="w-full">
+                          Continue Reading
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
+          ) : (
+            <p className="text-muted-foreground">No active assignments</p>
+          )}
+        </div>
+      </div>
 
       {/* Quick Actions */}
       <div className="mb-8">
