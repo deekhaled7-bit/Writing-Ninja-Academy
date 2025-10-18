@@ -100,8 +100,7 @@ export async function GET(req: NextRequest) {
       .populate("author", "firstName lastName assignedClasses")
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit)
-      .lean();
+      .limit(limit);
 
     // Get class information for each student
     const classIds = stories.reduce((ids: Set<string>, story: any) => {
@@ -172,7 +171,7 @@ export async function GET(req: NextRequest) {
       }
 
       return {
-        id: story._id,
+        _id: story._id,
         title: story.title,
         student:
           story.authorName ||
