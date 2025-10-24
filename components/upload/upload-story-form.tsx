@@ -158,12 +158,12 @@ export default function UploadStoryForm() {
   };
 
   const handleFileSelection = (file: File) => {
-    const maxSize = 50 * 1024 * 1024; // 50MB
+    const maxSize = 10 * 1024 * 1024; // 10MB
 
     if (file.size > maxSize) {
       toast({
         title: "File too large",
-        description: "Please select a file smaller than 50MB.",
+        description: "Please select a file smaller than 10MB.",
         variant: "destructive",
       });
       return;
@@ -737,7 +737,7 @@ export default function UploadStoryForm() {
             <li>• Be respectful and kind in your stories</li>
             <li>• PDF files should be clear and readable</li>
             <li>• Videos should have good audio quality</li>
-            <li>• Maximum file size: 50MB</li>
+            <li>• Maximum file size: 10MB</li>
           </ul>
         </div>
 
