@@ -8,7 +8,7 @@ import { ConnectDB } from "@/config/db";
 // GET: Fetch a specific quiz by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { quizId: string } }
+  { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -20,9 +20,10 @@ export async function GET(
 
     await ConnectDB();
 
-    const quizId = params.quizId;
+    const { quizId } = await params;
 
     // Fetch the quiz
+    console.log("the quizID" + quizId);
     const quiz = await Quiz.findById(quizId);
 
     if (!quiz) {
@@ -36,7 +37,7 @@ export async function GET(
         { status: 403 }
       );
     }
-
+    console.log(JSON.stringify(quiz));
     return NextResponse.json({ quiz });
   } catch (error) {
     console.error("Error fetching quiz:", error);
@@ -50,7 +51,7 @@ export async function GET(
 // PUT: Update a specific quiz
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { quizId: string } }
+  { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -62,7 +63,7 @@ export async function PUT(
 
     await connectToDatabase();
 
-    const quizId = params.quizId;
+    const { quizId } = await params;
     const body = await req.json();
 
     // Find the quiz

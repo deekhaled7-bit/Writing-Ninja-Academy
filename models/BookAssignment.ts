@@ -11,9 +11,11 @@ export interface IBookAssignment extends Document {
   isCompleted: boolean;
   readingProgress: number; // percentage of completion (0-100)
   lastReadDate: Date | null;
+  quizScore: number | null; // percentage score on the quiz (0-100)
+  quizSubmissionId: mongoose.Types.ObjectId | null; // reference to the quiz submission
 }
 
-const BookAssignmentSchema: Schema = new Schema(
+const BookAssignmentSchema: Schema = new Schema<IBookAssignment>(
   {
     teacherId: {
       type: Schema.Types.ObjectId,
@@ -43,10 +45,7 @@ const BookAssignmentSchema: Schema = new Schema(
       type: Date,
       default: Date.now,
     },
-    dueDate: {
-      type: Date,
-      default: null,
-    },
+
     isCompleted: {
       type: Boolean,
       default: false,
@@ -59,6 +58,15 @@ const BookAssignmentSchema: Schema = new Schema(
     },
     lastReadDate: {
       type: Date,
+      default: null,
+    },
+    quizScore: {
+      type: Number,
+      default: null,
+    },
+    quizSubmissionId: {
+      type: Schema.Types.ObjectId,
+      ref: "QuizSubmission",
       default: null,
     },
   },

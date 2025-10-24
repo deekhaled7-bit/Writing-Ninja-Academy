@@ -34,7 +34,7 @@ interface QuizDocument {
 // POST /api/student/quizzes/[quizId]/submit - Submit a quiz
 export async function POST(
   req: NextRequest,
-  { params }: { params: { quizId: string } }
+  { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -43,7 +43,7 @@ export async function POST(
     }
 
     const studentId = session.user.id;
-    const { quizId } = params;
+    const { quizId } = await params;
     const { answers } = await req.json();
 
     if (!answers || !Array.isArray(answers)) {
@@ -56,18 +56,17 @@ export async function POST(
     await connectDB();
 
     // Find the quiz
-    const quiz = await Quiz.findById(quizId).lean() as unknown as QuizDocument;
+    const quiz = (await Quiz.findById(
+      quizId
+    ).lean()) as unknown as QuizDocument;
     if (!quiz) {
-      return NextResponse.json(
-        { message: "Quiz not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "Quiz not found" }, { status: 404 });
     }
 
     // Check if student has already submitted this quiz
     const existingSubmission = await QuizSubmission.findOne({
       quizId,
-      studentId
+      studentId,
     });
 
     if (existingSubmission) {
@@ -92,7 +91,7 @@ export async function POST(
           questionId: answer.questionId,
           selectedOptionId: answer.selectedOptionId,
           isCorrect: false,
-          points: 0
+          points: 0,
         };
       }
 
@@ -103,7 +102,7 @@ export async function POST(
 
       // Check if the answer is correct
       const isCorrect = selectedOption?.isCorrect || false;
-      
+
       // Add points if correct
       const points = isCorrect ? question.points : 0;
       score += points;
@@ -113,17 +112,15 @@ export async function POST(
         questionId: answer.questionId,
         selectedOptionId: answer.selectedOptionId,
         isCorrect,
-        points
+        points,
       };
     });
 
     // Calculate percentage score
-    const percentageScore = totalPossibleScore > 0 
-      ? Math.round((score / totalPossibleScore) * 100) 
-      : 0;
+    const percentageScore = score;
 
     // Check if passed
-    const passingScore = quiz.passingScore || 70;
+    const passingScore = quiz.passingScore || 50;
     const passed = percentageScore >= passingScore;
 
     // Create submission
@@ -135,7 +132,7 @@ export async function POST(
       totalPossibleScore,
       percentageScore,
       passed,
-      completedAt: new Date()
+      completedAt: new Date(),
     });
 
     await submission.save();
@@ -148,8 +145,8 @@ export async function POST(
         totalPossibleScore,
         percentageScore,
         passed,
-        completedAt: submission.completedAt
-      }
+        completedAt: submission.completedAt,
+      },
     });
   } catch (error) {
     console.error("Error submitting quiz:", error);

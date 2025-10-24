@@ -10,7 +10,8 @@ import mongoose from "mongoose";
 // Define types for user and submission data
 interface UserDocument {
   _id: mongoose.Types.ObjectId;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 
@@ -29,7 +30,7 @@ interface QuizSubmissionDocument {
 // GET /api/teacher/quizzes/[quizId]/submissions - Get all submissions for a quiz
 export async function GET(
   req: NextRequest,
-  { params }: { params: { quizId: string } }
+  { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -45,7 +46,7 @@ export async function GET(
       );
     }
 
-    const { quizId } = params;
+    const { quizId } = await params;
     await connectDB();
 
     // Find the quiz
@@ -62,33 +63,32 @@ export async function GET(
       );
     }
 
-    // Get all submissions for this quiz
+    // Get all submissions for this quiz with populated student data
     const submissions = await QuizSubmission.find({ quizId })
-      .sort({ completedAt: -1 })
-      .lean() as unknown as QuizSubmissionDocument[];
+      .populate({
+        path: "studentId",
+        model: UserModel,
+        select: "name email firstName lastName profilePicture",
+      })
+      .sort({ completedAt: -1 });
 
-    // Get student information for each submission
-    const studentIds = submissions.map((sub) => sub.studentId);
-    const students = await UserModel.find(
-      { _id: { $in: studentIds } },
-      { name: 1, email: 1 }
-    ).lean() as unknown as UserDocument[];
-
-    // Map student info to submissions
+    // Format the submissions for the frontend
     const submissionsWithStudentInfo = submissions.map((submission) => {
-      const student = students.find(
-        (s) => s._id.toString() === submission.studentId.toString()
-      );
-
+      const submissionObj = submission.toObject();
       return {
-        ...submission,
-        student: student
+        ...submissionObj,
+        student: submissionObj.studentId
           ? {
-              _id: student._id,
-              name: student.name,
-              email: student.email,
+              _id: submissionObj.studentId._id,
+              name: submissionObj.studentId.name,
+              email: submissionObj.studentId.email,
+              firstName: submissionObj.studentId.firstName,
+              lastName: submissionObj.studentId.lastName,
+              profilePicture: submissionObj.studentId.profilePicture,
             }
           : null,
+        // Ensure answers are included in the response
+        answers: submissionObj.answers || [],
       };
     });
 

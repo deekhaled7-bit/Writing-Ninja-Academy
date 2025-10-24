@@ -5,7 +5,14 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BookOpen, PenTool, User, LogOut, Home, BookMarked } from "lucide-react";
+import {
+  BookOpen,
+  PenTool,
+  User,
+  LogOut,
+  Home,
+  BookMarked,
+} from "lucide-react";
 
 export default function StudentLayout({
   children,
@@ -89,21 +96,31 @@ export default function StudentLayout({
         <nav className="flex-1 space-y-2">
           <Link
             href="/student"
-            className={`flex items-center justify-center p-2 rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname === "/student" ? "bg-ninja-crimson text-ninja-white" : ""}`}
+            className={`flex items-center justify-center p-2 rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname === "/student" ? "bg-ninja-crimson text-ninja-white" : ""
+            }`}
           >
             <Home className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Dashboard</span>
           </Link>
           <Link
             href="/student/my-stories"
-            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname.startsWith("/student/my-stories") ? "bg-ninja-crimson text-ninja-white" : ""}`}
+            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/student/my-stories")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <BookOpen className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Stories</span>
           </Link>
           <Link
             href="/student/assigned-books"
-            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname.startsWith("/student/assigned-books") ? "bg-ninja-crimson text-ninja-white" : ""}`}
+            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/student/assigned-books")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <BookMarked className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Assigned Books</span>
@@ -111,7 +128,11 @@ export default function StudentLayout({
           {/* Write Story option removed for students */}
           <Link
             href="/student/profile"
-            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${pathname.startsWith("/student/profile") ? "bg-ninja-crimson text-ninja-white" : ""}`}
+            className={`flex items-center  p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/student/profile")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
           >
             <User className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Profile</span>
@@ -132,7 +153,7 @@ export default function StudentLayout({
 
       {/* Main Content */}
       <div className="flex-1 p-8">
-        <div className="bg-ninja-cream rounded-lg shadow-sm p-6">
+        <div className="bg-ninja-white rounded-lg shadow-sm p-6">
           {/* <div className="mb-6">
             <h2 className="text-xl font-semibold">Student Portal</h2>
             <p className="text-sm text-gray-500">

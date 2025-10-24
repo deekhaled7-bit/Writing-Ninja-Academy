@@ -37,7 +37,7 @@ interface QuizDocument {
 // GET /api/student/quizzes/[quizId] - Get a specific quiz
 export async function GET(
   req: NextRequest,
-  { params }: { params: { quizId: string } }
+  { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -45,7 +45,7 @@ export async function GET(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { quizId } = params;
+    const { quizId } = await params;
     await connectDB();
 
     // Find the quiz

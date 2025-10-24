@@ -354,6 +354,22 @@ export default function StoryDetails({
                     onProgress={(cur, total) => {
                       setCurrentPage(cur);
                       setTotalPages(total);
+
+                      // Automatically mark as completed when user reaches 90% of the book
+                      const completionThreshold = Math.floor(total * 0.9);
+                      console.log(
+                        `Progress: ${cur}/${total}, Threshold: ${completionThreshold}, Completed: ${hasCompleted}`
+                      );
+
+                      if (
+                        total > 0 &&
+                        cur >= completionThreshold &&
+                        !hasCompleted
+                      ) {
+                        console.log("Marking story as completed");
+                        setHasCompleted(true); // Directly update state for immediate UI update
+                        handleInteraction("completed");
+                      }
                     }}
                   />
                 </div>
@@ -395,13 +411,13 @@ export default function StoryDetails({
                   {isLiked ? "Liked" : "Like Story"}
                 </Button>
 
-                {!hasCompleted && (
-                  <Button
-                    onClick={() => handleInteraction("completed")}
-                    className="bg-ninja-gold hover:bg-yellow-500 text-ninja-black"
-                  >
-                    Mark as Completed
-                  </Button>
+                {hasCompleted && (
+                  <Link href={`/student/quiz/${story._id}`}>
+                    <Button className="bg-ninja-black hover:bg-blue-600 text-white">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Take Quiz
+                    </Button>
+                  </Link>
                 )}
               </div>
             </div>

@@ -7,8 +7,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   BookOpen,
-  Users,
-  Settings,
   LogOut,
   Home,
   GraduationCap,
@@ -60,19 +58,6 @@ export default function TeacherLayout({
     return () => clearTimeout(redirectTimer);
   }, [session, status, router]);
 
-  const handleSignOut = async () => {
-    try {
-      // First clear the session from the database
-      await fetch("/api/auth/logout");
-      // Then use next-auth's signOut function
-      const { signOut } = await import("next-auth/react");
-      signOut({ callbackUrl: "/signin" });
-    } catch (error) {
-      console.error("Error signing out:", error);
-      router.push("/signin");
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -83,14 +68,8 @@ export default function TeacherLayout({
 
   return (
     <div className="flex min-h-screen bg-ninja-dark">
-      {/* Sidebar */}
-      <div className="lg:w-64 w-16 bg-ninja-cream shadow-lg px-2 lg:px-8 py-2 lg:py-8 flex flex-col">
-        {/* <div className="mb-8 mt-4">
-          <p className="text-sm text-ninja-black lg:block hidden">
-            Welcome, {session?.user?.firstName || "Teacher"}
-          </p>
-        </div> */}
-
+      {/* Sidebar - Hidden on small screens */}
+      <div className="hidden md:flex lg:w-64 w-16 bg-ninja-cream shadow-lg px-2 lg:px-8 py-2 lg:py-8 flex-col">
         <nav className="flex-1 space-y-2">
           <Link
             href="/teacher"
@@ -125,18 +104,6 @@ export default function TeacherLayout({
             <BookOpen className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Stories</span>
           </Link>
-          {/* <Link
-            href="/teacher/students"
-            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
-              pathname.startsWith("/teacher/students")
-                ? "bg-ninja-crimson text-ninja-white"
-                : "text-ninja-b"
-            }`}
-          >
-            <Users className="mr-2 h-5 w-5" />
-            <span className="lg:inline hidden">Students</span>
-          </Link> */}
-          
           <Link
             href="/teacher/quizzes"
             className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
@@ -149,17 +116,6 @@ export default function TeacherLayout({
             <span className="lg:inline hidden">Quizzes</span>
           </Link>
         </nav>
-
-        <div className="mt-auto pt-4 border-t border-ninja-white/20">
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50"
-            onClick={handleSignOut}
-          >
-            <LogOut className="mr-2 h-5 w-5" />
-            <span className="lg:inline hidden">Sign Out</span>
-          </Button>
-        </div>
       </div>
 
       {/* Main Content */}

@@ -13,6 +13,8 @@ import {
   BookOpen,
   PlusCircle,
   LogOut,
+  GraduationCap,
+  Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -161,6 +163,25 @@ export default function Navbar() {
                           : "My Stories"}{" "}
                       </DropdownMenuItem>
                     </Link>
+                    
+                    {/* Teacher quick links */}
+                    {session.user?.role === "teacher" && (
+                      <>
+                        <Link href="/teacher/classes">
+                          <DropdownMenuItem>
+                            <GraduationCap className="mr-2 h-4 w-4" />
+                            Classes
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/teacher/quizzes">
+                          <DropdownMenuItem>
+                            <Award className="mr-2 h-4 w-4" />
+                            Quizzes
+                          </DropdownMenuItem>
+                        </Link>
+                      </>
+                    )}
+                    
                     {/* Student quick links for small screens */}
                     {session.user?.role === "student" && (
                       <>
@@ -278,6 +299,33 @@ export default function Navbar() {
                       ? "Teacher Dashboard"
                       : "Student Dashboard"}
                   </Link>
+                  
+                  {/* Teacher mobile links */}
+                  {session.user?.role === "teacher" && (
+                    <>
+                      <Link
+                        href="/teacher/classes"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Classes
+                      </Link>
+                      <Link
+                        href="/teacher/stories"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Stories
+                      </Link>
+                      <Link
+                        href="/teacher/quizzes"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Quizzes
+                      </Link>
+                    </>
+                  )}
 
                   <button
                     onClick={() => {
