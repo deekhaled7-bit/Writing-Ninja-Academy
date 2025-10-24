@@ -26,6 +26,7 @@ import dynamic from "next/dynamic";
 import VideoPlayer from "@/components/stories/video-player";
 import FlipBook from "./FlipBook";
 import { Progress } from "@/components/ui/progress";
+import { useSearchParams } from "next/navigation";
 
 // Dynamically import PDFViewer with no SSR to avoid DOM API issues
 const PDFViewer = dynamic(() => import("@/components/stories/pdf-viewer"), {
@@ -79,6 +80,9 @@ export default function StoryDetails({
   story,
   comments: initialComments,
 }: StoryDetailsProps) {
+  const searchParams = useSearchParams();
+  const assignmentId = searchParams.get("assignmentId");
+
   const { toast } = useToast();
   // For demo purposes, we'll show as if user is logged in
   const demoUser = {
@@ -411,7 +415,7 @@ export default function StoryDetails({
                   {isLiked ? "Liked" : "Like Story"}
                 </Button>
 
-                {hasCompleted && (
+                {hasCompleted && assignmentId && (
                   <Link href={`/student/quiz/${story._id}`}>
                     <Button className="bg-ninja-black hover:bg-blue-600 text-white">
                       <FileText className="h-4 w-4 mr-2" />
