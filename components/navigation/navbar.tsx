@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-
 import {
   Menu,
   X,
@@ -15,6 +14,10 @@ import {
   LogOut,
   GraduationCap,
   Award,
+  Bell,
+  Gauge,
+  Users,
+  School,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,18 +31,58 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
+
+  // Check for unread notifications
+  useEffect(() => {
+    if (session?.user && session.user.role === "student") {
+      const checkUnreadNotifications = async () => {
+        try {
+          const response = await fetch(
+            `/api/notifications?userId=${session.user.id}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const unreadNotifications = data.filter(
+              (notification: any) => !notification.read
+            );
+            setHasUnreadNotifications(unreadNotifications.length > 0);
+
+            // Update the navbar notification indicator
+            const indicator = document.getElementById(
+              "navbar-notification-indicator"
+            );
+            if (indicator) {
+              indicator.classList.toggle(
+                "hidden",
+                unreadNotifications.length === 0
+              );
+            }
+          }
+        } catch (error) {
+          console.error("Error checking notifications:", error);
+        }
+      };
+
+      checkUnreadNotifications();
+
+      // Check for new notifications every minute
+      const interval = setInterval(checkUnreadNotifications, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [session]);
 
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         isMenuOpen &&
-        mobileMenuRef.current &&
+        menuRef.current &&
         menuButtonRef.current &&
-        !mobileMenuRef.current.contains(event.target as Node) &&
+        !menuRef.current.contains(event.target as Node) &&
         !menuButtonRef.current.contains(event.target as Node)
       ) {
         setIsMenuOpen(false);
@@ -138,7 +181,7 @@ export default function Navbar() {
                       }
                     >
                       <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
+                        <Gauge className="mr-2 h-4 w-4" />
                         {session.user?.role === "admin"
                           ? "Admin Dashboard"
                           : session.user?.role === "teacher"
@@ -146,6 +189,7 @@ export default function Navbar() {
                           : "Student Dashboard"}
                       </DropdownMenuItem>
                     </Link>
+
                     <Link
                       href={
                         session.user?.role === "admin"
@@ -163,7 +207,31 @@ export default function Navbar() {
                           : "My Stories"}{" "}
                       </DropdownMenuItem>
                     </Link>
-                    
+
+                    {/* Admin quick links */}
+                    {session.user?.role === "admin" && (
+                      <>
+                        <Link href="/admin/users">
+                          <DropdownMenuItem>
+                            <Users className="mr-2 h-4 w-4" />
+                            Users
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/admin/grades">
+                          <DropdownMenuItem>
+                            <GraduationCap className="mr-2 h-4 w-4" />
+                            Grades
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/admin/classes">
+                          <DropdownMenuItem>
+                            <School className="mr-2 h-4 w-4" />
+                            Classes
+                          </DropdownMenuItem>
+                        </Link>
+                      </>
+                    )}
+
                     {/* Teacher quick links */}
                     {session.user?.role === "teacher" && (
                       <>
@@ -181,7 +249,7 @@ export default function Navbar() {
                         </Link>
                       </>
                     )}
-                    
+
                     {/* Student quick links for small screens */}
                     {session.user?.role === "student" && (
                       <>
@@ -198,12 +266,34 @@ export default function Navbar() {
                             My Stories
                           </DropdownMenuItem>
                         </Link>
-                        <Link href="/student/profile" className="md:hidden">
+                        <Link href="/student/profile" className="">
                           <DropdownMenuItem>
                             <User className="mr-2 h-4 w-4" />
                             My Profile
                           </DropdownMenuItem>
                         </Link>
+                        <Link href="/student/notifications" className="">
+                          <DropdownMenuItem>
+                            <div className="relative flex items-center">
+                              <Bell className="mr-2 h-4 w-4" />
+                              Notifications
+                              {hasUnreadNotifications && (
+                                <span className="absolute -top-1 -left-1 h-2 w-2 rounded-full bg-red-500" />
+                              )}
+                            </div>
+                          </DropdownMenuItem>
+                        </Link>
+                        {/* <Link href="/student/notifications" className="">
+                          <DropdownMenuItem>
+                            <div className="relative flex items-center">
+                              <Bell className="mr-2 h-4 w-4" />
+                              Notifications
+                              {hasUnreadNotifications && (
+                                <span className="absolute -top-1 -left-1 h-2 w-2 rounded-full bg-red-500" />
+                              )}
+                            </div>
+                          </DropdownMenuItem>
+                        </Link> */}
                       </>
                     )}
                     <DropdownMenuSeparator />
@@ -237,7 +327,20 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden">
+          <div className="lg:hidden flex items-center">
+            {status === "authenticated" && session?.user && (
+              <Link
+                href={`/${session.user.role}/notifications`}
+                className="mr-2"
+              >
+                <div className="relative">
+                  <Bell className="h-5 w-5 text-ninja-white" />
+                  {hasUnreadNotifications && (
+                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
+                  )}
+                </div>
+              </Link>
+            )}
             <Button
               ref={menuButtonRef}
               variant="ghost"
@@ -257,7 +360,7 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div
-            ref={mobileMenuRef}
+            ref={menuRef}
             className="lg:hidden fixed left-0 top-[66px] z-30 border-t bg-ninja-crimson w-[100vw] border-ninja-coral/30"
           >
             <div className="pl-4 pt-2 pb-3 space-y-1">
@@ -299,7 +402,78 @@ export default function Navbar() {
                       ? "Teacher Dashboard"
                       : "Student Dashboard"}
                   </Link>
-                  
+
+                  {/* Student mobile links */}
+                  {session.user?.role === "student" && (
+                    <>
+                      <Link
+                        href="/student/profile"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center">My Profile</div>
+                      </Link>
+                      {/* <Link
+                        href="/student/notifications"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="relative flex items-center">
+                          Notifications
+                          {hasUnreadNotifications && (
+                            <span className="absolute -top-1 -left-1 h-2 w-2 rounded-full bg-red-500" />
+                          )}
+                        </div>
+                      </Link> */}
+                    </>
+                  )}
+
+                  {/* Admin mobile links */}
+                  {session.user?.role === "admin" && (
+                    <>
+                      <Link
+                        href="/admin/users"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          {/* <Users className="mr-2 h-4 w-4" /> */}
+                          Users
+                        </div>
+                      </Link>
+                      <Link
+                        href="/admin/grades"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          {/* <GraduationCap className="mr-2 h-4 w-4" /> */}
+                          Grades
+                        </div>
+                      </Link>
+                      <Link
+                        href="/admin/classes"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          {/* <School className="mr-2 h-4 w-4" /> */}
+                          Classes
+                        </div>
+                      </Link>
+                      <Link
+                        href="/admin/stories"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <div className="flex items-center">
+                          {/* <BookOpen className="mr-2 h-4 w-4" /> */}
+                          Stories
+                        </div>
+                      </Link>
+                    </>
+                  )}
+
                   {/* Teacher mobile links */}
                   {session.user?.role === "teacher" && (
                     <>

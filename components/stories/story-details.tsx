@@ -27,6 +27,7 @@ import VideoPlayer from "@/components/stories/video-player";
 import FlipBook from "./FlipBook";
 import { Progress } from "@/components/ui/progress";
 import { useSearchParams } from "next/navigation";
+import CommentSection from "@/app/stories/CommentSection";
 
 // Dynamically import PDFViewer with no SSR to avoid DOM API issues
 const PDFViewer = dynamic(() => import("@/components/stories/pdf-viewer"), {
@@ -281,7 +282,8 @@ export default function StoryDetails({
               </div>
 
               {/* Stats */}
-              <div className="flex items-center gap-6 text-ninja-gray">
+              <CommentSection storyId={story._id}></CommentSection>
+              {/* <div className="flex items-center gap-6 text-ninja-gray">
                 <div className="flex items-center gap-1">
                   <Eye className="h-4 w-4" />
                   {story.readCount} reads
@@ -294,7 +296,7 @@ export default function StoryDetails({
                   <MessageCircle className="h-4 w-4" />
                   {story.commentCount} comments
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Story Content */}
@@ -399,7 +401,7 @@ export default function StoryDetails({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4 mt-6">
+              {/* <div className="flex flex-wrap gap-4 mt-6">
                 <Button
                   onClick={() => handleInteraction("like")}
                   variant={isLiked ? "default" : "outline"}
@@ -423,16 +425,15 @@ export default function StoryDetails({
                     </Button>
                   </Link>
                 )}
-              </div>
+              </div> */}
             </div>
 
             {/* Comments Section */}
-            <div className="ninja-scroll p-8">
+            {/* <div className="ninja-scroll p-8">
               <h2 className="font-oswald text-2xl text-ninja-black mb-6">
                 Comments ({comments.length})
               </h2>
 
-              {/* Add Comment Form */}
               <form onSubmit={handleCommentSubmit} className="mb-8">
                 <Textarea
                   placeholder="Share your thoughts about this story..."
@@ -451,7 +452,6 @@ export default function StoryDetails({
                 </Button>
               </form>
 
-              {/* Comments List */}
               <div className="space-y-6">
                 {comments.length > 0 ? (
                   comments.map((comment) => (
@@ -485,7 +485,7 @@ export default function StoryDetails({
                   </p>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Sidebar */}

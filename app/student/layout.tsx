@@ -12,6 +12,7 @@ import {
   LogOut,
   Home,
   BookMarked,
+  Bell,
 } from "lucide-react";
 
 export default function StudentLayout({
@@ -22,6 +23,7 @@ export default function StudentLayout({
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -59,6 +61,36 @@ export default function StudentLayout({
     return () => clearTimeout(redirectTimer);
   }, [session, status, router]);
 
+  // Check for unread notifications
+  useEffect(() => {
+    const checkUnreadNotifications = async () => {
+      if (session?.user?.id && !loading) {
+        try {
+          const response = await fetch(
+            `/api/notifications?userId=${session.user.id}`
+          );
+          if (response.ok) {
+            const notifications = await response.json();
+            // Check if there are any unread notifications
+            const unreadExists = notifications.some(
+              (notification: any) => !notification.read
+            );
+            setHasUnreadNotifications(unreadExists);
+          }
+        } catch (error) {
+          console.error("Error checking unread notifications:", error);
+        }
+      }
+    };
+
+    if (session?.user?.id && !loading) {
+      checkUnreadNotifications();
+      // Set up interval to check for new notifications every minute
+      const interval = setInterval(checkUnreadNotifications, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [session, loading]);
+
   const handleSignOut = async () => {
     try {
       // First clear the session from the database
@@ -83,7 +115,7 @@ export default function StudentLayout({
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar (hidden on small screens) */}
-      <div className="hidden md:flex md:w-64 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex-col">
+      <div className="hidden md:flex md:w-20 lg:w-64 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex-col">
         <div className="mb-8 mt-4">
           {/* <h1 className="text-xl font-bold text-ninja-crimson lg:block hidden">
             Student Dashboard
@@ -136,6 +168,22 @@ export default function StudentLayout({
           >
             <User className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">My Profile</span>
+          </Link>
+          <Link
+            href="/student/notifications"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/student/notifications")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            } relative`}
+          >
+            <div className="relative flex items-center">
+              <Bell className="mr-2 h-5 w-5" />
+              <span className="lg:inline hidden">Notifications</span>
+              {hasUnreadNotifications && (
+                <span className="absolute top-0 left-0 h-2 w-2 rounded-full bg-red-500" />
+              )}
+            </div>
           </Link>
         </nav>
 

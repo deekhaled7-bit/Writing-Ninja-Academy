@@ -117,10 +117,10 @@ export default function AssignedBooks() {
       <h1 className="text-2xl font-bold tracking-tight mb-6">Assigned Books</h1>
       <div>
         <Tabs defaultValue="active" className="w-full">
-          {/* <TabsList className="mb-4">
+          <TabsList className="mb-4">
             <TabsTrigger value="active">Active Assignments</TabsTrigger>
             <TabsTrigger value="completed">Completed</TabsTrigger>
-          </TabsList> */}
+          </TabsList>
 
           <TabsContent value="active">
             {assignments.filter((a) => !a.isCompleted).length > 0 ? (
@@ -226,7 +226,10 @@ export default function AssignedBooks() {
                 {assignments
                   .filter((assignment) => assignment.isCompleted)
                   .map((assignment) => (
-                    <Card key={assignment._id} className="overflow-hidden">
+                    <Card
+                      key={assignment._id}
+                      className="overflow-hidden bg-ninja-light-gray text-ninja-black"
+                    >
                       <div className="relative h-40 w-full">
                         <Image
                           src={
@@ -263,7 +266,9 @@ export default function AssignedBooks() {
                           </span>
                         </div>
 
-                        <Link href={`/stories/${assignment.story._id}`}>
+                        <Link
+                          href={`/stories/${assignment.story._id}?assignmentId=${assignment._id}`}
+                        >
                           <Button variant="outline" className="w-full">
                             Read Again
                           </Button>

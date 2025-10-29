@@ -63,7 +63,7 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar (hidden on small screens) */}
-      <div className="hidden md:flex md:w-64 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex-col">
+      <div className="hidden md:flex md:w-20 lg:w-64 bg-ninja-cream shadow-md px-2  lg:px-8 py-2 lg:py-8 flex-col">
         <div className="mb-8 mt-4">
           {/* <h1 className="text-xl font-bold text-ninja-crimson lg:block hidden">
             Admin Dashboard
@@ -154,7 +154,7 @@ export default function AdminLayout({
 
       {/* Main content */}
       <div className="flex-1 p-8">
-        <div className="bg-ninja-cream rounded-lg shadow-sm p-6">
+        <div className="bg-ninja-light-gray rounded-lg shadow-sm p-6">
           {/* <div className="mb-6">
             <h2 className="text-xl font-semibold">Admin Portal</h2>
             <p className="text-sm text-gray-500">

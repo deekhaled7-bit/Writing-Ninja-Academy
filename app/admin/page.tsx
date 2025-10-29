@@ -77,7 +77,7 @@ export default function AdminDashboard() {
       <h1 className="text-2xl font-bold mb-6">Dashboard Overview</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
+        <Card className="text-ninja-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
             <Users className="h-4 w-4 text-ninja-crimson" />
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="text-ninja-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Stories</CardTitle>
             <BookOpen className="h-4 w-4 text-ninja-crimson" />
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="text-ninja-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Teachers</CardTitle>
             <Award className="h-4 w-4 text-ninja-crimson" />
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="text-ninja-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Students</CardTitle>
             <Users className="h-4 w-4 text-ninja-crimson" />
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
 
       {/* Additional Analytics Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
-        <Card>
+        <Card className="text-ninja-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
               Total Story Reads
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
 
       {/* Top Stories by Reads */}
       <div className="grid grid-cols-1 gap-6 mb-8">
-        <Card>
+        <Card className="bg-ninja-light-gray">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
               Top Stories by Reads
@@ -195,11 +195,11 @@ export default function AdminDashboard() {
                           <span className="font-medium  transition-colors">
                             {story.title}
                           </span>
-                          <span className="text-sm text-ninja-light-gray">
+                          <span className="text-sm text-ninja-gray">
                             {story.description}
                           </span>
                           {story.authorName && (
-                            <span className="text-xs text-ninja-cream">
+                            <span className="text-xs text-ninja-crimson">
                               by {story.authorName}
                             </span>
                           )}

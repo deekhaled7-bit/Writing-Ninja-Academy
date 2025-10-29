@@ -701,7 +701,7 @@ export default function UploadStoryForm() {
                   </h3>
                   <p className="text-ninja-gray">or click to browse files</p>
                   <p className="text-sm text-ninja-gray">
-                    Supported formats: PDF, MP4, MOV, AVI (max 50MB)
+                    Supported formats: PDF, MP4, MOV, AVI (max 10MB)
                   </p>
                 </div>
                 <input

@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,68 +31,49 @@ import {
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { format } from "date-fns";
-import QuizzesInDashboard from "./quizzes/QuizzesInDashboard";
 
-type DashboardStats = {
-  totalStudents: number;
-  totalStories: number;
-  pendingReviews: number;
-};
+const BooksAssignments = () => {
+  type Class = {
+    _id: string;
+    className: string;
+  };
 
-type Class = {
-  _id: string;
-  className: string;
-};
-
-type Student = {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  profilePicture: string;
-  email: string;
-};
-
-type Story = {
-  _id: string;
-  title: string;
-  coverImage: string;
-};
-
-type BookAssignment = {
-  _id: string;
-  title: string;
-  studentId: Student | null;
-  storyId: Story;
-  assignedDate: string;
-  // dueDate: string | null;
-  isCompleted: boolean;
-  readingProgress: number;
-  // New properties for grouped assignments
-  isGrouped?: boolean;
-  studentCount?: number;
-  students?: Array<{
+  type Student = {
     _id: string;
     firstName: string;
     lastName: string;
     profilePicture: string;
-    readingProgress?: number;
-    isCompleted?: boolean;
-  } | null>;
-  expanded?: boolean;
-};
+    email: string;
+  };
 
-export default function TeacherDashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalStudents: 0,
-    totalStories: 0,
-    pendingReviews: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [stories, setStories] = useState<Story[]>([]);
-  const [assignments, setAssignments] = useState<BookAssignment[]>([]);
+  type Story = {
+    _id: string;
+    title: string;
+    coverImage: string;
+  };
+
+  type BookAssignment = {
+    _id: string;
+    title: string;
+    studentId: Student | null;
+    storyId: Story;
+    assignedDate: string;
+    // dueDate: string | null;
+    isCompleted: boolean;
+    readingProgress: number;
+    // New properties for grouped assignments
+    isGrouped?: boolean;
+    studentCount?: number;
+    students?: Array<{
+      _id: string;
+      firstName: string;
+      lastName: string;
+      profilePicture: string;
+      readingProgress?: number;
+      isCompleted?: boolean;
+    } | null>;
+    expanded?: boolean;
+  };
   const [selectedClass, setSelectedClass] = useState<string>("");
   const [selectedStudent, setSelectedStudent] = useState<string>("all");
   const [selectedStory, setSelectedStory] = useState<string>("");
@@ -101,114 +81,11 @@ export default function TeacherDashboard() {
   const [assignmentTitle, setAssignmentTitle] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [assignmentLoading, setAssignmentLoading] = useState(false);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [assignments, setAssignments] = useState<BookAssignment[]>([]);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await fetch("/api/teacher/stats");
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
-        } else {
-          console.error("Failed to fetch teacher stats");
-          // Fallback to default values
-          setStats({
-            totalStudents: 0,
-            totalStories: 0,
-            pendingReviews: 0,
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching teacher stats:", error);
-        // Fallback to default values
-        setStats({
-          totalStudents: 0,
-          totalStories: 0,
-          pendingReviews: 0,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-    fetchClasses();
-    fetchStories();
-    fetchAssignments();
-  }, []);
-
-  // Fetch classes taught by the teacher
-  const fetchClasses = async () => {
-    try {
-      const response = await fetch("/api/teacher/classes/");
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data.classes);
-        // console.log("frontend classes" + JSON.stringify(data.classes));
-        setClasses(data.classes);
-        if (data.classes.length > 0) {
-          setSelectedClass(data.classes[0]._id);
-          fetchStudents(data.classes[0]._id);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-    }
-  };
-
-  // Fetch students in a class
-  const fetchStudents = async (classId: string) => {
-    try {
-      const response = await fetch(`/api/teacher/students?classId=${classId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setStudents(data.students);
-      }
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    }
-  };
-
-  // Fetch available stories
-  const fetchStories = async () => {
-    try {
-      const response = await fetch("/api/stories");
-      if (response.ok) {
-        const data = await response.json();
-        setStories(data.stories);
-      }
-    } catch (error) {
-      console.error("Error fetching stories:", error);
-    }
-  };
-
-  // Delete assignment by title and storyId
-  const handleDeleteAssignment = async (title: string, storyId: string) => {
-    if (
-      confirm(`Are you sure you want to delete all assignments for "${title}"?`)
-    ) {
-      try {
-        const response = await fetch("/api/teacher/assign-book", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ title, storyId }),
-        });
-
-        if (response.ok) {
-          // Refresh assignments after deletion
-          fetchAssignments();
-        } else {
-          console.error("Failed to delete assignments");
-        }
-      } catch (error) {
-        console.error("Error deleting assignments:", error);
-      }
-    }
-  };
-
-  // Fetch book assignments
   const fetchAssignments = async () => {
     try {
       const response = await fetch("/api/teacher/assign-book");
@@ -282,14 +159,6 @@ export default function TeacherDashboard() {
       console.error("Error fetching assignments:", error);
     }
   };
-
-  // Handle class change
-  const handleClassChange = (classId: string) => {
-    setSelectedClass(classId);
-    fetchStudents(classId);
-  };
-
-  // Handle assignment submission
   const handleAssignBook = async () => {
     if (!selectedClass || !selectedStory || !assignmentTitle) {
       toast.error("Please fill in all required fields");
@@ -332,80 +201,94 @@ export default function TeacherDashboard() {
       setAssignmentLoading(false);
     }
   };
+  const handleDeleteAssignment = async (title: string, storyId: string) => {
+    if (
+      confirm(`Are you sure you want to delete all assignments for "${title}"?`)
+    ) {
+      try {
+        const response = await fetch("/api/teacher/assign-book", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title, storyId }),
+        });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-ninja-crimson"></div>
-      </div>
-    );
-  }
+        if (response.ok) {
+          // Refresh assignments after deletion
+          fetchAssignments();
+        } else {
+          console.error("Failed to delete assignments");
+        }
+      } catch (error) {
+        console.error("Error deleting assignments:", error);
+      }
+    }
+  };
+  const fetchStudents = async (classId: string) => {
+    try {
+      const response = await fetch(`/api/teacher/students?classId=${classId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setStudents(data.students);
+      }
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  };
+  const handleClassChange = (classId: string) => {
+    setSelectedClass(classId);
+    fetchStudents(classId);
+  };
+  const fetchClasses = async () => {
+    try {
+      const response = await fetch("/api/teacher/classes/");
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.classes);
+        // console.log("frontend classes" + JSON.stringify(data.classes));
+        setClasses(data.classes);
+        if (data.classes.length > 0) {
+          setSelectedClass(data.classes[0]._id);
+          fetchStudents(data.classes[0]._id);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
+  };
+  const fetchStories = async () => {
+    try {
+      const response = await fetch("/api/stories");
+      if (response.ok) {
+        const data = await response.json();
+        setStories(data.stories);
+      }
+    } catch (error) {
+      console.error("Error fetching stories:", error);
+    }
+  };
+  useEffect(() => {
+    fetchClasses();
+    fetchStories();
+    fetchAssignments();
+  }, []);
 
   return (
-    <div className="bg-ninja-light-gray p-4">
-      <h1 className="text-2xl font-bold mb-6 text-ninja-black">
-        Dashboard Overview
-      </h1>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="text-ninja-white">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Students
-            </CardTitle>
-            <Users className="h-4 w-4 text-ninja-crimson" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalStudents}</div>
-            <p className="text-xs text-ninja-white">
-              Students under your guidance
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="text-ninja-white">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Stories</CardTitle>
-            <BookOpen className="h-4 w-4 text-ninja-crimson" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalStories}</div>
-            <p className="text-xs text-ninja-white">
-              Stories created by your students
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="text-ninja-white">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Pending Reviews
-            </CardTitle>
-            <Award className="h-4 w-4 text-ninja-crimson" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingReviews}</div>
-            <p className="text-xs text-ninja-white">
-              Stories waiting for your review
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Book Assignments Section */}
+    <div>
+      {" "}
       <Card className="mb-8 bg-ninja-white">
         <CardHeader className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-2">
             <CardTitle className="text-xl font-semibold text-ninja-black">
               Book Assignments
             </CardTitle>
-            <Link
+            {/* <Link
               href="/teacher/book-assignments"
               className="text-sm text-ninja-crimson hover:underline"
             >
               See All
-            </Link>
+            </Link> */}
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
@@ -554,7 +437,8 @@ export default function TeacherDashboard() {
                 <div className="space-y-4">
                   {assignments
                     .filter((assignment) => !assignment.isCompleted)
-                    .slice(0, 3) // Show only the latest 3 assignments
+                    // .slice(0, 3)
+                    // Show only the latest 3 assignments
                     .map((assignment) => (
                       <div
                         key={assignment._id}
@@ -759,61 +643,8 @@ export default function TeacherDashboard() {
           </Tabs>
         </CardContent>
       </Card>
-      <QuizzesInDashboard />
-
-      {/* Recent Activity */}
-      {/* <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold">
-            Recent Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="bg-ninja-darker p-4 rounded-lg border border-ninja-white/10">
-              <p className="text-sm text-ninja-white">
-                <span className="font-medium text-ninja-crimson">
-                  Sarah Johnson
-                </span>{" "}
-                submitted a new story{" "}
-                <span className="font-medium text-ninja-crimson">
-                  &quot;The Magic Tree&quot;
-                </span>{" "}
-                for review.
-              </p>
-              <p className="text-xs text-ninja-white/70 mt-1">
-                Today at 10:45 AM
-              </p>
-            </div>
-
-            <div className="bg-ninja-darker p-4 rounded-lg border border-ninja-white/10">
-              <p className="text-sm text-ninja-white">
-                <span className="font-medium text-ninja-crimson">
-                  Michael Brown
-                </span>{" "}
-                revised their story{" "}
-                <span className="font-medium text-ninja-crimson">
-                  &quot;Space Adventures&quot;
-                </span>{" "}
-                based on your feedback.
-              </p>
-              <p className="text-xs text-ninja-white/70 mt-1">
-                Yesterday at 3:20 PM
-              </p>
-            </div>
-
-            <div className="bg-ninja-darker p-4 rounded-lg border border-ninja-white/10">
-              <p className="text-sm text-ninja-white">
-                <span className="font-medium text-ninja-crimson">
-                  Emma Davis
-                </span>{" "}
-                joined your class.
-              </p>
-              <p className="text-xs text-ninja-white/70 mt-1">2 days ago</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card> */}
     </div>
   );
-}
+};
+
+export default BooksAssignments;

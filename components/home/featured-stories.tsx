@@ -21,122 +21,42 @@ interface Story {
   fileType: string;
   coverImageUrl: string;
   fileUrl: string;
+  featured?: boolean;
 }
 
-// Featured mock stories for the home page
-const featuredStories: Story[] = [
-  {
-    _id: "11",
-    title: "Quest for the Golden Compass",
-    description:
-      "A group of young explorers must navigate treacherous mountains and solve ancient riddles to find a legendary treasure.",
-    authorName: "Ethan Brown",
-    ageGroup: "13-17",
-    category: "adventure",
-    readCount: 3456,
-    likeCount: 278,
-    createdAt: "2023-12-20T10:00:00Z",
-    fileType: "video",
-    coverImageUrl: "/stories/time-backpack.svg",
-    fileUrl:
-      "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-  },
-  {
-    _id: "6",
-    title: "My Robot Best Friend",
-    description:
-      "A lonely teenager builds a robot companion, but things get complicated when the robot develops feelings.",
-    authorName: "Sarah Kim",
-    ageGroup: "13-17",
-    category: "science-fiction",
-    readCount: 2341,
-    likeCount: 189,
-    createdAt: "2024-01-03T13:20:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/robot-friend.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-  {
-    _id: "9",
-    title: "The New Kid's Superpower",
-    description:
-      "Starting at a new school is hard, but it's even harder when you accidentally reveal you can read minds.",
-    authorName: "Jordan Smith",
-    ageGroup: "13-17",
-    category: "school",
-    readCount: 2987,
-    likeCount: 234,
-    createdAt: "2023-12-25T15:45:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/space-pirates.svg",
-    fileUrl:
-      "https://www.learningcontainer.com/wp-content/uploads/2019/09/sample-pdf-file.pdf",
-  },
-  {
-    _id: "2",
-    title: "Space Pirates of Nebula Seven",
-    description:
-      "Captain Alex and their crew must outsmart alien pirates to save their home planet from destruction.",
-    authorName: "Marcus Rodriguez",
-    ageGroup: "9-12",
-    category: "science-fiction",
-    readCount: 2156,
-    likeCount: 134,
-    createdAt: "2024-01-12T14:20:00Z",
-    fileType: "video",
-    coverImageUrl: "/stories/space-pirates.svg",
-    fileUrl:
-      "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-  },
-  {
-    _id: "5",
-    title: "The Time-Traveling Backpack",
-    description:
-      "When Jake finds an old backpack in his attic, he discovers it can transport him to any time period in history.",
-    authorName: "David Park",
-    ageGroup: "9-12",
-    category: "adventure",
-    readCount: 1876,
-    likeCount: 145,
-    createdAt: "2024-01-05T11:30:00Z",
-    fileType: "video",
-    coverImageUrl: "/stories/time-backpack.svg",
-    fileUrl:
-      "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
-  },
-  {
-    _id: "12",
-    title: "The Singing Whale's Message",
-    description:
-      "A marine biologist's daughter discovers she can understand whale songs and learns about an underwater crisis.",
-    authorName: "Chloe Anderson",
-    ageGroup: "9-12",
-    category: "animals",
-    readCount: 1789,
-    likeCount: 134,
-    createdAt: "2023-12-18T14:30:00Z",
-    fileType: "pdf",
-    coverImageUrl: "/stories/dragon-garden.svg",
-    fileUrl:
-      "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-  },
-];
-
 export default function FeaturedStories() {
-  const [stories] = useState<Story[]>(featuredStories);
-  const [loading] = useState(false);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedStories = async () => {
+      try {
+        const response = await fetch("/api/stories/featured");
+        if (!response.ok) {
+          throw new Error("Failed to fetch featured stories");
+        }
+        const data = await response.json();
+        setStories(data);
+      } catch (error) {
+        console.error("Error fetching featured stories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedStories();
+  }, []);
 
   if (loading) {
     return (
-      <section className="py-20 bg-ninja-cream">
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-oswald text-4xl sm:text-5xl text-ninja-black mb-4">
               Featured Stories
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-8">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="ninja-scroll p-6 animate-pulse">
                 <div className="h-4 bg-ninja-gray bg-opacity-30 rounded w-3/4 mb-4"></div>

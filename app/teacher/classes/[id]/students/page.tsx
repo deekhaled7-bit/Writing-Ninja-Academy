@@ -141,7 +141,7 @@ export default function ClassStudentsPage({ params }: ClientPageProps) {
         </div>
       </div>
 
-      <Card>
+      <Card className="bg-ninja-light-gray text-ninja-black">
         <CardHeader>
           <CardTitle>
             {classData.className} {classData.section} - Grade{" "}
@@ -162,11 +162,11 @@ export default function ClassStudentsPage({ params }: ClientPageProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-ninja-white">Name</TableHead>
-                  <TableHead className="text-ninja-white">Email</TableHead>
-                  <TableHead className="text-right text-ninja-white">
+                  <TableHead className="text-ninja-black">Name</TableHead>
+                  <TableHead className="text-ninja-black">Email</TableHead>
+                  {/* <TableHead className="text-right text-ninja-white">
                     Actions
-                  </TableHead>
+                  </TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -176,7 +176,7 @@ export default function ClassStudentsPage({ params }: ClientPageProps) {
                       {student.firstName} {student.lastName}
                     </TableCell>
                     <TableCell>{student.email}</TableCell>
-                    <TableCell className="text-right">
+                    {/* <TableCell className="text-right">
                       <Button
                         variant="default"
                         size="sm"
@@ -188,7 +188,7 @@ export default function ClassStudentsPage({ params }: ClientPageProps) {
                         <Mail className="mr-2 h-4 w-4" />
                         Assign a reading
                       </Button>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))}
               </TableBody>

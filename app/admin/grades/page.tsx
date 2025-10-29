@@ -300,7 +300,7 @@ export default function GradesPage() {
         </Dialog>
       </div>
 
-      <Card>
+      <Card className="bg-ninja-light-gray">
         <CardHeader>
           <CardTitle>Grades</CardTitle>
           <CardDescription>Manage all grades in the system.</CardDescription>
@@ -308,7 +308,7 @@ export default function GradesPage() {
         <CardContent>
           {grades.length === 0 ? (
             <div className="text-center py-6">
-              <p className="text-ninja-white">
+              <p className="text-ninja-black">
                 No grades found. Create your first grade to get started.
               </p>
             </div>
@@ -316,9 +316,9 @@ export default function GradesPage() {
             <Table>
               <TableHeader>
                 <TableRow className="">
-                  <TableHead className="text-ninja-white">Grade</TableHead>
-                  <TableHead className="text-ninja-white">Name</TableHead>
-                  <TableHead className="text-ninja-white text-right">
+                  <TableHead className="text-ninja-black">Grade</TableHead>
+                  <TableHead className="text-ninja-black">Name</TableHead>
+                  <TableHead className="text-ninja-black text-right">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -343,7 +343,7 @@ export default function GradesPage() {
                         size="sm"
                         onClick={() => openDeleteModal(grade)}
                       >
-                        <Trash2 className="h-4 w-4 text-ninja-white" />
+                        <Trash2 className="h-4 w-4 text-ninja-black" />
                       </Button>
                     </TableCell>
                   </TableRow>

@@ -56,12 +56,12 @@ export async function GET(
     }
 
     // Verify that the teacher created this quiz
-    if (quiz.createdBy.toString() !== session.user.id) {
-      return NextResponse.json(
-        { message: "You can only view submissions for quizzes you created" },
-        { status: 403 }
-      );
-    }
+    // if (quiz.createdBy.toString() !== session.user.id) {
+    //   return NextResponse.json(
+    //     { message: "You can only view submissions for quizzes you created" },
+    //     { status: 403 }
+    //   );
+    // }
 
     // Get all submissions for this quiz with populated student data
     const submissions = await QuizSubmission.find({ quizId })

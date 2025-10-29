@@ -339,7 +339,7 @@ export default function ClassesPage() {
         </Dialog>
       </div>
 
-      <Card>
+      <Card className="bg-ninja-light-gray">
         <CardHeader>
           <CardTitle>Classes</CardTitle>
           <CardDescription>Manage all classes in the system.</CardDescription>
@@ -355,9 +355,9 @@ export default function ClassesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-ninja-white">Class Name</TableHead>
-                  <TableHead className="text-ninja-white">Grade</TableHead>
-                  <TableHead className="text-ninja-white text-right">
+                  <TableHead className="text-ninja-black">Class Name</TableHead>
+                  <TableHead className="text-ninja-black">Grade</TableHead>
+                  <TableHead className="text-ninja-black text-right">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -379,7 +379,7 @@ export default function ClassesPage() {
                         onClick={() => navigateToAssignTeachers(classItem._id)}
                         title="Assign Teachers"
                       >
-                        <Users className="h-4 w-4 text-ninja-white" />
+                        <Users className="h-4 w-4 text-ninja-black" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -395,7 +395,7 @@ export default function ClassesPage() {
                         onClick={() => openDeleteModal(classItem)}
                         title="Delete Class"
                       >
-                        <Trash2 className="h-4 w-4 text-ninja-white" />
+                        <Trash2 className="h-4 w-4 text-ninja-black" />
                       </Button>
                     </TableCell>
                   </TableRow>

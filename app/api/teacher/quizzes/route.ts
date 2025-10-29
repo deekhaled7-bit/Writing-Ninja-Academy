@@ -28,8 +28,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Fetch quizzes with populated story data
-    const quizzes = await Quiz.find(query).populate("storyId", "title");
-    //   .sort({ createdAt: -1 });
+    const quizzes = await Quiz.find(query)
+      .populate("storyId", "title")
+      .sort({ createdAt: -1 });
     // console.log("title" + quizzes[0].storyId.title);
     return NextResponse.json({ quizzes });
   } catch (error) {

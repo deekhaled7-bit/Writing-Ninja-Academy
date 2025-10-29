@@ -109,8 +109,8 @@ export default function TeacherClassesPage() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
+      <Card className="bg-ninja-light-gray text-ninja-black">
+        <CardHeader className="text-ninja-black">
           <CardTitle>Assigned Classes</CardTitle>
           <CardDescription>
             Classes you have been assigned to teach
@@ -128,13 +128,13 @@ export default function TeacherClassesPage() {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow className="text-ninja-white">
-                  <TableHead className="text-ninja-white">
+                <TableRow className="text-ninja-black">
+                  <TableHead className="text-ninja-black">
                     {" "}
                     Class Name
                   </TableHead>
-                  <TableHead className="text-ninja-white">Grade</TableHead>
-                  <TableHead className="text-right text-ninja-white">
+                  <TableHead className="text-ninja-black">Grade</TableHead>
+                  <TableHead className="text-right text-ninja-black">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -151,7 +151,7 @@ export default function TeacherClassesPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
-                        variant="default"
+                        variant="destructive"
                         size="sm"
                         onClick={() =>
                           router.push(

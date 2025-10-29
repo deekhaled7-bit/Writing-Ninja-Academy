@@ -24,6 +24,8 @@ import {
   Save,
   FileUp,
   Loader2,
+  Star,
+  StarIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
@@ -69,6 +71,7 @@ type Story = {
   description?: string;
   category?: string;
   tags?: string[];
+  featured: Boolean;
   coverImageUrl?: string;
   ageGroup?: string;
 };
@@ -471,6 +474,50 @@ export default function StoriesPage() {
     }
   };
 
+  const toggleFeatured = async (storyId: string) => {
+    try {
+      const story = stories.find((s) => s.id === storyId);
+      if (!story) {
+        throw new Error("Story not found");
+      }
+
+      const newFeaturedStatus = !story.featured;
+
+      const response = await fetch(`/api/admin/stories/${storyId}/featured`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ featured: newFeaturedStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update featured status");
+      }
+
+      // Update the story in the local state
+      setStories(
+        stories.map((s) =>
+          s.id === storyId ? { ...s, featured: newFeaturedStatus } : s
+        )
+      );
+
+      toast({
+        title: "Success",
+        description: `Story ${
+          newFeaturedStatus ? "marked as featured" : "removed from featured"
+        }`,
+      });
+    } catch (error) {
+      console.error("Error updating featured status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update featured status. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleUploadPdfClick = (story: Story) => {
     setCurrentStory(story);
     setUploadDialogOpen(true);
@@ -675,6 +722,23 @@ export default function StoriesPage() {
                       title="Download PDF"
                     >
                       <Download className="h-4 w-4 text-blue-700" />
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => toggleFeatured(story.id)}
+                      title={
+                        story.featured
+                          ? "Remove from featured"
+                          : "Mark as featured"
+                      }
+                    >
+                      {story.featured ? (
+                        <StarIcon className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                      ) : (
+                        <Star className="h-4 w-4 text-yellow-500" />
+                      )}
                     </Button>
 
                     <Button

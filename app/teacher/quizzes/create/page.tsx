@@ -14,8 +14,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusCircle, Trash2, ArrowLeft, Save } from "lucide-react";
+import { PlusCircle, Trash2, ArrowLeft, Save, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type Story = {
   _id: string;
@@ -38,6 +46,8 @@ export default function CreateQuiz() {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showExistingQuizDialog, setShowExistingQuizDialog] = useState(false);
+  const [existingQuizStoryTitle, setExistingQuizStoryTitle] = useState("");
 
   const [quizData, setQuizData] = useState({
     title: "",
@@ -87,7 +97,27 @@ export default function CreateQuiz() {
     setQuizData({ ...quizData, [name]: value });
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = async (name: string, value: string) => {
+    // If this is a story selection and not "none", check if a quiz already exists
+    if (name === "storyId" && value !== "none") {
+      try {
+        const response = await fetch(`/api/teacher/quizzes/check-story?storyId=${value}`);
+        const data = await response.json();
+        
+        if (data.exists) {
+          // Find the story title to display in the dialog
+          const selectedStory = stories.find(story => story._id === value);
+          if (selectedStory) {
+            setExistingQuizStoryTitle(selectedStory.title);
+          }
+          setShowExistingQuizDialog(true);
+          return; // Don't update the state if a quiz already exists
+        }
+      } catch (error) {
+        console.error("Error checking for existing quiz:", error);
+      }
+    }
+    
     setQuizData({ ...quizData, [name]: value });
   };
 
@@ -434,6 +464,28 @@ export default function CreateQuiz() {
           </Button>
         </div>
       </form>
+          <Dialog open={showExistingQuizDialog} onOpenChange={setShowExistingQuizDialog}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-red-500" />
+            Quiz Already Exists
+          </DialogTitle>
+          <DialogDescription>
+            A quiz already exists for the story {existingQuizStoryTitle}.
+            Please select a different story to create a quiz.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button onClick={() => setShowExistingQuizDialog(false)}>
+            OK
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     </div>
-  );
+
+  
+)
 }
+

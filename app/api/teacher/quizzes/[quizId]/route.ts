@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import Quiz from "@/models/Quiz";
+import QuizSubmission from "@/models/QuizSubmission";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { connectToDatabase } from "@/utils/mongodb";
 import { ConnectDB } from "@/config/db";
@@ -43,6 +44,54 @@ export async function GET(
     console.error("Error fetching quiz:", error);
     return NextResponse.json(
       { message: "Failed to fetch quiz" },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE: Delete a specific quiz and its submissions
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ quizId: string }> }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    // Check if user is authenticated and is a teacher
+    if (!session || session.user.role !== "teacher") {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    await ConnectDB();
+
+    const { quizId } = await params;
+
+    // Find the quiz
+    const quiz = await Quiz.findById(quizId);
+
+    if (!quiz) {
+      return NextResponse.json({ message: "Quiz not found" }, { status: 404 });
+    }
+
+    // Check if the quiz belongs to the teacher
+    if (quiz.createdBy.toString() !== session.user.id) {
+      return NextResponse.json(
+        { message: "Unauthorized to delete this quiz" },
+        { status: 403 }
+      );
+    }
+
+    // Delete the quiz
+    const deletedQuiz = await Quiz.findByIdAndDelete(quizId);
+    
+    // Also delete any submissions for this quiz
+    await QuizSubmission.deleteMany({ quizId });
+    
+    return NextResponse.json({ message: "Quiz deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting quiz:", error);
+    return NextResponse.json(
+      { message: "Failed to delete quiz" },
       { status: 500 }
     );
   }
