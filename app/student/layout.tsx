@@ -200,7 +200,7 @@ export default function StudentLayout({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 sm:p-4 md:p-8">
         <div className="bg-ninja-white rounded-lg shadow-sm p-6">
           {/* <div className="mb-6">
             <h2 className="text-xl font-semibold">Student Portal</h2>

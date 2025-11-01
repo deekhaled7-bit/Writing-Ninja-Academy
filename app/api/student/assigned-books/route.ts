@@ -6,6 +6,7 @@ import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { ConnectDB } from "@/config/db";
 import Story from "@/models/Story";
 import UserModel from "@/models/userModel";
+import InteractionsModel from "@/models/interactionsModel";
 
 export async function GET(req: NextRequest) {
   try {
@@ -64,7 +65,7 @@ export async function GET(req: NextRequest) {
           assignment.teacherId.firstName + " " + assignment.teacherId.lastName,
       },
     }));
-    console.log("test" + formattedAssignments[0].story.coverImage);
+    // console.log("test" + formattedAssignments[0].story.coverImage);
     return NextResponse.json({ assignments: formattedAssignments });
   } catch (error) {
     console.error("Error fetching assigned books:", error);
@@ -126,6 +127,20 @@ export async function POST(req: NextRequest) {
     if (isCompleted || progress >= 100) {
       assignment.isCompleted = true;
       assignment.readingProgress = 100;
+      // Create interaction
+      const interaction = new InteractionsModel({
+        userId: studentId,
+        notifyUserId: assignment.teacherId,
+        broadcast: false,
+        targetId: assignmentId,
+        targetType: "assignment",
+        actionType: "completed",
+        link: `/teacher/book-assignments`,
+        read: false,
+        createdAt: new Date(),
+        // type: "assignment",
+      });
+      await interaction.save();
     }
 
     await assignment.save();

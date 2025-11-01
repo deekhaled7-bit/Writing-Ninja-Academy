@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -85,11 +85,7 @@ export default function StoryDetails({
   const assignmentId = searchParams.get("assignmentId");
 
   const { toast } = useToast();
-  // For demo purposes, we'll show as if user is logged in
-  const demoUser = {
-    id: "demo-user-id",
-    name: "Demo User",
-  };
+  const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(false);
   const [isReading, setIsReading] = useState(false);
   const [hasCompleted, setHasCompleted] = useState(false);
@@ -417,14 +413,7 @@ export default function StoryDetails({
                   {isLiked ? "Liked" : "Like Story"}
                 </Button>
 
-                {hasCompleted && assignmentId && (
-                  <Link href={`/student/quiz/${story._id}`}>
-                    <Button className="bg-ninja-black hover:bg-blue-600 text-white">
-                      <FileText className="h-4 w-4 mr-2" />
-                      Take Quiz
-                    </Button>
-                  </Link>
-                )}
+               
               </div> */}
             </div>
 
@@ -486,6 +475,14 @@ export default function StoryDetails({
                 )}
               </div>
             </div> */}
+            {hasCompleted && session?.user && (
+              <Link href={`/quiza/${story._id}`}>
+                <Button className="bg-ninja-black hover:bg-blue-600 text-white">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Take Quiz
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Sidebar */}

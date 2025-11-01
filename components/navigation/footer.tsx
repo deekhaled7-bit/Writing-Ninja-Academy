@@ -21,7 +21,7 @@ export default function Footer() {
                 The Writing Ninjas Academy
               </span>
             </Link>
-            <p className="text-ninja-white opacity-80 max-w-md">
+            <p className="text-ninja-white opacity-90 max-w-md">
               Where young authors discover their voice and share their
               incredible stories with the world. Every story matters, every
               voice counts.
@@ -36,25 +36,25 @@ export default function Footer() {
             <div className="space-y-2">
               <Link
                 href="/explore"
-                className="block text-ninja-white opacity-80 hover:text-ninja-coral transition-colors"
+                className="block text-ninja-white opacity-90 hover:text-ninja-coral transition-colors"
               >
                 Explore Stories
               </Link>
               <Link
                 href="/about"
-                className="block text-ninja-white opacity-80 hover:text-ninja-gold transition-colors"
+                className="block text-ninja-white opacity-90 hover:text-ninja-gold transition-colors"
               >
                 About Us
               </Link>
               <Link
                 href="/how-it-works"
-                className="block text-ninja-white opacity-80 hover:text-ninja-gold transition-colors"
+                className="block text-ninja-white opacity-90 hover:text-ninja-gold transition-colors"
               >
                 How It Works
               </Link>
               <Link
                 href="/contact"
-                className="block text-ninja-white opacity-80 hover:text-ninja-gold transition-colors"
+                className="block text-ninja-white opacity-90 hover:text-ninja-gold transition-colors"
               >
                 Contact
               </Link>
@@ -69,27 +69,9 @@ export default function Footer() {
             <div className="space-y-2">
               <Link
                 href="/safety"
-                className="block text-ninja-white opacity-80 hover:text-ninja-coral transition-colors"
+                className="block text-ninja-white opacity-90 hover:text-ninja-coral transition-colors"
               >
-                Safety Guidelines
-              </Link>
-              <Link
-                href="/privacy"
-                className="block text-ninja-white opacity-80 hover:text-ninja-coral transition-colors"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/terms"
-                className="block text-ninja-white opacity-80 hover:text-ninja-coral transition-colors"
-              >
-                Terms of Use
-              </Link>
-              <Link
-                href="/support"
-                className="block text-ninja-white opacity-80 hover:text-ninja-coral transition-colors"
-              >
-                Support
+                Terms And Condistions
               </Link>
             </div>
           </div>
@@ -99,7 +81,7 @@ export default function Footer() {
           <p className="text-ninja-white  text-sm">
             © 2025 The Writing Ninja. All rights reserved.
           </p>
-          <div className="flex items-center text-ninja-white opacity-60 text-sm mt-2 sm:mt-0">
+          <div className="flex items-center text-ninja-white  text-sm mt-2 sm:mt-0">
             Made with <Heart className="h-4 w-4 mx-1 text-ninja-peach" /> for
             young writers
           </div>

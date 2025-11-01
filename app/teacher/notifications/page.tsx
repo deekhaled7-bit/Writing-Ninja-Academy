@@ -12,8 +12,10 @@ interface Notification {
   createdAt: string;
   read: boolean;
   link: string;
-  actionType: "like" | "unlike" | "comment" | "reply";
-  targetType: "story" | "comment" | "reply";
+  actionType: "like" | "unlike" | "comment" | "reply" | "completed";
+  targetType: "story" | "comment" | "reply" | "assignment" | "quiz";
+  targetId?: string;
+  targetTitle?: string;
   userId: {
     _id: string;
     firstName: string;
@@ -36,7 +38,40 @@ export default function NotificationsPage() {
           );
           if (response.ok) {
             const data = await response.json();
-            setNotifications(data);
+            
+            // Process notifications to fetch titles for assignments and quizzes
+            const processedNotifications = await Promise.all(
+              data.map(async (notification: Notification) => {
+                // Only process completed notifications for assignments and quizzes
+                if (notification.actionType === "completed" && 
+                   (notification.targetType === "assignment" || notification.targetType === "quiz")) {
+                  
+                  try {
+                    // Fetch assignment or quiz details to get the title
+                    const endpoint = notification.targetType === "assignment" 
+                      ? `/api/assignments/${notification.targetId}`
+                      : `/api/quizzes/${notification.targetId}`;
+                    
+                    const detailsResponse = await fetch(endpoint);
+                    
+                    if (detailsResponse.ok) {
+                      const details = await detailsResponse.json();
+                      // Get title based on the target type
+                      const title = notification.targetType === "assignment" 
+                        ? details.storyId?.title || "Untitled Book"
+                        : details.title || "Untitled Quiz";
+                      
+                      return { ...notification, targetTitle: title };
+                    }
+                  } catch (error) {
+                    console.error(`Error fetching ${notification.targetType} details:`, error);
+                  }
+                }
+                return notification;
+              })
+            );
+            
+            setNotifications(processedNotifications);
           }
         } catch (error) {
           console.error("Error fetching notifications:", error);
@@ -140,8 +175,18 @@ export default function NotificationsPage() {
                           {notification.actionType === "comment" &&
                             "commented on your"}
                           {notification.actionType === "reply" &&
-                            "replied to your"}{" "}
-                          {notification.targetType}
+                            "replied to your"}
+                          {notification.actionType === "completed" &&
+                            "completed"}{" "}
+                          {notification.targetType === "assignment" && "the book assignment"}
+                          {notification.targetType === "quiz" && "the quiz"}
+                          {(notification.targetType === "story" || 
+                            notification.targetType === "comment" || 
+                            notification.targetType === "reply") && 
+                            notification.targetType}
+                          {(notification.targetType === "assignment" || 
+                            notification.targetType === "quiz") && 
+                            notification.targetTitle && `: ${notification.targetTitle}`}
                         </span>
                       </p>
                       {notification.link ? (

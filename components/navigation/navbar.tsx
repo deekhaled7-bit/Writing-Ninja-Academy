@@ -38,7 +38,7 @@ export default function Navbar() {
 
   // Check for unread notifications
   useEffect(() => {
-    if (session?.user && session.user.role === "student") {
+    if (session?.user) {
       const checkUnreadNotifications = async () => {
         try {
           const response = await fetch(
@@ -235,6 +235,36 @@ export default function Navbar() {
                     {/* Teacher quick links */}
                     {session.user?.role === "teacher" && (
                       <>
+                        <Link
+                          href="/teacher/notifications"
+                          className=""
+                          onClick={async () => {
+                            try {
+                              await fetch("/api/notifications/mark-read", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                              });
+                              setHasUnreadNotifications(false);
+                            } catch (error) {
+                              console.error(
+                                "Error marking notifications as read:",
+                                error
+                              );
+                            }
+                          }}
+                        >
+                          <DropdownMenuItem>
+                            <div className="relative flex items-center">
+                              <Bell className="mr-2 h-4 w-4" />
+                              Notifications
+                              {hasUnreadNotifications && (
+                                <span className="absolute -top-1 -left-1 h-2 w-2 rounded-full bg-red-500" />
+                              )}
+                            </div>
+                          </DropdownMenuItem>
+                        </Link>
                         <Link href="/teacher/classes">
                           <DropdownMenuItem>
                             <GraduationCap className="mr-2 h-4 w-4" />
@@ -272,7 +302,26 @@ export default function Navbar() {
                             My Profile
                           </DropdownMenuItem>
                         </Link>
-                        <Link href="/student/notifications" className="">
+                        <Link
+                          href="/student/notifications"
+                          className=""
+                          onClick={async () => {
+                            try {
+                              await fetch("/api/notifications/mark-read", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                              });
+                              setHasUnreadNotifications(false);
+                            } catch (error) {
+                              console.error(
+                                "Error marking notifications as read:",
+                                error
+                              );
+                            }
+                          }}
+                        >
                           <DropdownMenuItem>
                             <div className="relative flex items-center">
                               <Bell className="mr-2 h-4 w-4" />
@@ -328,15 +377,31 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center">
-            {status === "authenticated" && session?.user && (
+            {status === "authenticated" && session?.user.role !== "admin" && (
               <Link
                 href={`/${session.user.role}/notifications`}
                 className="mr-2"
+                onClick={async () => {
+                  try {
+                    await fetch("/api/notifications/mark-read", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                    });
+                    setHasUnreadNotifications(false);
+                  } catch (error) {
+                    console.error(
+                      "Error marking notifications as read:",
+                      error
+                    );
+                  }
+                }}
               >
                 <div className="relative">
                   <Bell className="h-5 w-5 text-ninja-white" />
                   {hasUnreadNotifications && (
-                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />
+                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-ninja-white" />
                   )}
                 </div>
               </Link>

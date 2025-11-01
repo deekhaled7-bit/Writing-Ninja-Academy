@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { submitQuizAnswers } from "@/app/actions/quiz-actions";
+import InteractionsModel from "@/models/interactionsModel";
+import Quiz from "@/models/Quiz";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,10 +13,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { quizId, storyId, userId, score, answers, bookAssignmentId, submissionId } =
-      await request.json();
+    const {
+      quizId,
+      storyId,
+      userId,
+      score,
+      answers,
+      bookAssignmentId,
+      submissionId,
+    } = await request.json();
 
-    if (!quizId || !storyId || !userId || score === undefined || !submissionId) {
+    if (
+      !quizId ||
+      !storyId ||
+      !userId ||
+      score === undefined ||
+      !submissionId
+    ) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -34,7 +49,26 @@ export async function POST(request: NextRequest) {
       score,
       answers,
       bookAssignmentId,
-      submissionId
+      submissionId,
+    });
+
+    // Fetch quiz data to get createdBy field
+    const quiz = await Quiz.findById(quizId);
+    if (!quiz) {
+      return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+    }
+
+    InteractionsModel.create({
+      userId: userId,
+      notifyUserId: quiz.createdBy,
+      broadcast: false,
+      link: `${process.env.baseUrl}/teacher/quizzes`,
+      targetId: quizId,
+      targetType: "quiz",
+      actionType: "completed",
+      parentId: quizId,
+      parentType: "quiz",
+      read: false,
     });
 
     if (!result.success) {
@@ -44,9 +78,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      submissionId: result.submissionId 
+    return NextResponse.json({
+      success: true,
+      submissionId: result.submissionId,
     });
   } catch (error) {
     console.error("Error submitting quiz:", error);

@@ -6,10 +6,10 @@ export interface IInteraction extends Document {
   broadcast: boolean;
   targetId: mongoose.Types.ObjectId;
   parentId?: mongoose.Types.ObjectId;
-  parentType?: "story";
+  parentType?: "story" | "quiz" | "assignment";
   replyId?: mongoose.Types.ObjectId;
-  targetType: "story" | "comment" | "reply";
-  actionType: "like" | "unlike" | "comment" | "reply";
+  targetType: "story" | "comment" | "reply" | "quiz" | "assignment";
+  actionType: "like" | "unlike" | "comment" | "reply" | "completed";
   link: string;
   content?: string; // For comments/replies
   read: boolean; // For notification tracking
@@ -20,13 +20,13 @@ const InteractionSchema = new Schema<IInteraction>(
   {
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
       required: true,
       index: true,
     },
     notifyUserId: {
       type: Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
       required: false,
       index: true,
     },
@@ -46,17 +46,17 @@ const InteractionSchema = new Schema<IInteraction>(
     },
     targetType: {
       type: String,
-      enum: ["story", "comment", "reply"],
+      enum: ["story", "comment", "reply", "quiz", "assignment"],
       required: true,
     },
     actionType: {
       type: String,
-      enum: ["like", "unlike", "comment", "reply"],
+      enum: ["like", "unlike", "comment", "reply", "completed"],
       required: true,
     },
     parentType: {
       type: String,
-      enum: ["story"],
+      enum: ["story", "quiz", "assignment"],
       required: false,
     },
     parentId: {

@@ -107,7 +107,7 @@ export default function ContactPage() {
               </div>
 
               {/* Contact Cards */}
-              <div className="space-y-6">
+              {/* <div className="space-y-6">
                 <div className="bg-ninja-cream p-6 rounded-lg border-2 border-ninja-peach ">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-ninja-peach rounded-full flex items-center justify-center">
@@ -151,7 +151,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* FAQ Section */}
               <div className="border-2 border-ninja-peach bg-ninja-cream p-8 rounded-lg">

@@ -5,6 +5,7 @@ import connectDB from "@/lib/mongodb";
 import Quiz from "@/models/Quiz";
 import QuizSubmission from "@/models/QuizSubmission";
 import mongoose from "mongoose";
+import InteractionsModel from "@/models/interactionsModel";
 
 // Define types for quiz data
 interface QuizOption {
@@ -136,7 +137,19 @@ export async function POST(
     });
 
     await submission.save();
-
+    // Create interaction
+    const interaction = new InteractionsModel({
+      userId: studentId,
+      notifyUserId: quiz.createdBy,
+      broadcast: false,
+      targetId: quizId,
+      targetType: "quiz",
+      actionType: "completed",
+      link: `/teacher/quizzes`,
+      read: false,
+      createdAt: new Date(),
+    });
+    await interaction.save();
     return NextResponse.json({
       message: "Quiz submitted successfully",
       submission: {

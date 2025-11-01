@@ -176,7 +176,7 @@ export default function TeacherLayout({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">{children}</div>
+      <div className="flex-1 sm:p-4 md:p-8">{children}</div>
     </div>
   );
 }

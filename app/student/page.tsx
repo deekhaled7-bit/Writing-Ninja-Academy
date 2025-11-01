@@ -20,6 +20,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import FeaturedStories from "@/components/home/featured-stories";
+import FeaturedStoriesAccount from "@/components/account/FeaturedstoriesAccount";
+import RecentStoriesAccount from "@/components/account/RecentStoriesAccount";
 
 type DashboardStats = {
   totalStories: number;
@@ -268,7 +271,7 @@ export default function StudentDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card>
+        <Card className="text-ninja-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Stories</CardTitle>
             <BookOpen className="h-4 w-4 text-ninja-white" />
@@ -281,7 +284,7 @@ export default function StudentDashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="text-ninja-white">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Published</CardTitle>
             <Star className="h-4 w-4 text-ninja-white" />
@@ -414,9 +417,10 @@ export default function StudentDashboard() {
           )}
         </div>
       </div>
-
+      <FeaturedStoriesAccount />
+      <RecentStoriesAccount />
       {/* Quick Actions */}
-      <div className="mb-8">
+      {/* <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
         <div className="flex flex-wrap gap-4">
           <Link href="/student/my-stories">
@@ -444,10 +448,10 @@ export default function StudentDashboard() {
             </Button>
           </Link>
         </div>
-      </div>
+      </div> */}
 
       {/* Recent Activity */}
-      <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+      {/* <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
       <div className="space-y-4">
         {recentActivity.map((activity) => (
           <div
@@ -464,7 +468,7 @@ export default function StudentDashboard() {
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
 
       {/* Writing Tips */}
       {/* <div className="mt-8 p-4 bg-blue-50 rounded-md">
