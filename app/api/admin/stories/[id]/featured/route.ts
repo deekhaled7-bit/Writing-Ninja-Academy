@@ -6,18 +6,15 @@ import Story from "@/models/Story";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
+    const { id } = await params;
     // Connect to database
     await connectDB();
 
@@ -26,20 +23,20 @@ export async function PATCH(
 
     // Update story featured status
     const updatedStory = await Story.findByIdAndUpdate(
-      params.id,
+      id,
       { featured },
       { new: true }
     );
 
     if (!updatedStory) {
-      return NextResponse.json(
-        { error: "Story not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Story not found" }, { status: 404 });
     }
 
     return NextResponse.json(
-      { message: "Story featured status updated successfully", story: updatedStory },
+      {
+        message: "Story featured status updated successfully",
+        story: updatedStory,
+      },
       { status: 200 }
     );
   } catch (error) {
