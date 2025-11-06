@@ -848,18 +848,21 @@ const CommentSection = ({ storyId }: CommentSectionProps) => {
                         <Reply className="mr-1 h-4 w-4" />
                         Reply
                       </button>
-                      {session?.user?.id ===
+                      {((session?.user?.id ===
                         (typeof comment.userId === "string"
                           ? comment.userId
-                          : comment.userId?._id) && (
-                        <button
-                          onClick={() => handleDeleteComment(comment._id || "")}
-                          className="flex items-center text-center justify-center text-sm text-red-500 hover:text-red-700"
-                        >
-                          <Trash2 className="mr-1 h-4 w-4" />
-                          Delete
-                        </button>
-                      )}
+                          : comment.userId?._id)) ||
+                        session?.user.role === "admin") && (
+                          <button
+                            onClick={() =>
+                              handleDeleteComment(comment._id || "")
+                            }
+                            className="flex items-center text-center justify-center text-sm text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="mr-1 h-4 w-4" />
+                            Delete
+                          </button>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -1027,23 +1030,24 @@ const CommentSection = ({ storyId }: CommentSectionProps) => {
                                     {reply.likes?.length || 0}
                                   </button>
 
-                                  {session?.user?.id ===
+                                  {((session?.user?.id ===
                                     (typeof reply.userId === "string"
                                       ? reply.userId
-                                      : reply.userId?._id) && (
-                                    <button
-                                      onClick={() =>
-                                        handleDeleteReply(
-                                          comment._id || "",
-                                          reply._id || ""
-                                        )
-                                      }
-                                      className="flex items-center text-xs text-red-500 hover:text-red-700"
-                                    >
-                                      <Trash2 className="mr-1 h-3 w-3" />
-                                      Delete
-                                    </button>
-                                  )}
+                                      : reply.userId?._id)) ||
+                                    session?.user.role === "admin") && (
+                                      <button
+                                        onClick={() =>
+                                          handleDeleteReply(
+                                            comment._id || "",
+                                            reply._id || ""
+                                          )
+                                        }
+                                        className="flex items-center text-xs text-red-500 hover:text-red-700"
+                                      >
+                                        <Trash2 className="mr-1 h-3 w-3" />
+                                        Delete
+                                      </button>
+                                    )}
                                 </div>
                               </div>
                             </div>

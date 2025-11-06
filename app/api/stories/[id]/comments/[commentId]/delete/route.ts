@@ -53,7 +53,7 @@ export async function DELETE(
     }
 
     // Check if the user is the owner of the comment
-    if (comment.userId.toString() !== userId) {
+    if (comment.userId.toString() !== userId && session.user.role !== "admin") {
       return NextResponse.json(
         { error: "You can only delete your own comments" },
         { status: 403 }

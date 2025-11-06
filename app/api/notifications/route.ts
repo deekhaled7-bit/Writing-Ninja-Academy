@@ -26,6 +26,12 @@ export async function GET(request: NextRequest) {
         model: "User",
         select: "firstName lastName profilePicture",
       })
+      // Populate story using parentId when applicable (e.g., story/comment/reply interactions)
+      .populate({
+        path: "parentId",
+        model: "Story",
+        select: "title _id",
+      })
       .sort({ createdAt: -1 }) // Sort by newest first
       .limit(50); // Limit to 50 notifications
 

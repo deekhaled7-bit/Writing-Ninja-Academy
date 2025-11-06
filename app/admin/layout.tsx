@@ -13,6 +13,7 @@ import {
   LogOut,
   GraduationCap,
   School,
+  Bell,
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -23,6 +24,7 @@ export default function AdminLayout({
   const router = useRouter();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
+  const [hasUnreadAdmin, setHasUnreadAdmin] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -59,6 +61,39 @@ export default function AdminLayout({
 
     return () => clearTimeout(redirectTimer);
   }, [session, status, router]);
+
+  // Fetch unread admin notifications count to show badge
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        if (status === "authenticated" && session?.user?.role === "admin") {
+          const res = await fetch("/api/admin/notifications/unread-count");
+          if (res.ok) {
+            const data = await res.json();
+            setHasUnreadAdmin((data?.count || 0) > 0);
+          } else {
+            setHasUnreadAdmin(false);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch admin unread count:", err);
+        setHasUnreadAdmin(false);
+      }
+    };
+
+    fetchUnread();
+  }, [status, session]);
+
+  const handleNotificationsClick = async () => {
+    try {
+      // Mark all admin notifications as read; ignore errors
+      await fetch("/api/admin/notifications/mark-read", { method: "POST" });
+    } catch (err) {
+      console.error("Failed to mark admin notifications read:", err);
+    }
+    // Optimistically hide the unread badge
+    setHasUnreadAdmin(false);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -122,6 +157,23 @@ export default function AdminLayout({
           >
             <BookOpen className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Stories</span>
+          </Link>
+          <Link
+            href="/admin/notifications"
+            onClick={handleNotificationsClick}
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/admin/notifications")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
+          >
+            <span className="relative mr-2">
+              <Bell className="h-5 w-5" />
+              {hasUnreadAdmin && (
+                <span className="absolute -top-1 -right-1 block h-2 w-2 rounded-full bg-red-500" />
+              )}
+            </span>
+            <span className="lg:inline hidden">Notifications</span>
           </Link>
           {/* <Link
             href="/admin/settings"

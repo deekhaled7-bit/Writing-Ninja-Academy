@@ -32,6 +32,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+  const [hasUnreadAdminNotifications, setHasUnreadAdminNotifications] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
@@ -71,6 +72,29 @@ export default function Navbar() {
 
       // Check for new notifications every minute
       const interval = setInterval(checkUnreadNotifications, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [session]);
+
+  // Check for unread admin notifications (readByAdmin: false)
+  useEffect(() => {
+    if (session?.user?.role === "admin") {
+      const checkUnreadAdminNotifications = async () => {
+        try {
+          const response = await fetch(`/api/admin/notifications/unread-count`);
+          if (response.ok) {
+            const data = await response.json();
+            setHasUnreadAdminNotifications((data?.count || 0) > 0);
+          }
+        } catch (error) {
+          console.error("Error checking admin notifications:", error);
+        }
+      };
+
+      checkUnreadAdminNotifications();
+
+      // Check for new admin notifications every minute
+      const interval = setInterval(checkUnreadAdminNotifications, 60000);
       return () => clearInterval(interval);
     }
   }, [session]);
@@ -211,6 +235,36 @@ export default function Navbar() {
                     {/* Admin quick links */}
                     {session.user?.role === "admin" && (
                       <>
+                        <Link
+                          href="/admin/notifications"
+                          className=""
+                          onClick={async () => {
+                            try {
+                              await fetch("/api/admin/notifications/mark-read", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                              });
+                              setHasUnreadAdminNotifications(false);
+                            } catch (error) {
+                              console.error(
+                                "Error marking admin notifications as read:",
+                                error
+                              );
+                            }
+                          }}
+                        >
+                          <DropdownMenuItem>
+                            <div className="relative flex items-center">
+                              <Bell className="mr-2 h-4 w-4" />
+                              Notifications
+                              {hasUnreadAdminNotifications && (
+                                <span className="absolute -top-1 -left-1 h-2 w-2 rounded-full bg-red-500" />
+                              )}
+                            </div>
+                          </DropdownMenuItem>
+                        </Link>
                         <Link href="/admin/users">
                           <DropdownMenuItem>
                             <Users className="mr-2 h-4 w-4" />
@@ -232,7 +286,9 @@ export default function Navbar() {
                       </>
                     )}
 
+                   
                     {/* Teacher quick links */}
+                   
                     {session.user?.role === "teacher" && (
                       <>
                         <Link
@@ -401,6 +457,35 @@ export default function Navbar() {
                 <div className="relative">
                   <Bell className="h-5 w-5 text-ninja-white" />
                   {hasUnreadNotifications && (
+                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-ninja-white" />
+                  )}
+                </div>
+              </Link>
+            )}
+            {status === "authenticated" && session?.user.role === "admin" && (
+              <Link
+                href={`/admin/notifications`}
+                className="mr-2"
+                onClick={async () => {
+                  try {
+                    await fetch("/api/admin/notifications/mark-read", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                    });
+                    setHasUnreadAdminNotifications(false);
+                  } catch (error) {
+                    console.error(
+                      "Error marking admin notifications as read:",
+                      error
+                    );
+                  }
+                }}
+              >
+                <div className="relative">
+                  <Bell className="h-5 w-5 text-ninja-white" />
+                  {hasUnreadAdminNotifications && (
                     <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-ninja-white" />
                   )}
                 </div>

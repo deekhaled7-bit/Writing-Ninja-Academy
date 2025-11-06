@@ -13,6 +13,7 @@ export interface IInteraction extends Document {
   link: string;
   content?: string; // For comments/replies
   read: boolean; // For notification tracking
+  readByAdmin: boolean; // Admin-specific read tracking
   createdAt: Date;
 }
 
@@ -68,6 +69,10 @@ const InteractionSchema = new Schema<IInteraction>(
       required: false,
     },
     read: {
+      type: Boolean,
+      default: false,
+    },
+    readByAdmin: {
       type: Boolean,
       default: false,
     },
