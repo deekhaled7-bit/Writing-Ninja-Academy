@@ -36,7 +36,7 @@ export default function Footer() {
             <div className="space-y-2">
               <Link
                 href="/explore"
-                className="block text-ninja-white opacity-90 hover:text-ninja-coral transition-colors"
+                className="block text-ninja-white opacity-90 hover:text-ninja-peach transition-colors"
               >
                 Explore Stories
               </Link>
@@ -69,9 +69,27 @@ export default function Footer() {
             <div className="space-y-2">
               <Link
                 href="/safety"
-                className="block text-ninja-white opacity-90 hover:text-ninja-coral transition-colors"
+                className="block text-ninja-white opacity-90 hover:text-ninja-peach transition-colors"
               >
-                Terms And Condistions
+                Terms of Use
+              </Link>
+              <Link
+                href="/privacy"
+                className="block text-ninja-white opacity-90 hover:text-ninja-peach transition-colors"
+              >
+                Privacy policy
+              </Link>
+              <Link
+                href="/childrens-privacy"
+                className="block text-ninja-white opacity-90 hover:text-ninja-peach transition-colors"
+              >
+                Children&apos;s privacy
+              </Link>
+              <Link
+                href="/guidelines"
+                className="block text-ninja-white opacity-90 hover:text-ninja-peach transition-colors"
+              >
+                Safety Guidelines
               </Link>
             </div>
           </div>
