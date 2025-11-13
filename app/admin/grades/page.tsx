@@ -34,10 +34,16 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, AlertCircle } from "lucide-react";
 
+interface School {
+  _id: string;
+  name: string;
+}
+
 interface Grade {
   _id: string;
   gradeNumber: number;
   name: string;
+  schoolID: string;
   description?: string;
   createdAt: string;
   updatedAt: string;
@@ -46,6 +52,7 @@ interface Grade {
 export default function GradesPage() {
   const router = useRouter();
   const [grades, setGrades] = useState<Grade[]>([]);
+  const [schools, setSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(true);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -57,6 +64,7 @@ export default function GradesPage() {
     gradeNumber: "",
     name: "",
     description: "",
+    schoolID: "",
   });
 
   const fetchGrades = async () => {
@@ -82,12 +90,35 @@ export default function GradesPage() {
     }
   };
 
+  const fetchSchools = async () => {
+    try {
+      const response = await fetch("/api/admin/schools");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch schools");
+      }
+
+      const data = await response.json();
+      setSchools(data.schools);
+    } catch (error) {
+      console.error("Error fetching schools:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load schools. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchGrades();
+    fetchSchools();
   }, []);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -98,6 +129,7 @@ export default function GradesPage() {
       gradeNumber: "",
       name: "",
       description: "",
+      schoolID: "",
     });
   };
 
@@ -211,6 +243,7 @@ export default function GradesPage() {
       gradeNumber: grade.gradeNumber.toString(),
       name: grade.name,
       description: grade.description || "",
+      schoolID: grade.schoolID,
       // academicYear: grade.academicYear,
       // isActive: grade.isActive
     });
@@ -249,6 +282,24 @@ export default function GradesPage() {
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
+                <Label htmlFor="schoolID">School</Label>
+                <select
+                  id="schoolID"
+                  name="schoolID"
+                  value={formData.schoolID}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ninja-crimson"
+                  required
+                >
+                  <option value="">Select a school</option>
+                  {schools.map((school) => (
+                    <option key={school._id} value={school._id}>
+                      {school.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="gradeNumber">Grade Number</Label>
                 <Input
                   id="gradeNumber"
@@ -259,6 +310,7 @@ export default function GradesPage() {
                   value={formData.gradeNumber}
                   onChange={handleInputChange}
                   placeholder="1-12"
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -363,6 +415,24 @@ export default function GradesPage() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
+              <Label htmlFor="edit-schoolID">School</Label>
+              <select
+                id="edit-schoolID"
+                name="schoolID"
+                value={formData.schoolID}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ninja-crimson"
+                required
+              >
+                <option value="">Select a school</option>
+                {schools.map((school) => (
+                  <option key={school._id} value={school._id}>
+                    {school.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="edit-gradeNumber">Grade Number</Label>
               <Input
                 id="edit-gradeNumber"
@@ -372,6 +442,7 @@ export default function GradesPage() {
                 max="12"
                 value={formData.gradeNumber}
                 onChange={handleInputChange}
+                required
               />
             </div>
             <div className="space-y-2">

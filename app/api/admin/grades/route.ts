@@ -50,12 +50,12 @@ export async function POST(req: NextRequest) {
     await dbConnect();
 
     const body = await req.json();
-    const { gradeNumber, name, description } = body;
+    const { gradeNumber, name, description, schoolID } = body;
 
     // Validate required fields
-    if (!gradeNumber || !name) {
+    if (!gradeNumber || !name || !schoolID) {
       return NextResponse.json(
-        { error: "Grade number and name are required" },
+        { error: "Grade number, name, and school are required" },
         { status: 400 }
       );
     }
@@ -63,12 +63,13 @@ export async function POST(req: NextRequest) {
     // Check if grade already exists
     const existingGrade = await GradeModel.findOne({
       gradeNumber,
+      schoolID,
     });
 
     if (existingGrade) {
       return NextResponse.json(
         {
-          error: `Grade ${gradeNumber} already exists`,
+          error: `Grade ${gradeNumber} already exists for this school`,
         },
         { status: 409 }
       );
@@ -79,6 +80,7 @@ export async function POST(req: NextRequest) {
       gradeNumber,
       name,
       description,
+      schoolID,
     });
 
     return NextResponse.json({ grade: newGrade }, { status: 201 });

@@ -14,6 +14,7 @@ import {
   GraduationCap,
   School,
   Bell,
+  Building2,
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -125,6 +126,18 @@ export default function AdminLayout({
             <Users className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Users</span>
           </Link>
+          <Link
+            href="/admin/schools"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/admin/schools")
+                ? "bg-ninja-crimson text-ninja-white"
+                : ""
+            }`}
+          >
+            <Building2 className="mr-2 h-5 w-5" />
+            <span className="lg:inline hidden">Schools</span>
+          </Link>
+          
           <Link
             href="/admin/grades"
             className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${

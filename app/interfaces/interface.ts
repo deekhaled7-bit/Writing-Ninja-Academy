@@ -15,6 +15,11 @@ export interface Story {
   fileUrl: string;
 }
 
+export interface ISchool {
+  _id: string;
+  name: string;
+}
+
 export interface CommentUser {
   _id?: string;
   username: string;

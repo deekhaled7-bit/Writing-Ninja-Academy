@@ -81,7 +81,7 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { gradeNumber, name, description } = body;
+    const { gradeNumber, name, description, schoolID } = body;
 
     // Check if grade exists
     const existingGrade = await GradeModel.findById(id);
@@ -90,17 +90,21 @@ export async function PUT(
       return NextResponse.json({ error: "Grade not found" }, { status: 404 });
     }
 
-    // Check if updating to a grade number that already exists
-    if (gradeNumber && gradeNumber !== existingGrade.gradeNumber) {
+    // Check if updating to a grade number that already exists for the same school
+    if (
+      (gradeNumber && gradeNumber !== existingGrade.gradeNumber) ||
+      (schoolID && schoolID.toString() !== existingGrade.schoolID?.toString())
+    ) {
       const duplicateGrade = await GradeModel.findOne({
         _id: { $ne: id },
-        gradeNumber,
+        gradeNumber: gradeNumber || existingGrade.gradeNumber,
+        schoolID: schoolID || existingGrade.schoolID,
       });
 
       if (duplicateGrade) {
         return NextResponse.json(
           {
-            error: `Grade ${gradeNumber} already exists`,
+            error: `Grade ${gradeNumber || existingGrade.gradeNumber} already exists for this school`,
           },
           { status: 409 }
         );
@@ -114,6 +118,7 @@ export async function PUT(
         ...(gradeNumber && { gradeNumber }),
         ...(name && { name }),
         ...(description !== undefined && { description }),
+        ...(schoolID && { schoolID }),
       },
       { new: true, runValidators: true }
     );
