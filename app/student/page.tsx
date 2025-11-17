@@ -67,6 +67,7 @@ export default function StudentDashboard() {
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [assignments, setAssignments] = useState<BookAssignment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [storiesUploaded, setStoriesUploaded] = useState<number>(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -123,6 +124,13 @@ export default function StudentDashboard() {
           if (assignmentsResponse.ok) {
             const assignmentsData = await assignmentsResponse.json();
             setAssignments(assignmentsData.assignments || []);
+          }
+
+          // Fetch profile to get storiesUploaded count
+          const profileRes = await fetch("/api/user/profile");
+          if (profileRes.ok) {
+            const { user } = await profileRes.json();
+            setStoriesUploaded(Number(user?.storiesUploaded || 0));
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -243,7 +251,7 @@ export default function StudentDashboard() {
               </div>
             </Link>
           </div>
-          <div>
+          <div className="flex gap-2 justify-center items-center">
             <h1 className="text-lg md:text-2xl font-bold">
               Welcome,{" "}
               {session?.user?.firstName ||
@@ -255,10 +263,47 @@ export default function StudentDashboard() {
                   ? session.user.name.split(" ").slice(1).join(" ")
                   : "")}
             </h1>
+
+            <span className="mr-2 inline-flex items-center flex-col">
+              {
+                storiesUploaded>0 &&
+              <Image
+                src={`${(() => {
+                  const c = storiesUploaded;
+                  if (c >= 15) return "/belts/Black.png";
+                  if (c >= 10) return "/belts/Brown.png";
+                  if (c >= 7) return "/belts/Blue.png";
+                  if (c >= 5) return "/belts/Green.png";
+                  if (c >= 4) return "/belts/Orange.png";
+                  if (c >= 2) return "/belts/Yellow.png";
+                  return "/belts/White.png";
+                })()}`}
+                alt="Belt"
+                width={80}
+                height={80}
+                className="rounded-full "
+              />
+}
+              <div className="mt-1 text-xs text-ninja-gray text-center w-full">
+                {(() => {
+                  const thresholds = [1, 2, 4, 5, 7, 10, 15];
+                  const next = thresholds.find((t) => t > storiesUploaded);
+                  if (storiesUploaded === 0) return "Upload your first story to get your first belt";
+                  if (!next) return "Max belt reached";
+                  const remain = next - storiesUploaded;
+                  return `${remain} stories to next belt`;
+                })()}
+              </div>
+              <Link href="/belts" className="text-[11px] text-ninja-crimson underline">
+                How belts work
+              </Link>
+            </span>
+
             <div className="flex items-center mt-1">
-              <Badge variant="destructive" className="mr-2">
+              {/* <Badge variant="destructive" className="mr-2">
                 Level {session?.user?.ninjaLevel || 1}
-              </Badge>
+              </Badge> */}
+
               <Badge variant="secondary">
                 {session?.user?.role || "Student"}
               </Badge>

@@ -24,7 +24,7 @@ export async function GET(
     }
     
     const story = await Story.findById(id)
-      .populate('author', 'firstName lastName username profilePicture ninjaLevel')
+      .populate('author', 'firstName lastName username profilePicture ninjaLevel storiesUploaded')
       .lean();
     
     if (!story) {

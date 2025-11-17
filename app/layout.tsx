@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import Navbar from '@/components/navigation/navbar';
 import Footer from '@/components/navigation/footer';
 import { SessionProvider } from '@/components/providers/session-provider';
+import BeltAchievementNotifier from '@/components/providers/belt-achievement-notifier';
 
 export const metadata: Metadata = {
   title: 'The Writing Ninja - Where Young Authors Share Their Stories',
@@ -34,6 +35,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <Toaster />
+          <BeltAchievementNotifier />
         </SessionProvider>
       </body>
     </html>

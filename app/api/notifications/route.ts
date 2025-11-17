@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import InteractionsModel from "@/models/interactionsModel";
 import { connectToDatabase } from "@/utils/mongodb";
 import UserModel from "@/models/userModel";
+import Story from "@/models/Story";
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
     }
 
     await connectToDatabase();
-    console.log("registeringUsers" + UserModel);
+    console.log("registeringUsers" + UserModel + Story);
     // Find interactions where notifyUserId matches the provided userId
     const notifications = await InteractionsModel.find({
       notifyUserId: userId,

@@ -48,7 +48,7 @@ interface Story {
     _id: string;
     name: string;
     profilePicture?: string;
-    ninjaLevel: number;
+    s: number;
   };
   authorName: string;
   ageGroup: string;
@@ -268,7 +268,21 @@ export default function StoryDetails({
                   </div>
                   <div className="text-sm text-ninja-gray flex items-center gap-2">
                     <Star className="h-3 w-3 text-ninja-gold fill-current" />
-                    Level {story.author.ninjaLevel} Ninja
+                    Level {story.author.s} Ninja
+                    <Badge variant="outline" className="ml-2">
+                      {(() => {
+                        const map: Record<number, string> = {
+                          1: "White Belt",
+                          2: "Yellow Belt",
+                          3: "Orange Belt",
+                          4: "Green Belt",
+                          5: "Blue Belt",
+                          6: "Brown Belt",
+                          7: "Black Belt",
+                        };
+                        return map[Number(story.author.s)] || "";
+                      })()}
+                    </Badge>
                   </div>
                 </div>
                 <div className="ml-auto text-sm text-ninja-gray">
@@ -349,7 +363,9 @@ export default function StoryDetails({
                       : ""
                   }
                 >
-                  {session?.user && session.user.active && session.user.verified ? (
+                  {session?.user &&
+                  session.user.active &&
+                  session.user.verified ? (
                     <FlipBook
                       storyId={story._id}
                       fileUrl={story.fileUrl}
@@ -376,13 +392,20 @@ export default function StoryDetails({
                     <div className="text-center py-8">
                       {!session?.user ? (
                         <>
-                          <p className="text-ninja-gray mb-4">Please sign in to read this story.</p>
+                          <p className="text-ninja-gray mb-4">
+                            Please sign in to read this story.
+                          </p>
                           <Link href="/signin">
-                            <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">Sign In</Button>
+                            <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">
+                              Sign In
+                            </Button>
                           </Link>
                         </>
                       ) : (
-                        <p className="text-ninja-gray">Your account is not active or verified. Contact the administrator.</p>
+                        <p className="text-ninja-gray">
+                          Your account is not active or verified. Contact the
+                          administrator.
+                        </p>
                       )}
                     </div>
                   )}
