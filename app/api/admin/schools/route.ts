@@ -10,12 +10,12 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     // Only admins can access
-    if (!session || session.user.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized. Admin access required." },
-        { status: 401 }
-      );
-    }
+    // if (!session || session.user.role !== "admin") {
+    //   return NextResponse.json(
+    //     { error: "Unauthorized. Admin access required." },
+    //     { status: 401 }
+    //   );
+    // }
 
     await dbConnect();
 

@@ -349,31 +349,43 @@ export default function StoryDetails({
                       : ""
                   }
                 >
-                  <FlipBook
-                    storyId={story._id}
-                    fileUrl={story.fileUrl}
-                    cover={story.coverImageUrl || ""}
-                    onProgress={(cur, total) => {
-                      setCurrentPage(cur);
-                      setTotalPages(total);
-
-                      // Automatically mark as completed when user reaches 90% of the book
-                      const completionThreshold = Math.floor(total * 0.9);
-                      console.log(
-                        `Progress: ${cur}/${total}, Threshold: ${completionThreshold}, Completed: ${hasCompleted}`
-                      );
-
-                      if (
-                        total > 0 &&
-                        cur >= completionThreshold &&
-                        !hasCompleted
-                      ) {
-                        console.log("Marking story as completed");
-                        setHasCompleted(true); // Directly update state for immediate UI update
-                        handleInteraction("completed");
-                      }
-                    }}
-                  />
+                  {session?.user && session.user.active && session.user.verified ? (
+                    <FlipBook
+                      storyId={story._id}
+                      fileUrl={story.fileUrl}
+                      cover={story.coverImageUrl || ""}
+                      onProgress={(cur, total) => {
+                        setCurrentPage(cur);
+                        setTotalPages(total);
+                        const completionThreshold = Math.floor(total * 0.9);
+                        console.log(
+                          `Progress: ${cur}/${total}, Threshold: ${completionThreshold}, Completed: ${hasCompleted}`
+                        );
+                        if (
+                          total > 0 &&
+                          cur >= completionThreshold &&
+                          !hasCompleted
+                        ) {
+                          console.log("Marking story as completed");
+                          setHasCompleted(true);
+                          handleInteraction("completed");
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      {!session?.user ? (
+                        <>
+                          <p className="text-ninja-gray mb-4">Please sign in to read this story.</p>
+                          <Link href="/signin">
+                            <Button className="bg-ninja-crimson hover:bg-red-600 text-ninja-white">Sign In</Button>
+                          </Link>
+                        </>
+                      ) : (
+                        <p className="text-ninja-gray">Your account is not active or verified. Contact the administrator.</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {totalPages > 0 && (

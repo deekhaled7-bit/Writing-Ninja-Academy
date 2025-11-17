@@ -19,16 +19,21 @@ import { toast } from "sonner";
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
     name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
     role: "student",
+    schoolId: "",
     gradeId: "",
     classId: "",
   });
+  const [schools, setSchools] = useState([]);
   const [grades, setGrades] = useState([]);
   const [classes, setClasses] = useState([]);
-  const [loadingGrades, setLoadingGrades] = useState(true);
+  const [loadingSchools, setLoadingSchools] = useState(true);
+  const [loadingGrades, setLoadingGrades] = useState(false);
   const [loadingClasses, setLoadingClasses] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,15 +46,45 @@ export default function SignUpPage() {
     });
   };
 
-  // Fetch grades for student registration
+  // Fetch schools for student registration
+  useEffect(() => {
+    const fetchSchools = async () => {
+      try {
+        setLoadingSchools(true);
+        const response = await fetch("/api/admin/schools");
+        if (response.ok) {
+          const data = await response.json();
+          setSchools(data.schools || []);
+        } else {
+          console.error("Failed to fetch schools");
+        }
+      } catch (error) {
+        console.error("Error fetching schools:", error);
+      } finally {
+        setLoadingSchools(false);
+      }
+    };
+
+    fetchSchools();
+  }, []);
+
+  // Fetch grades based on selected school
   useEffect(() => {
     const fetchGrades = async () => {
+      if (!formData.schoolId) {
+        setGrades([]);
+        setFormData((prev) => ({ ...prev, gradeId: "", classId: "" }));
+        return;
+      }
+
       try {
         setLoadingGrades(true);
-        const response = await fetch("/api/grades");
+        const response = await fetch(`/api/grades?schoolId=${formData.schoolId}`);
         if (response.ok) {
           const data = await response.json();
           setGrades(data.grades || []);
+          // Reset gradeId and classId when school changes
+          setFormData((prev) => ({ ...prev, gradeId: "", classId: "" }));
         } else {
           console.error("Failed to fetch grades");
         }
@@ -61,7 +96,7 @@ export default function SignUpPage() {
     };
 
     fetchGrades();
-  }, []);
+  }, [formData.schoolId]);
 
   // Fetch classes based on selected grade
   useEffect(() => {
@@ -104,6 +139,13 @@ export default function SignUpPage() {
       return;
     }
 
+    // Validate school selection for students
+    if (formData.role === "student" && !formData.schoolId) {
+      toast.error("Please select a school");
+      setIsLoading(false);
+      return;
+    }
+
     // Validate grade selection for students
     if (formData.role === "student" && !formData.gradeId) {
       toast.error("Please select a grade");
@@ -126,10 +168,13 @@ export default function SignUpPage() {
         },
         body: JSON.stringify({
           name: formData.name,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
           confirmPassword: formData.confirmPassword,
           role: formData.role,
+          schoolId: formData.schoolId,
           classId: formData.classId,
         }),
       });
@@ -221,6 +266,38 @@ export default function SignUpPage() {
                     required
                     className="font-oswald"
                   />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="firstName" className="text-ninja-gray font-oswald">
+                        First Name
+                      </Label>
+                      <Input
+                        id="firstName"
+                        name="firstName"
+                        type="text"
+                        placeholder="First Name"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        required
+                        className="font-oswald"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName" className="text-ninja-gray font-oswald">
+                        Last Name
+                      </Label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        type="text"
+                        placeholder="Last Name"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        required
+                        className="font-oswald"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label
@@ -295,33 +372,70 @@ export default function SignUpPage() {
                 <>
                   <div className="space-y-2">
                     <Label
-                      htmlFor="gradeId"
+                      htmlFor="schoolId"
                       className="text-ninja-gray font-oswald"
                     >
-                      Select Grade
+                      Select School
                     </Label>
                     <select
-                      id="gradeId"
-                      name="gradeId"
-                      value={formData.gradeId}
+                      id="schoolId"
+                      name="schoolId"
+                      value={formData.schoolId}
                       onChange={handleChange}
                       className="w-full p-2 border text-ninja-gray border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
                       required={formData.role === "student"}
-                      disabled={loadingGrades}
+                      disabled={loadingSchools}
                     >
-                      <option value="">Select a grade</option>
-                      {grades.map((grade: any) => (
-                        <option key={grade._id} value={grade._id}>
-                          Grade {grade.gradeNumber} - {grade.name}
+                      <option value="">Select a school</option>
+                      {schools.map((school: any) => (
+                        <option key={school._id} value={school._id}>
+                          {school.name}
                         </option>
                       ))}
                     </select>
-                    {loadingGrades && (
+                    {loadingSchools && (
                       <p className="text-sm text-ninja-gray">
-                        Loading grades...
+                        Loading schools...
                       </p>
                     )}
                   </div>
+
+                  {formData.schoolId && (
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="gradeId"
+                        className="text-ninja-gray font-oswald"
+                      >
+                        Select Grade
+                      </Label>
+                      <select
+                        id="gradeId"
+                        name="gradeId"
+                        value={formData.gradeId}
+                        onChange={handleChange}
+                        className="w-full p-2 border text-ninja-gray border-gray-300 rounded-md font-oswald focus:outline-none focus:ring-2 focus:ring-ninja-orange"
+                        required={formData.role === "student"}
+                        disabled={loadingGrades}
+                      >
+                        <option value="">Select a grade</option>
+                        {grades.map((grade: any) => (
+                          <option key={grade._id} value={grade._id}>
+                            Grade {grade.gradeNumber} - {grade.name}
+                          </option>
+                        ))}
+                      </select>
+                      {loadingGrades && (
+                        <p className="text-sm text-ninja-gray">
+                          Loading grades...
+                        </p>
+                      )}
+                      {!loadingGrades && grades.length === 0 && (
+                        <p className="text-sm text-ninja-gray">
+                          No grades available for this school
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {formData.gradeId && (
                     <div className="space-y-2">
