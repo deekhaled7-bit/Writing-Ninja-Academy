@@ -265,9 +265,6 @@ export async function POST(request: NextRequest) {
     const savedStory = await newStory.save();
 
     // Update user's stories uploaded count
-    await UserModel.findByIdAndUpdate(author._id, {
-      $inc: { storiesUploaded: 1 },
-    });
 
     return NextResponse.json(
       {

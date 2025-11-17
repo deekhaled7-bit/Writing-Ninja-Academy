@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import dbConnect from "@/lib/mongodb";
 import Story from "@/models/Story";
+import UserModel from "@/models/userModel";
 
 export async function GET(request: NextRequest) {
   try {
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
 
 // Update story status
 export async function PUT(request: NextRequest) {
+  console.log("registering" + UserModel);
   try {
     // Get session to check user role
     const session = await getServerSession(authOptions);
@@ -63,18 +65,19 @@ export async function PUT(request: NextRequest) {
     // Update the story status
     const updatedStory = await Story.findByIdAndUpdate(
       storyId,
-      { 
+      {
         status,
-        isPublished: status === "published"
+        isPublished: status === "published",
       },
       { new: true }
-    ).populate("author", "firstName lastName email");
+    ).populate("author", "_id firstName lastName email");
+
+    await UserModel.findByIdAndUpdate(updatedStory.author._id, {
+      $inc: { storiesUploaded: 1 },
+    });
 
     if (!updatedStory) {
-      return NextResponse.json(
-        { error: "Story not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Story not found" }, { status: 404 });
     }
 
     return NextResponse.json({ story: updatedStory });
