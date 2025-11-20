@@ -4,6 +4,9 @@ import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import dbConnect from "@/lib/mongodb";
 import Story from "@/models/Story";
 import UserModel from "@/models/userModel";
+import ClassModel from "@/models/ClassModel";
+import GradeModel from "@/models/GradeModel";
+import SchoolModel from "@/models/school";
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +25,30 @@ export async function GET(request: NextRequest) {
 
     // Fetch all stories regardless of publication status
     const stories = await Story.find({})
-      .populate("author", "firstName lastName email")
+      .populate({
+        path: "author",
+        select: "firstName lastName email assignedClasses",
+        model: UserModel,
+        options: { strictPopulate: false },
+        populate: {
+          path: "assignedClasses",
+          select: "className grade",
+          model: ClassModel,
+          options: { strictPopulate: false },
+          populate: {
+            path: "grade",
+            select: "name gradeNumber schoolID",
+            model: GradeModel,
+            options: { strictPopulate: false },
+            populate: {
+              path: "schoolID",
+              select: "name",
+              model: SchoolModel,
+              options: { strictPopulate: false },
+            },
+          },
+        },
+      })
       .sort({ createdAt: -1 })
       .lean();
 

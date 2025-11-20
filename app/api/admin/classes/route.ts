@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 
     // Get classes with grade information
     const classes = await ClassModel.find(query)
-      // .populate("grade", "gradeNumber name")
+      .populate("grade", "gradeNumber name")
       .sort({ grade: 1 });
 
     // Get class IDs

@@ -42,7 +42,22 @@ interface User {
   active: boolean;
   verified: boolean;
   gradeId?: string;
+  grade?: {
+    _id: string;
+    name: string;
+    gradeNumber: number;
+    schoolID?: { _id: string; name: string };
+  };
+  gradeName?: string;
+  gradeNumber?: number | string;
+  schoolName?: string;
   assignedClasses?: { className: string; _id: string }[];
+  classNames?: string[];
+  primaryClassName?: string;
+  primaryGradeName?: string;
+  primaryGradeNumber?: number | string;
+  primarySchoolName?: string;
+  primarySchoolId?: string;
   profilePicture?: string;
   createdAt: string;
   updatedAt: string;
@@ -68,14 +83,17 @@ export default function UsersPage() {
     role: "student",
     active: false,
     verified: false,
+    schoolId: "" as string | undefined,
     gradeId: "" as string | undefined,
     assignedClasses: [] as string[],
     classId: "",
   });
 
-  // States for grades and classes
+  // States for schools, grades and classes
+  const [schools, setSchools] = useState<any[]>([]);
   const [grades, setGrades] = useState<any[]>([]);
   const [classes, setClasses] = useState<any[]>([]);
+  const [loadingSchools, setLoadingSchools] = useState(false);
   const [loadingGrades, setLoadingGrades] = useState(false);
   const [loadingClasses, setLoadingClasses] = useState(false);
 
@@ -122,11 +140,31 @@ export default function UsersPage() {
     }
   };
 
-  // Fetch grades for student registration
-  const fetchGrades = async () => {
+  // Fetch schools
+  const fetchSchools = async () => {
+    try {
+      setLoadingSchools(true);
+      const response = await fetch("/api/admin/schools");
+      if (response.ok) {
+        const data = await response.json();
+        setSchools(data.schools || []);
+      } else {
+        console.error("Failed to fetch schools");
+      }
+    } catch (error) {
+      console.error("Error fetching schools:", error);
+    } finally {
+      setLoadingSchools(false);
+    }
+  };
+
+  // Fetch grades for selected school
+  const fetchGrades = async (schoolId?: string) => {
     try {
       setLoadingGrades(true);
-      const response = await fetch("/api/admin/grades");
+      let url = "/api/admin/grades";
+      if (schoolId) url += `?schoolId=${schoolId}`;
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         setGrades(data.grades || []);
@@ -167,15 +205,35 @@ export default function UsersPage() {
     fetchUsers();
   }, [selectedRole, searchTerm]);
 
-  // Fetch grades when component mounts
+  // Fetch schools when component mounts
   useEffect(() => {
-    fetchGrades();
+    fetchSchools();
   }, []);
+
+  // Fetch grades when school changes
+  useEffect(() => {
+    if (formData.role === "student") {
+      if (formData.schoolId) {
+        fetchGrades(formData.schoolId);
+      } else {
+        setGrades([]);
+      }
+      // Reset dependent selections
+      setFormData((prev) => ({ ...prev, gradeId: "", classId: "", assignedClasses: [] }));
+      setClasses([]);
+    }
+  }, [formData.schoolId, formData.role]);
 
   // Fetch classes when grade changes
   useEffect(() => {
-    if (formData.role === "student" && formData.gradeId) {
-      fetchClasses(formData.gradeId);
+    if (formData.role === "student") {
+      if (formData.gradeId) {
+        fetchClasses(formData.gradeId);
+      } else {
+        setClasses([]);
+      }
+      // Reset class selection when grade changes
+      setFormData((prev) => ({ ...prev, classId: "", assignedClasses: [] }));
     }
   }, [formData.gradeId, formData.role]);
 
@@ -198,6 +256,7 @@ export default function UsersPage() {
       role: "student",
       active: false,
       verified: false,
+      schoolId: "",
       gradeId: "",
       assignedClasses: [],
       classId: "",
@@ -325,6 +384,7 @@ export default function UsersPage() {
       role: user.role,
       active: user.active,
       verified: user.verified,
+      schoolId: (user as any).primarySchoolId || undefined,
       gradeId: user.gradeId || undefined,
       assignedClasses: [] as string[],
       classId: "" as string,
@@ -346,8 +406,15 @@ export default function UsersPage() {
         // alert(formData.classId);
 
         // Fetch classes for the selected grade
+        if (initialFormData.schoolId) {
+          await fetchGrades(initialFormData.schoolId);
+        } else {
+          setGrades([]);
+        }
         if (initialFormData.gradeId) {
-          fetchClasses(initialFormData.gradeId);
+          await fetchClasses(initialFormData.gradeId);
+        } else {
+          setClasses([]);
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -486,6 +553,34 @@ export default function UsersPage() {
               {formData.role === "student" && (
                 <>
                   <div className="space-y-2">
+                    <Label htmlFor="schoolId">School</Label>
+                    <Select
+                      value={formData.schoolId || undefined}
+                      onValueChange={(value) => handleSelectChange("schoolId", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select School" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loadingSchools ? (
+                          <SelectItem value="loading" disabled>
+                            Loading...
+                          </SelectItem>
+                        ) : schools.length === 0 ? (
+                          <SelectItem value="no-schools" disabled>
+                            No schools available
+                          </SelectItem>
+                        ) : (
+                          schools.map((school) => (
+                            <SelectItem key={school._id} value={school._id}>
+                              {school.name}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="gradeId">Grade</Label>
                     <Select
                       value={formData.gradeId || undefined}
@@ -500,6 +595,10 @@ export default function UsersPage() {
                         {loadingGrades ? (
                           <SelectItem value="loading" disabled>
                             Loading...
+                          </SelectItem>
+                        ) : !formData.schoolId ? (
+                          <SelectItem value="select-school-first" disabled>
+                            Select a school first
                           </SelectItem>
                         ) : grades.length === 0 ? (
                           <SelectItem value="no-grades" disabled>
@@ -521,9 +620,10 @@ export default function UsersPage() {
                       <Label htmlFor="assignedClasses">Class</Label>
                       <Select
                         value={formData.classId}
-                        onValueChange={(value) =>
-                          handleSelectChange("assignedClasses", [value])
-                        }
+                        onValueChange={(value) => {
+                          handleSelectChange("assignedClasses", [value]);
+                          handleSelectChange("classId", value);
+                        }}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select Class" />
@@ -645,6 +745,9 @@ export default function UsersPage() {
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
+              <TableHead>Class</TableHead>
+              <TableHead>Grade</TableHead>
+              <TableHead>School</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -672,6 +775,44 @@ export default function UsersPage() {
                   <TableCell>{user.username}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
+                  <TableCell>
+                    {user.role === "student" &&
+                    (user.primaryClassName ||
+                      (user.assignedClasses && user.assignedClasses[0]))
+                      ? String(
+                          user.primaryClassName ??
+                            user.assignedClasses?.[0]?.className ??
+                            "-"
+                        )
+                      : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {user.role === "student" &&
+                    (user.primaryGradeName || user.gradeName || user.grade)
+                      ? `Grade ${String(
+                          user.primaryGradeNumber ??
+                            user.gradeNumber ??
+                            (user.grade as any)?.gradeNumber
+                        )}: ${String(
+                          user.primaryGradeName ??
+                            user.gradeName ??
+                            (user.grade as any)?.name
+                        )}`
+                      : "-"}
+                  </TableCell>
+                  <TableCell>
+                    {user.role === "student" &&
+                    (user.primarySchoolName ||
+                      user.schoolName ||
+                      (user.grade as any)?.schoolID)
+                      ? String(
+                          user.primarySchoolName ??
+                            user.schoolName ??
+                            (user.grade as any)?.schoolID?.name ??
+                            "-"
+                        )
+                      : "-"}
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <span
@@ -719,7 +860,7 @@ export default function UsersPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-4">
+                <TableCell colSpan={11} className="text-center py-4">
                   No users found
                 </TableCell>
               </TableRow>

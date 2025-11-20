@@ -4,6 +4,7 @@ import UserModel from "@/models/userModel";
 import { hash } from "bcryptjs";
 import GradeModel from "@/models/GradeModel";
 import ClassModel from "@/models/ClassModel";
+import SchoolModel from "@/models/school";
 
 // GET /api/admin/users - Get all users
 export async function GET(request: NextRequest) {
@@ -32,26 +33,47 @@ export async function GET(request: NextRequest) {
     }
     console.log("registeringModels" + GradeModel + ClassModel);
     const users = await UserModel.find(query)
-      .select("-password") // Exclude password field
-      .populate({
-        path: "grade",
-        select: "name gradeNumber _id",
-        model: GradeModel,
-        options: { strictPopulate: false },
-      })
+      .select("-password")
+
       .populate({
         path: "assignedClasses",
-        select: "className _id",
+        select: "className _id grade",
         model: ClassModel,
         options: { strictPopulate: false },
+        populate: {
+          path: "grade",
+          select: "name gradeNumber schoolID",
+          model: GradeModel,
+          options: { strictPopulate: false },
+          populate: {
+            path: "schoolID",
+            select: "name _id",
+            model: SchoolModel,
+            options: { strictPopulate: false },
+          },
+        },
       })
       .sort({ createdAt: -1 });
 
-    // Map the populated grade to gradeId for frontend consistency
+    // Map class-derived grade and school (from first assigned class)
     const mappedUsers = users.map((user) => {
-      const userObj = user.toObject();
-      if (userObj.grade) {
-        userObj.gradeId = userObj.grade._id;
+      const userObj: any = user.toObject();
+      if (Array.isArray(userObj.assignedClasses)) {
+        userObj.classNames = userObj.assignedClasses.map(
+          (c: any) => c.className
+        );
+        const primary = userObj.assignedClasses[0];
+        if (primary) {
+          userObj.primaryClassName = primary.className;
+          userObj.primaryGradeName = primary.grade?.name;
+          userObj.primaryGradeNumber = primary.grade?.gradeNumber;
+          userObj.primarySchoolName = primary.grade?.schoolID?.name;
+          userObj.primarySchoolId = primary.grade?.schoolID?._id;
+          userObj.gradeId = primary.grade?._id;
+          userObj.gradeName = primary.grade?.name;
+          userObj.gradeNumber = primary.grade?.gradeNumber;
+          userObj.schoolName = primary.grade?.schoolID?.name;
+        }
       }
       return userObj;
     });

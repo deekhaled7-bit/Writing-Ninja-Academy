@@ -65,6 +65,10 @@ type Story = {
   title: string;
   author: string;
   authorEmail: string;
+  authorClassName?: string;
+  authorGradeName?: string;
+  authorGradeNumber?: string | number;
+  authorSchoolName?: string;
   status: "published" | "draft" | "review" | "waiting_revision" | "rejected";
   createdAt: string;
   pdfUrl?: string;
@@ -161,7 +165,9 @@ export default function StoriesPage() {
         const data = await response.json();
 
         // Transform the data to match our Story type
-        const formattedStories = data.stories.map((story: any) => ({
+        const formattedStories = data.stories.map((story: any) => {
+          const primaryClass = story.author?.assignedClasses?.[0];
+          return {
           id: story._id,
           title: story.title,
           author:
@@ -169,6 +175,10 @@ export default function StoriesPage() {
               ? `${story.author.firstName} ${story.author.lastName}`
               : "Unknown",
           authorEmail: story.author?.email || "N/A",
+          authorClassName: primaryClass?.className || "-",
+          authorGradeName: primaryClass?.grade?.name || "-",
+          authorGradeNumber: primaryClass?.grade?.gradeNumber ?? "-",
+          authorSchoolName: primaryClass?.grade?.schoolID?.name || "-",
           status: story.isPublished ? "published" : story.status || "draft",
           createdAt: new Date(story.createdAt).toLocaleDateString(),
           pdfUrl: story.pdfUrl || story.fileUrl || "",
@@ -177,7 +187,8 @@ export default function StoriesPage() {
           tags: story.tags || [],
           coverImageUrl: story.coverImageUrl || "",
           ageGroup: story.ageGroup || "",
-        }));
+        };
+        });
 
         setStories(formattedStories);
       } catch (error) {
@@ -683,6 +694,9 @@ export default function StoriesPage() {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Author</TableHead>
+              <TableHead>Class</TableHead>
+              <TableHead>Grade</TableHead>
+              <TableHead>School</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -694,6 +708,9 @@ export default function StoriesPage() {
                 <TableRow key={story.id}>
                   <TableCell className="font-medium">{story.title}</TableCell>
                   <TableCell>{story.author}</TableCell>
+                  <TableCell>{String(story.authorClassName ?? "-")}</TableCell>
+                  <TableCell>{String(story.authorGradeName ?? "-")}{story.authorGradeNumber ? ` (Grade ${story.authorGradeNumber})` : ""}</TableCell>
+                  <TableCell>{String(story.authorSchoolName ?? "-")}</TableCell>
                   <TableCell>{getStatusBadge(story.status)}</TableCell>
                   <TableCell>{story.createdAt}</TableCell>
                   <TableCell className="text-right">
@@ -800,7 +817,7 @@ export default function StoriesPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-4">
+                <TableCell colSpan={8} className="text-center py-4">
                   No stories found
                 </TableCell>
               </TableRow>

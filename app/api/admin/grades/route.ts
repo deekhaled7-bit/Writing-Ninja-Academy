@@ -19,8 +19,12 @@ export async function GET(req: NextRequest) {
 
     await dbConnect();
 
-    // No query parameters needed since academicYear and isActive fields are removed
+    const url = new URL(req.url);
+    const schoolId = url.searchParams.get("schoolId");
     const query: any = {};
+    if (schoolId) {
+      query.schoolID = schoolId;
+    }
 
     const grades = await GradeModel.find(query).sort({ gradeNumber: 1 });
 

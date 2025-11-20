@@ -45,12 +45,18 @@ interface Story {
   title: string;
   description: string;
   author: {
+    firstName: string;
+    lastName: string;
     _id: string;
     name: string;
     profilePicture?: string;
     s: number;
   };
   authorName: string;
+  authorClassName?: string;
+  authorGradeName?: string;
+  authorGradeNumber?: number | string;
+  authorSchoolName?: string;
   ageGroup: string;
   category: string;
   fileType: string;
@@ -264,12 +270,12 @@ export default function StoryDetails({
                 </div>
                 <div>
                   <div className="font-semibold text-ninja-black">
-                    {story.authorName}
+                    {story.author.firstName + " " + story.author.lastName}
                   </div>
                   <div className="text-sm text-ninja-gray flex items-center gap-2">
-                    <Star className="h-3 w-3 text-ninja-gold fill-current" />
-                    Level {story.author.s} Ninja
-                    <Badge variant="outline" className="ml-2">
+                    {/* <Star className="h-3 w-3 text-ninja-gold fill-current" />
+                    Level {story.author.s} Ninja */}
+                    {/* <Badge variant="outline" className="ml-2">
                       {(() => {
                         const map: Record<number, string> = {
                           1: "White Belt",
@@ -282,6 +288,41 @@ export default function StoryDetails({
                         };
                         return map[Number(story.author.s)] || "";
                       })()}
+                    </Badge> */}
+                  </div>
+                  <div className="text-sm text-ninja-gray flex flex-col md:flex-row  items-start md:items-center gap-2 mt-1">
+                    <Badge variant="outline">
+                      {String(
+                        story.authorClassName ??
+                          (story as any).author?.assignedClasses?.[0]
+                            ?.className ??
+                          "-"
+                      )}
+                    </Badge>
+                    <Badge variant="outline">
+                      {String(
+                        story.authorGradeName ??
+                          (story as any).author?.assignedClasses?.[0]?.grade
+                            ?.name ??
+                          "-"
+                      )}
+                      {story.authorGradeNumber != null
+                        ? ` (Grade ${story.authorGradeNumber})`
+                        : (story as any).author?.assignedClasses?.[0]?.grade
+                            ?.gradeNumber != null
+                        ? ` (Grade ${
+                            (story as any).author.assignedClasses[0].grade
+                              .gradeNumber
+                          })`
+                        : ""}
+                    </Badge>
+                    <Badge variant="outline">
+                      {String(
+                        story.authorSchoolName ??
+                          (story as any).author?.assignedClasses?.[0]?.grade
+                            ?.schoolID?.name ??
+                          "-"
+                      )}
                     </Badge>
                   </div>
                 </div>
