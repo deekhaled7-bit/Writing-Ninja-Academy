@@ -5,6 +5,7 @@ import Navbar from '@/components/navigation/navbar';
 import Footer from '@/components/navigation/footer';
 import { SessionProvider } from '@/components/providers/session-provider';
 import BeltAchievementNotifier from '@/components/providers/belt-achievement-notifier';
+import LevelAchievementNotifier from '@/components/providers/level-achievement-notifier';
 
 export const metadata: Metadata = {
   title: 'The Writing Ninja - Where Young Authors Share Their Stories',
@@ -36,6 +37,7 @@ export default function RootLayout({
           </div>
           <Toaster />
           <BeltAchievementNotifier />
+          <LevelAchievementNotifier />
         </SessionProvider>
       </body>
     </html>

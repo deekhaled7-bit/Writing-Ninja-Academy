@@ -6,6 +6,7 @@ import Quiz from "@/models/Quiz";
 import QuizSubmission from "@/models/QuizSubmission";
 import mongoose from "mongoose";
 import InteractionsModel from "@/models/interactionsModel";
+import UserModel from "@/models/userModel";
 
 // Define types for quiz data
 interface QuizOption {
@@ -150,6 +151,11 @@ export async function POST(
       createdAt: new Date(),
     });
     await interaction.save();
+    // Award extra ninjaGold points to the student for completing the quiz
+    await UserModel.findByIdAndUpdate(studentId, {
+      $inc: { ninjaGold: 10 },
+    });
+    
     return NextResponse.json({
       message: "Quiz submitted successfully",
       submission: {

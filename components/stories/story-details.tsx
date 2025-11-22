@@ -270,7 +270,9 @@ export default function StoryDetails({
                 </div>
                 <div>
                   <div className="font-semibold text-ninja-black">
-                    {story.author.firstName + " " + story.author.lastName}
+                    {story.author?.firstName?.trim() && story.author?.lastName?.trim()
+                      ? `${story.author.firstName} ${story.author.lastName}`
+                      : story.authorName || story.author?.name || "Unknown Author"}
                   </div>
                   <div className="text-sm text-ninja-gray flex items-center gap-2">
                     {/* <Star className="h-3 w-3 text-ninja-gold fill-current" />

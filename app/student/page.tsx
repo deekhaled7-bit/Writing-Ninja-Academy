@@ -68,6 +68,10 @@ export default function StudentDashboard() {
   const [assignments, setAssignments] = useState<BookAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [storiesUploaded, setStoriesUploaded] = useState<number>(0);
+  const [ninjaGold, setNinjaGold] = useState<number>(0);
+  const [ninjaLevel, setNinjaLevel] = useState<number>(1); // belt level (stories uploaded)
+  const [ninjaReadingLevel, setNinjaReadingLevel] = useState<number>(1); // reading-specific level
+  const [ninjaCharacterLevel, setNinjaCharacterLevel] = useState<number>(1); // points-based character level
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -131,6 +135,10 @@ export default function StudentDashboard() {
           if (profileRes.ok) {
             const { user } = await profileRes.json();
             setStoriesUploaded(Number(user?.storiesUploaded || 0));
+            setNinjaGold(Number(user?.ninjaGold || 0));
+            setNinjaLevel(Number(user?.ninjaLevel || 1));
+            setNinjaReadingLevel(Number(user?.ninjaReadingLevel || 1));
+            setNinjaCharacterLevel(Number(user?.ninjaCharacterLevel || 1));
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -296,6 +304,26 @@ export default function StudentDashboard() {
               </div>
               <Link href="/belts" className="text-[11px] text-ninja-crimson underline">
                 How belts work
+              </Link>
+            </span>
+
+            {/* Character Level beside belts */}
+            <span className="inline-flex items-center flex-col">
+              <Image
+                src={`/readingAvatars/${(() => {
+                  const lvl = Math.max(1, Math.min(20, Number(ninjaCharacterLevel) || 1));
+                  return lvl;
+                })()}.png`}
+                alt="Character Level Avatar"
+                width={80}
+                height={80}
+                className="rounded-full"
+              />
+              <div className="mt-1 text-xs text-ninja-gray text-center w-full">
+                {`Character Level ${Math.max(1, Math.min(20, Number(ninjaCharacterLevel) || 1))}`}
+              </div>
+              <Link href="/levels" className="text-[11px] text-ninja-crimson underline">
+                How character levels work
               </Link>
             </span>
 

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
 import ReadingProgress from "@/models/ReadingProgress";
 import { ConnectDB } from "@/config/db";
+import UserModel from "@/models/userModel";
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,11 +46,36 @@ export async function POST(request: NextRequest) {
     const clampedPage = Math.max(0, Math.min(currentPage, totalPages));
 
     await ConnectDB();
+
+    // Fetch existing progress to check reward status
+    const existing = await ReadingProgress.findOne({
+      userId: session.user.id,
+      storyId,
+    });
+
+    const isComplete = totalPages > 0 && clampedPage === totalPages;
+    const shouldAward =
+      isComplete && session.user.role === "student" && !existing?.completionRewardGranted;
+
+    const updateFields: Record<string, any> = {
+      currentPage: clampedPage,
+      totalPages,
+    };
+    if (shouldAward) {
+      updateFields.completionRewardGranted = true;
+    }
+
     const progress = await ReadingProgress.findOneAndUpdate(
       { userId: session.user.id, storyId },
-      { currentPage: clampedPage, totalPages },
+      { $set: updateFields },
       { upsert: true, new: true }
     ).lean();
+
+    if (shouldAward) {
+      await UserModel.findByIdAndUpdate(session.user.id, {
+        $inc: { ninjaGold: 10 },
+      });
+    }
 
     return NextResponse.json({ progress });
   } catch (e) {

@@ -55,9 +55,22 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    // Separate character level driven by ninjaGold thresholds
+    ninjaCharacterLevel: {
+      type: Number,
+      default: 1,
+    },
     ninjaGold: {
       type: Number,
       default: 0,
+    },
+    nextLevelBonusPoints: {
+      type: Number,
+      default: 50,
+    },
+    ninjaReadingLevel: {
+      type: Number,
+      default: 1,
     },
     achievements: [
       {
@@ -96,10 +109,12 @@ const UserSchema = new mongoose.Schema(
       enum: ["admin", "teacher", "student"],
       required: false,
     },
-    assignedClasses: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Class",
-    }],
+    assignedClasses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Class",
+      },
+    ],
     grade: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Grade",

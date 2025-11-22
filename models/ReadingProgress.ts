@@ -6,6 +6,8 @@ const ReadingProgressSchema = new mongoose.Schema(
     storyId: { type: mongoose.Schema.Types.ObjectId, ref: "Story", required: true },
     currentPage: { type: Number, default: 0 }, // 1-based page number including cover
     totalPages: { type: Number, default: 0 },
+    // Guard to ensure completion reward is only granted once per story per user
+    completionRewardGranted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
