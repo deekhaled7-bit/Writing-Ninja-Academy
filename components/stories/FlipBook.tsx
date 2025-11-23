@@ -13,11 +13,13 @@ const ClientFlipBook = ({
   cover,
   storyId,
   onProgress,
+  isFullScreen = false,
 }: {
   fileUrl: string;
   cover: string;
   storyId: string;
   onProgress?: (currentPage: number, totalPages: number) => void;
+  isFullScreen?: boolean;
 }) => {
   const searchParams = useSearchParams();
   const assignmentId = searchParams.get("assignmentId");
@@ -29,6 +31,7 @@ const ClientFlipBook = ({
       storyId={storyId}
       onProgress={onProgress}
       assignmentId={assignmentId}
+      isFullScreen={isFullScreen}
     />
   );
 };
@@ -175,7 +178,7 @@ const FlipBook = ({
       ref={bookRef}
       width={300}
       height={500}
-      className="flipBook bg-books-pattern"
+      className="flipBook "
       size="fixed"
       minWidth={0}
       maxWidth={0}
@@ -189,7 +192,11 @@ const FlipBook = ({
       maxShadowOpacity={0.5}
       showCover={true}
       mobileScrollSupport={true}
-      style={{}}
+      style={
+        isFullScreen
+          ? { transform: "scale(1.2)", transformOrigin: "center center" }
+          : {}
+      }
       startPage={startPage}
       swipeDistance={1} // Extremely reduced swipe distance for very easy swiping
       clickEventForward={true}
@@ -209,9 +216,10 @@ const FlipBook = ({
           // For a 3-page book (cover + 2 content pages), indices are 0, 1, 2
           // We need to consider the second content page (index = 2) as the last page
           // Apply different logic based on screen size
-          const isLastPage = window.innerWidth >= 768 
-            ? zeroIndex >= pageImages.length - 1  // For md screens and larger
-            : zeroIndex >= pageImages.length;     // For smaller screens
+          const isLastPage =
+            window.innerWidth >= 768
+              ? zeroIndex >= pageImages.length - 1 // For md screens and larger
+              : zeroIndex >= pageImages.length; // For smaller screens
 
           // Calculate 1-based page number for display and progress
           const currentOneBased = zeroIndex + 1;

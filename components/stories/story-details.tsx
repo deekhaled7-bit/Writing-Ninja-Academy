@@ -410,9 +410,11 @@ export default function StoryDetails({
                   session.user.active &&
                   session.user.verified ? (
                     <FlipBook
+                    
                       storyId={story._id}
                       fileUrl={story.fileUrl}
                       cover={story.coverImageUrl || ""}
+                      isFullScreen={isFullScreen}
                       onProgress={(cur, total) => {
                         setCurrentPage(cur);
                         setTotalPages(total);
