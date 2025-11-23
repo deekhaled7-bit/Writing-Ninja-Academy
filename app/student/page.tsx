@@ -260,7 +260,7 @@ export default function StudentDashboard() {
             </Link>
           </div>
           <div className="flex gap-2 justify-center items-center">
-            <h1 className="text-lg md:text-2xl font-bold">
+            <h1 className="text-md hidden md:block md:text-2xl font-bold">
               Welcome,{" "}
               {session?.user?.firstName ||
                 (session?.user?.name
@@ -273,36 +273,39 @@ export default function StudentDashboard() {
             </h1>
 
             <span className="mr-2 inline-flex items-center flex-col">
-              {
-                storiesUploaded>0 &&
-              <Image
-                src={`${(() => {
-                  const c = storiesUploaded;
-                  if (c >= 15) return "/belts/Black.png";
-                  if (c >= 10) return "/belts/Brown.png";
-                  if (c >= 7) return "/belts/Blue.png";
-                  if (c >= 5) return "/belts/Green.png";
-                  if (c >= 4) return "/belts/Orange.png";
-                  if (c >= 2) return "/belts/Yellow.png";
-                  return "/belts/White.png";
-                })()}`}
-                alt="Belt"
-                width={80}
-                height={80}
-                className="rounded-full "
-              />
-}
+              {storiesUploaded > 0 && (
+                <Image
+                  src={`${(() => {
+                    const c = storiesUploaded;
+                    if (c >= 15) return "/belts/Black.png";
+                    if (c >= 10) return "/belts/Brown.png";
+                    if (c >= 7) return "/belts/Blue.png";
+                    if (c >= 5) return "/belts/Green.png";
+                    if (c >= 4) return "/belts/Orange.png";
+                    if (c >= 2) return "/belts/Yellow.png";
+                    return "/belts/White.png";
+                  })()}`}
+                  alt="Belt"
+                  width={160}
+                  height={160}
+                  className="rounded-full "
+                />
+              )}
               <div className="mt-1 text-xs text-ninja-gray text-center w-full">
                 {(() => {
                   const thresholds = [1, 2, 4, 5, 7, 10, 15];
                   const next = thresholds.find((t) => t > storiesUploaded);
-                  if (storiesUploaded === 0) return "Upload your first story to get your first belt";
+                  if (storiesUploaded === 0)
+                    return "Upload your first story to get your first belt";
                   if (!next) return "Max belt reached";
                   const remain = next - storiesUploaded;
                   return `${remain} stories to next belt`;
                 })()}
               </div>
-              <Link href="/belts" className="text-[11px] text-ninja-crimson underline">
+              <Link
+                href="/belts"
+                className="text-[11px] text-ninja-crimson underline"
+              >
                 How belts work
               </Link>
             </span>
@@ -311,18 +314,27 @@ export default function StudentDashboard() {
             <span className="inline-flex items-center flex-col">
               <Image
                 src={`/readingAvatars/${(() => {
-                  const lvl = Math.max(1, Math.min(20, Number(ninjaCharacterLevel) || 1));
+                  const lvl = Math.max(
+                    1,
+                    Math.min(20, Number(ninjaCharacterLevel) || 1)
+                  );
                   return lvl;
                 })()}.png`}
                 alt="Character Level Avatar"
-                width={80}
-                height={80}
+                width={160}
+                height={160}
                 className="rounded-full"
               />
               <div className="mt-1 text-xs text-ninja-gray text-center w-full">
-                {`Character Level ${Math.max(1, Math.min(20, Number(ninjaCharacterLevel) || 1))}`}
+                {`Character Level ${Math.max(
+                  1,
+                  Math.min(20, Number(ninjaCharacterLevel) || 1)
+                )}`}
               </div>
-              <Link href="/levels" className="text-[11px] text-ninja-crimson underline">
+              <Link
+                href="/levels"
+                className="text-[11px] text-ninja-crimson underline"
+              >
                 How character levels work
               </Link>
             </span>
@@ -332,9 +344,9 @@ export default function StudentDashboard() {
                 Level {session?.user?.ninjaLevel || 1}
               </Badge> */}
 
-              <Badge variant="secondary">
+              {/* <Badge variant="secondary">
                 {session?.user?.role || "Student"}
-              </Badge>
+              </Badge> */}
             </div>
           </div>
         </div>
