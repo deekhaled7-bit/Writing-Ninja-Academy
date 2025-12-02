@@ -1,6 +1,61 @@
+"use client";
 import { Mail, Phone, MapPin, Send, MessageCircle, Clock } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ContactPage() {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Failed to send message");
+
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you as soon as possible.",
+      });
+
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   return (
     <div className="min-h-screen bg-ninja-cream">
       {/* Hero Section - Same as About Page */}
@@ -25,7 +80,7 @@ export default function ContactPage() {
               <h2 className="font-oswald text-3xl text-ninja-crimson mb-6">
                 Send Us a Message
               </h2>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-ninja-black text-sm font-medium mb-2">
@@ -33,6 +88,10 @@ export default function ContactPage() {
                     </label>
                     <input
                       type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      required
                       className="w-full px-4 py-3 bg-ninja-cream border-2 border-ninja-peach  rounded-lg text-ninja-black placeholder-ninja-gray focus:outline-none focus:border-ninja-crimson transition-colors"
                       placeholder="Enter your first name"
                     />
@@ -43,6 +102,10 @@ export default function ContactPage() {
                     </label>
                     <input
                       type="text"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      required
                       className="w-full px-4 py-3 bg-ninja-cream border-2 border-ninja-peach  rounded-lg text-ninja-black placeholder-ninja-gray focus:outline-none focus:border-ninja-crimson transition-colors"
                       placeholder="Enter your last name"
                     />
@@ -55,6 +118,10 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     className="w-full px-4 py-3 bg-ninja-cream border-2 border-ninja-peach  rounded-lg text-ninja-black placeholder-ninja-gray focus:outline-none focus:border-ninja-crimson transition-colors"
                     placeholder="Enter your email address"
                   />
@@ -66,6 +133,10 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
                     className="w-full px-4 py-3 bg-ninja-cream border-2 border-ninja-peach  rounded-lg text-ninja-black placeholder-ninja-gray focus:outline-none focus:border-ninja-crimson transition-colors"
                     placeholder="What's this about?"
                   />
@@ -77,6 +148,10 @@ export default function ContactPage() {
                   </label>
                   <textarea
                     rows={6}
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
                     className="w-full px-4 py-3 bg-ninja-cream border-2 border-ninja-peach  rounded-lg text-ninja-black placeholder-ninja-gray focus:outline-none focus:border-ninja-crimson transition-colors resize-none"
                     placeholder="Tell us about your writing journey or ask us anything..."
                   ></textarea>
@@ -84,10 +159,17 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-ninja-crimson text-ninja-white font-semibold py-3 px-6 rounded-lg hover:from-red-600 hover:to-ninja-crimson transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                  disabled={isLoading}
+                  className="w-full bg-ninja-crimson text-ninja-white font-semibold py-3 px-6 rounded-lg hover:from-red-600 hover:to-ninja-crimson transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
                 >
-                  <Send className="h-5 w-5" />
-                  Send Message
+                  {isLoading ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5" />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </form>
             </div>
@@ -175,15 +257,6 @@ export default function ContactPage() {
                     <p className="text-ninja-gray text-sm">
                       Simply create an account and start sharing your stories
                       with our community.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-ninja-black font-semibold mb-2">
-                      Can parents monitor their child&apos;s activity?
-                    </h4>
-                    <p className="text-ninja-black text-sm">
-                      Yes, we provide parent dashboards and regular activity
-                      reports.
                     </p>
                   </div>
                 </div>

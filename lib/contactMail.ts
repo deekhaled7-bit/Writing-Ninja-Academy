@@ -1,10 +1,10 @@
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer";
 export async function sendContactMail({
   to,
   name,
   subject,
   body,
-  from
+  from,
 }: {
   to: string;
   name: string;
@@ -14,12 +14,12 @@ export async function sendContactMail({
 }) {
   const { SMTP_EMAIL, SMTP_PASSWORD } = process.env;
 
- const transport = nodemailer.createTransport({
-    host: "mail.smtp2go.com",
+  const transport = nodemailer.createTransport({
+    host: "smtp-relay.brevo.com",
     port: 587,
     secure: false,
     auth: {
-      user: process.env.SMTP_EMAIL,
+      user: process.env.SMTP_LOGIN,
       pass: process.env.SMTP_PASSWORD,
     },
   });
@@ -50,7 +50,7 @@ export async function sendContactMail({
 </html>
 `;
     const sendResult = await transport.sendMail({
-      from: `noreply@shopwifeyforlifey.com`,
+      from: `noreply@thewritingninjasacademy.org`,
       to,
       subject,
       html: emailContent,

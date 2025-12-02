@@ -160,14 +160,22 @@ export default function QuizComponent({
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit quiz results");
+        throw new Error(
+          data.message || data.error || "Failed to submit quiz results"
+        );
       }
 
       toast({
+        className: "bg-ninja-crimson text-white",
         title: "Quiz Completed!",
-        description: `You scored ${finalScore.toFixed(0)}% on this quiz.`,
+        description: `You scored ${finalScore.toFixed(0)}% on this quiz.${
+          data.awardedNinjaGold
+            ? ` You earned ${data.awardedNinjaGold} Ninja Gold!`
+            : ""
+        }`,
       });
     } catch (error) {
       console.error("Error submitting quiz:", error);

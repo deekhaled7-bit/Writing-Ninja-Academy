@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { submitQuizAnswers } from "@/app/actions/quiz-actions";
 import InteractionsModel from "@/models/interactionsModel";
 import Quiz from "@/models/Quiz";
+import QuizSubmission from "@/models/QuizSubmission";
+import UserModel from "@/models/userModel";
 
 export async function POST(request: NextRequest) {
   try {
@@ -58,6 +60,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
+    // Check if this is the first time completing this quiz
+    const completedSubmissionsCount = await QuizSubmission.countDocuments({
+      quizId,
+      studentId: userId,
+      completedAt: { $exists: true, $ne: null },
+    });
+
+    let awardedNinjaGold = 0;
+    // If this is the first completion (count is 1 because we just updated it), award points
+    if (completedSubmissionsCount === 1) {
+      awardedNinjaGold = 10;
+      await UserModel.findByIdAndUpdate(userId, {
+        $inc: { ninjaGold: awardedNinjaGold },
+      });
+    }
+
     InteractionsModel.create({
       userId: userId,
       notifyUserId: quiz.createdBy,
@@ -81,6 +99,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       submissionId: result.submissionId,
+      awardedNinjaGold,
     });
   } catch (error) {
     console.error("Error submitting quiz:", error);

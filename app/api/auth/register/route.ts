@@ -20,23 +20,27 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    
+
     // Validate role
-    if (!['student', 'teacher'].includes(role)) {
+    if (!["student", "teacher"].includes(role)) {
       return new Response(
-        JSON.stringify({ error: "Invalid role. Must be 'student' or 'teacher'" }),
+        JSON.stringify({
+          error: "Invalid role. Must be 'student' or 'teacher'",
+        }),
         { status: 400 }
       );
     }
-    
+
     // Validate classId if role is student
-    if (role === 'student' && !classId) {
+    if (role === "student" && !classId) {
       return new Response(
-        JSON.stringify({ error: "Class ID is required for student registration" }),
+        JSON.stringify({
+          error: "Class ID is required for student registration",
+        }),
         { status: 400 }
       );
     }
-    
+
     // Validate classId format if provided
     if (classId && !mongoose.Types.ObjectId.isValid(classId)) {
       return new Response(
@@ -83,17 +87,16 @@ export async function POST(req: Request) {
       role: role,
       active: true, // Set active to true for testing
       verified: true, // Set verified to true for testing
-      assignedClasses: role === 'student' && classId ? [classId] : []
+      assignedClasses: role === "student" && classId ? [classId] : [],
     };
-    
+
     const user = await UserModel.create(userData);
-    
+
     // If student, update class to include this student
-    if (role === 'student' && classId) {
-      await ClassModel.findByIdAndUpdate(
-        classId,
-        { $addToSet: { students: user._id } }
-      );
+    if (role === "student" && classId) {
+      await ClassModel.findByIdAndUpdate(classId, {
+        $addToSet: { students: user._id },
+      });
     }
 
     // Remove password from response
@@ -114,7 +117,7 @@ export async function POST(req: Request) {
       name: "wiiga",
       subject: "Please click on link to verify your account",
       body: `${SubscriprtionMail(verificationLink)}`,
-      from: "authintication@shopwifeyforlifey.com",
+      from: "authentication@thewritingninjasacademy.org",
       // body: `<a href=${verificationLink}> click here to verify your account</a>`,
       //   body: compileWelcomeTemplate("Vahid", "youtube.com/@sakuradev"),
     });

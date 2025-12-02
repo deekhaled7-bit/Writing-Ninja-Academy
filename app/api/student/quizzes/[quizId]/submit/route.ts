@@ -71,12 +71,12 @@ export async function POST(
       studentId,
     });
 
-    if (existingSubmission) {
-      return NextResponse.json(
-        { message: "You have already submitted this quiz" },
-        { status: 400 }
-      );
-    }
+    // if (existingSubmission) {
+    //   return NextResponse.json(
+    //     { message: "You have already submitted this quiz" },
+    //     { status: 400 }
+    //   );
+    // }
 
     // Calculate score
     let score = 0;
@@ -151,14 +151,17 @@ export async function POST(
       createdAt: new Date(),
     });
     await interaction.save();
-    // Award extra ninjaGold points to the student for completing the quiz
-    await UserModel.findByIdAndUpdate(studentId, {
-      $inc: { ninjaGold: 10 },
-    });
+
+    // Award extra ninjaGold points to the student for completing the quiz ONLY if it's their first submission
+    if (!existingSubmission) {
+      await UserModel.findByIdAndUpdate(studentId, {
+        $inc: { ninjaGold: 10 },
+      });
+    }
 
     return NextResponse.json({
       message: "Quiz submitted successfully",
-      awardedNinjaGold: 10,
+      awardedNinjaGold: existingSubmission ? 0 : 10,
       submission: {
         _id: submission._id,
         score,
