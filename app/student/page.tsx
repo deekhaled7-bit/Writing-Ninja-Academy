@@ -339,6 +339,20 @@ export default function StudentDashboard() {
               </Link>
             </span>
 
+            {/* Ninja Gold */}
+            <span className="inline-flex items-center flex-col">
+              <Image
+                src="/images/ninjaGold.png"
+                alt="Ninja Gold"
+                width={160}
+                height={160}
+                className="rounded-full"
+              />
+              <div className="mt-1 text-xs text-ninja-gray text-center w-full">
+                {ninjaGold} Ninja Gold
+              </div>
+            </span>
+
             <div className="flex items-center mt-1">
               {/* <Badge variant="destructive" className="mr-2">
                 Level {session?.user?.ninjaLevel || 1}
