@@ -155,9 +155,10 @@ export async function POST(
     await UserModel.findByIdAndUpdate(studentId, {
       $inc: { ninjaGold: 10 },
     });
-    
+
     return NextResponse.json({
       message: "Quiz submitted successfully",
+      awardedNinjaGold: 10,
       submission: {
         _id: submission._id,
         score,

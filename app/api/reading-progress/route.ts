@@ -14,10 +14,14 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams;
     const storyId = searchParams.get("storyId");
-    if (!storyId) return NextResponse.json({ error: "storyId required" }, { status: 400 });
+    if (!storyId)
+      return NextResponse.json({ error: "storyId required" }, { status: 400 });
 
     await ConnectDB();
-    const progress = await ReadingProgress.findOne({ userId: session.user.id, storyId }).lean();
+    const progress = await ReadingProgress.findOne({
+      userId: session.user.id,
+      storyId,
+    }).lean();
     return NextResponse.json({ progress });
   } catch (e) {
     console.error(e);
@@ -39,7 +43,11 @@ export async function POST(request: NextRequest) {
       totalPages: number;
     };
 
-    if (!storyId || typeof currentPage !== "number" || typeof totalPages !== "number") {
+    if (
+      !storyId ||
+      typeof currentPage !== "number" ||
+      typeof totalPages !== "number"
+    ) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
@@ -55,7 +63,9 @@ export async function POST(request: NextRequest) {
 
     const isComplete = totalPages > 0 && clampedPage === totalPages;
     const shouldAward =
-      isComplete && session.user.role === "student" && !existing?.completionRewardGranted;
+      isComplete &&
+      session.user.role === "student" &&
+      !existing?.completionRewardGranted;
 
     const updateFields: Record<string, any> = {
       currentPage: clampedPage,
@@ -77,11 +87,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return NextResponse.json({ progress });
+    // Include a flag in the response so the client can show a reward popup
+    return NextResponse.json({
+      progress,
+      awardedNinjaGold: shouldAward ? 10 : 0,
+    });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
-
-

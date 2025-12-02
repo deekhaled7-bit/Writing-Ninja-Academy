@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import HTMLFlipBook from "react-pageflip";
 import { convertPdfToImages } from "../../utils/pdfToImages";
 import { useSearchParams } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 // Add a small delay utility
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -154,11 +155,21 @@ const FlipBook = ({
       }
 
       // Always update general reading progress
-      await fetch(`/api/reading-progress`, {
+      const rpRes = await fetch(`/api/reading-progress`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ storyId, currentPage, totalPages }),
       });
+      if (rpRes.ok) {
+        const data = await rpRes.json();
+        if (data?.awardedNinjaGold && data.awardedNinjaGold >= 10) {
+          console.log("worked");
+          toast({
+            title: "Congratulations! You’ve earned 10 Ninja Gold!",
+            className: "bg-amber-500 text-white border-amber-600",
+          });
+        }
+      }
     } catch (e) {
       // Silently ignore to avoid interrupting reading
       console.error("Error updating progress:", e);
