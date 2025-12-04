@@ -45,8 +45,13 @@ export async function GET(req: NextRequest) {
       })
       .sort({ assignedDate: -1 });
 
+    // Filter out assignments where the story or teacher has been deleted
+    const validAssignments = assignments.filter(
+      (assignment) => assignment.storyId && assignment.teacherId
+    );
+
     // Transform the data to match the expected BookAssignment type
-    const formattedAssignments = assignments.map((assignment) => ({
+    const formattedAssignments = validAssignments.map((assignment) => ({
       _id: assignment._id.toString(),
       title: assignment.title,
       assignedDate: assignment.assignedDate,
