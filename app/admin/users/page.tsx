@@ -211,31 +211,36 @@ export default function UsersPage() {
   }, []);
 
   // Fetch grades when school changes
-  useEffect(() => {
-    if (formData.role === "student") {
-      if (formData.schoolId) {
-        fetchGrades(formData.schoolId);
-      } else {
-        setGrades([]);
-      }
-      // Reset dependent selections
-      setFormData((prev) => ({ ...prev, gradeId: "", classId: "", assignedClasses: [] }));
-      setClasses([]);
-    }
-  }, [formData.schoolId, formData.role]);
+  // useEffect(() => {
+  //   if (formData.role === "student") {
+  //     if (formData.schoolId) {
+  //       fetchGrades(formData.schoolId);
+  //     } else {
+  //       setGrades([]);
+  //     }
+  //     // Reset dependent selections
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       gradeId: "",
+  //       classId: "",
+  //       assignedClasses: [],
+  //     }));
+  //     setClasses([]);
+  //   }
+  // }, [formData.schoolId, formData.role]);
 
   // Fetch classes when grade changes
-  useEffect(() => {
-    if (formData.role === "student") {
-      if (formData.gradeId) {
-        fetchClasses(formData.gradeId);
-      } else {
-        setClasses([]);
-      }
-      // Reset class selection when grade changes
-      setFormData((prev) => ({ ...prev, classId: "", assignedClasses: [] }));
-    }
-  }, [formData.gradeId, formData.role]);
+  // useEffect(() => {
+  //   if (formData.role === "student") {
+  //     if (formData.gradeId) {
+  //       fetchClasses(formData.gradeId);
+  //     } else {
+  //       setClasses([]);
+  //     }
+  //     // Reset class selection when grade changes
+  //     setFormData((prev) => ({ ...prev, classId: "", assignedClasses: [] }));
+  //   }
+  // }, [formData.gradeId, formData.role]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -243,7 +248,29 @@ export default function UsersPage() {
   };
 
   const handleSelectChange = (name: string, value: string | string[]) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "schoolId") {
+      const schoolId = value as string;
+      fetchGrades(schoolId);
+      setFormData((prev) => ({
+        ...prev,
+        [name]: schoolId,
+        gradeId: "",
+        classId: "",
+        assignedClasses: [],
+      }));
+      setClasses([]);
+    } else if (name === "gradeId") {
+      const gradeId = value as string;
+      fetchClasses(gradeId);
+      setFormData((prev) => ({
+        ...prev,
+        [name]: gradeId,
+        classId: "",
+        assignedClasses: [],
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const resetForm = () => {
@@ -556,7 +583,9 @@ export default function UsersPage() {
                     <Label htmlFor="schoolId">School</Label>
                     <Select
                       value={formData.schoolId || undefined}
-                      onValueChange={(value) => handleSelectChange("schoolId", value)}
+                      onValueChange={(value) =>
+                        handleSelectChange("schoolId", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select School" />
@@ -949,6 +978,36 @@ export default function UsersPage() {
             {formData.role === "student" && (
               <>
                 <div className="space-y-2">
+                  <Label htmlFor="edit-schoolId">School</Label>
+                  <Select
+                    value={formData.schoolId || undefined}
+                    onValueChange={(value) =>
+                      handleSelectChange("schoolId", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select School" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loadingSchools ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
+                        </SelectItem>
+                      ) : schools.length === 0 ? (
+                        <SelectItem value="no-schools" disabled>
+                          No schools available
+                        </SelectItem>
+                      ) : (
+                        schools.map((school) => (
+                          <SelectItem key={school._id} value={school._id}>
+                            {school.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="edit-grade">Grade</Label>
                   <Select
                     value={formData.gradeId || undefined}
@@ -963,6 +1022,10 @@ export default function UsersPage() {
                       {loadingGrades ? (
                         <SelectItem value="loading" disabled>
                           Loading...
+                        </SelectItem>
+                      ) : !formData.schoolId ? (
+                        <SelectItem value="select-school-first" disabled>
+                          Select a school first
                         </SelectItem>
                       ) : grades.length === 0 ? (
                         <SelectItem value="no-grades" disabled>

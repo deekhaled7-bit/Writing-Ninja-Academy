@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { ConnectDB } from "@/config/db";
 import UserModel from "@/models/userModel";
+import Story from "@/models/Story";
 
 // POST: Assign a book to student(s)
 export async function POST(req: NextRequest) {
@@ -118,16 +119,28 @@ export async function GET(req: NextRequest) {
     const query: any = { teacherId: session.user.id };
     if (classId) query.classId = classId;
     if (studentId) query.studentId = studentId;
+    console.log("registering" + Story);
 
     // Get assignments with populated references
     const assignments = await BookAssignment.find(query)
       .populate("studentId", "firstName lastName username email profilePicture")
-      .populate("storyId", "title coverImage")
+      .populate("storyId", "title _id coverImage")
       .sort({ assignedDate: -1 });
+
+    // Filter out assignments where the story or student has been deleted
+    const validAssignments = assignments.filter(
+      (assignment) => assignment.storyId && assignment.studentId
+    );
+
+    console.log(
+      validAssignments.length +
+        " valid assignments out of " +
+        assignments.length
+    );
 
     return NextResponse.json({
       success: true,
-      assignments,
+      assignments: validAssignments,
     });
   } catch (error: any) {
     console.error("Error fetching assignments:", error);
@@ -148,7 +161,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     await ConnectDB();
-    
+
     const { title, storyId } = await req.json();
 
     // Validate required fields
@@ -163,7 +176,7 @@ export async function DELETE(req: NextRequest) {
     const result = await BookAssignment.deleteMany({
       teacherId: session.user.id,
       title: title,
-      storyId: storyId
+      storyId: storyId,
     });
 
     if (result.deletedCount === 0) {
@@ -176,7 +189,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: `Successfully deleted ${result.deletedCount} assignments`,
-      deletedCount: result.deletedCount
+      deletedCount: result.deletedCount,
     });
   } catch (error: any) {
     console.error("Error deleting assignments:", error);

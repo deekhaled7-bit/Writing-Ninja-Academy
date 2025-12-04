@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     await sendContactMail({
-      to: "omarwagih95@gmail.com",
+      to: "Saraa.ahmed@manhattanschools-eg.com",
       name: `${firstName} ${lastName}`,
       subject: `Contact Form: ${subject}`,
       body: message,

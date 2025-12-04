@@ -31,6 +31,15 @@ import {
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const BooksAssignments = () => {
   type Class = {
@@ -81,12 +90,14 @@ const BooksAssignments = () => {
   const [assignmentTitle, setAssignmentTitle] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [assignmentLoading, setAssignmentLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [classes, setClasses] = useState<Class[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [stories, setStories] = useState<Story[]>([]);
   const [assignments, setAssignments] = useState<BookAssignment[]>([]);
 
   const fetchAssignments = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/teacher/assign-book");
       if (response.ok) {
@@ -97,6 +108,10 @@ const BooksAssignments = () => {
         const groupedByTitle: Record<string, any> = {};
 
         data.assignments.forEach((assignment: BookAssignment) => {
+          if (!assignment.storyId) {
+            console.warn("Assignment with missing storyId found:", assignment);
+            return;
+          }
           const key = `${assignment.title}-${assignment.storyId._id}`;
 
           if (!groupedByTitle[key]) {
@@ -157,6 +172,8 @@ const BooksAssignments = () => {
       }
     } catch (error) {
       console.error("Error fetching assignments:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleAssignBook = async () => {
@@ -426,7 +443,29 @@ const BooksAssignments = () => {
               <TabsTrigger value="completed">Completed</TabsTrigger>
             </TabsList> */}
             <TabsContent value="active">
-              {assignments.length === 0 ? (
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="bg-ninja-light-gray p-4 rounded-lg border border-gray-200 shadow-sm"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-2 w-full">
+                          <Skeleton className="h-6 w-1/3 bg-gray-200" />
+                          <Skeleton className="h-4 w-1/4 bg-gray-200" />
+                          <Skeleton className="h-4 w-1/2 bg-gray-200" />
+                          <div className="mt-2 flex items-center space-x-2">
+                            <Skeleton className="h-4 w-4 rounded-full bg-gray-200" />
+                            <Skeleton className="h-3 w-24 bg-gray-200" />
+                          </div>
+                        </div>
+                        <Skeleton className="h-8 w-8 rounded-md bg-gray-200" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : assignments.length === 0 ? (
                 <div className="text-center py-8">
                   <BookMarked className="h-12 w-12 mx-auto text-ninja-crimson opacity-50" />
                   <p className="mt-4 text-ninja-black">
