@@ -765,8 +765,8 @@ export default function UsersPage() {
         </div>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border w-full overflow-x-auto">
+        <Table className="min-w-[1000px]">
           <TableHeader>
             <TableRow className="hover:bg-ninja-peach/20">
               <TableHead>Profile</TableHead>

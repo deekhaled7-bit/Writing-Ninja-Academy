@@ -32,7 +32,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
-  const [hasUnreadAdminNotifications, setHasUnreadAdminNotifications] = useState(false);
+  const [hasUnreadAdminNotifications, setHasUnreadAdminNotifications] =
+    useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const { data: session, status } = useSession();
@@ -240,12 +241,15 @@ export default function Navbar() {
                           className=""
                           onClick={async () => {
                             try {
-                              await fetch("/api/admin/notifications/mark-read", {
-                                method: "POST",
-                                headers: {
-                                  "Content-Type": "application/json",
-                                },
-                              });
+                              await fetch(
+                                "/api/admin/notifications/mark-read",
+                                {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
+                                }
+                              );
                               setHasUnreadAdminNotifications(false);
                             } catch (error) {
                               console.error(
@@ -286,9 +290,8 @@ export default function Navbar() {
                       </>
                     )}
 
-                   
                     {/* Teacher quick links */}
-                   
+
                     {session.user?.role === "teacher" && (
                       <>
                         <Link
@@ -319,6 +322,12 @@ export default function Navbar() {
                                 <span className="absolute -top-1 -left-1 h-2 w-2 rounded-full bg-red-500" />
                               )}
                             </div>
+                          </DropdownMenuItem>
+                        </Link>
+                        <Link href="/teacher/profile">
+                          <DropdownMenuItem>
+                            <User className="mr-2 h-4 w-4" />
+                            Profile
                           </DropdownMenuItem>
                         </Link>
                         <Link href="/teacher/classes">
@@ -627,6 +636,13 @@ export default function Navbar() {
                   {/* Teacher mobile links */}
                   {session.user?.role === "teacher" && (
                     <>
+                      <Link
+                        href="/teacher/profile"
+                        className="block py-2 text-ninja-white hover:text-ninja-gold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Profile
+                      </Link>
                       <Link
                         href="/teacher/classes"
                         className="block py-2 text-ninja-white hover:text-ninja-gold"

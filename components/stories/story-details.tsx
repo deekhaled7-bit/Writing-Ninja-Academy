@@ -101,10 +101,14 @@ export default function StoryDetails({
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const hasLoggedRead = useRef(false);
 
   useEffect(() => {
     // Track read when component mounts
-    handleInteraction("read");
+    if (!hasLoggedRead.current) {
+      handleInteraction("read");
+      hasLoggedRead.current = true;
+    }
   }, []);
 
   const handleInteraction = async (action: "read" | "completed" | "like") => {
@@ -270,9 +274,12 @@ export default function StoryDetails({
                 </div>
                 <div>
                   <div className="font-semibold text-ninja-black">
-                    {story.author?.firstName?.trim() && story.author?.lastName?.trim()
+                    {story.author?.firstName?.trim() &&
+                    story.author?.lastName?.trim()
                       ? `${story.author.firstName} ${story.author.lastName}`
-                      : story.authorName || story.author?.name || "Unknown Author"}
+                      : story.authorName ||
+                        story.author?.name ||
+                        "Unknown Author"}
                   </div>
                   <div className="text-sm text-ninja-gray flex items-center gap-2">
                     {/* <Star className="h-3 w-3 text-ninja-gold fill-current" />
@@ -410,7 +417,6 @@ export default function StoryDetails({
                   session.user.active &&
                   session.user.verified ? (
                     <FlipBook
-                    
                       storyId={story._id}
                       fileUrl={story.fileUrl}
                       cover={story.coverImageUrl || ""}

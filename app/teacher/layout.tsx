@@ -13,6 +13,7 @@ import {
   GraduationCap,
   Award,
   Bell,
+  User,
 } from "lucide-react";
 
 export default function TeacherLayout({
@@ -155,6 +156,17 @@ export default function TeacherLayout({
           >
             <Award className="mr-2 h-5 w-5" />
             <span className="lg:inline hidden">Quizzes</span>
+          </Link>
+          <Link
+            href="/teacher/profile"
+            className={`flex items-center p-2 justify-center rounded-md hover:bg-ninja-crimson hover:text-ninja-white ${
+              pathname.startsWith("/teacher/profile")
+                ? "bg-ninja-crimson text-ninja-white"
+                : "text-ninja-black"
+            }`}
+          >
+            <User className="mr-2 h-5 w-5" />
+            <span className="lg:inline hidden">Profile</span>
           </Link>
           <Link
             href="/teacher/notifications"

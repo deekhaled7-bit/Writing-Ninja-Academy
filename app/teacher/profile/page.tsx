@@ -19,7 +19,7 @@ type UserProfile = {
   avatarUrl: string | null;
 };
 
-export default function ProfilePage() {
+export default function TeacherProfilePage() {
   const { data: session } = useSession();
   const [profile, setProfile] = useState<UserProfile>({
     firstName: "",
@@ -40,11 +40,6 @@ export default function ProfilePage() {
     const fetchUserProfile = async () => {
       if (session?.user) {
         try {
-          console.log(
-            "Fetching user profile with session:",
-            JSON.stringify(session.user, null, 2)
-          );
-
           // First, initialize profile with session data to ensure we have something to display
           const sessionProfilePicture =
             session.user.profilePicture || session.user.image || null;
@@ -54,8 +49,6 @@ export default function ProfilePage() {
             firstName: session.user.firstName || "",
             lastName: session.user.lastName || "",
             email: session.user.email || "",
-            // bio: session.user.bio || "I love reading and writing adventure stories!",
-            // interests: session.user.interests || "Fantasy, Science Fiction, Mystery",
             avatarUrl: sessionProfilePicture,
           });
 
@@ -64,7 +57,6 @@ export default function ProfilePage() {
 
           if (response.ok) {
             const data = await response.json();
-            console.log("API response data:", JSON.stringify(data, null, 2));
 
             // Extract profile picture URL from various possible sources
             const profilePictureUrl =
@@ -74,34 +66,17 @@ export default function ProfilePage() {
               session.user.image ||
               null;
 
-            console.log("Profile picture URL:", profilePictureUrl);
-            console.log("First name from API:", data.user.firstName);
-            console.log("Last name from API:", data.user.lastName);
-            console.log("Email from API:", data.user.email);
-            console.log("Bio from API:", data.user.bio);
-            console.log("Interests from API:", data.user.interests);
-
             // Update profile with API data
             const updatedProfile = {
               firstName: data.user.firstName || session.user.firstName || "",
               lastName: data.user.lastName || session.user.lastName || "",
               email: data.user.email || session.user.email || "",
-              // bio:
-              //   data.user.bio ||
-              //   session.user.bio ||
-              //   "I love reading and writing adventure stories!",
-              // interests:
-              //   data.user.interests ||
-              //   session.user.interests ||
-              //   "Fantasy, Science Fiction, Mystery",
               avatarUrl: profilePictureUrl,
             };
 
-            console.log("Setting profile to:", updatedProfile);
             setProfile(updatedProfile);
           } else {
             console.error("API response not OK:", await response.text());
-            // We already set the profile from session data above, so no need to do it again
             toast({
               title: "Warning",
               description:
@@ -111,7 +86,6 @@ export default function ProfilePage() {
           }
         } catch (error) {
           console.error("Error fetching user profile:", error);
-          // We already set the profile from session data above, so no need to do it again
           toast({
             title: "Error",
             description:
@@ -122,13 +96,7 @@ export default function ProfilePage() {
           setLoading(false);
         }
       } else {
-        console.error("No session data available");
         setLoading(false);
-        toast({
-          title: "Error",
-          description: "You must be logged in to view your profile.",
-          variant: "destructive",
-        });
       }
     };
 
@@ -139,15 +107,10 @@ export default function ProfilePage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    console.log(`Input changed: ${name} = ${value}`);
-    setProfile((prev) => {
-      const updated = {
-        ...prev,
-        [name]: value,
-      };
-      console.log("Updated profile state:", updated);
-      return updated;
-    });
+    setProfile((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -189,7 +152,6 @@ export default function ProfilePage() {
         }
 
         const data = await response.json();
-        console.log("Upload response:", data);
 
         // Update the profile state with the new avatar URL
         setProfile((prev) => ({
@@ -211,7 +173,6 @@ export default function ProfilePage() {
           description: error.message || "Failed to upload profile picture",
           variant: "destructive",
         });
-        // Keep the preview image in case the user wants to try uploading again
       }
     }
   };
@@ -221,8 +182,6 @@ export default function ProfilePage() {
     setIsSubmitting(true);
 
     try {
-      console.log("Submitting profile update with data:", profile);
-
       // Update the profile via API
       const response = await fetch("/api/user/profile", {
         method: "PUT",
@@ -232,14 +191,11 @@ export default function ProfilePage() {
         body: JSON.stringify({
           firstName: profile.firstName,
           lastName: profile.lastName,
-          // bio: profile.bio,
-          // interests: profile.interests,
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Profile update failed with response:", errorText);
         try {
           const errorData = JSON.parse(errorText);
           throw new Error(errorData.error || "Failed to update profile");
@@ -247,9 +203,6 @@ export default function ProfilePage() {
           throw new Error("Failed to update profile: " + errorText);
         }
       }
-
-      const responseData = await response.json();
-      console.log("Profile update successful:", responseData);
 
       toast({
         title: "Profile Updated",
@@ -344,12 +297,8 @@ export default function ProfilePage() {
     );
   }
 
-  console.log("Rendering profile with data:", profile);
-
   return (
     <div>
-      {/* <h1 className="text-2xl font-bold mb-6">My Profile</h1> */}
-
       <Tabs defaultValue="profile">
         <TabsList className="mb-4">
           <TabsTrigger value="profile">Profile Information</TabsTrigger>
@@ -359,7 +308,7 @@ export default function ProfilePage() {
         <TabsContent value="profile">
           <Card className="bg-ninja-white">
             <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
+              <CardTitle>Teacher Profile</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleProfileUpdate} className="space-y-4">
@@ -374,9 +323,6 @@ export default function ProfilePage() {
                       onChange={handleInputChange}
                       placeholder={profile.firstName || "Enter your first name"}
                     />
-                    <p className="text-xs text-gray-500">
-                      Current value: {profile.firstName || "(empty)"}
-                    </p>
                   </div>
 
                   <div className="space-y-2">
@@ -388,16 +334,13 @@ export default function ProfilePage() {
                       onChange={handleInputChange}
                       placeholder="Enter your last name"
                     />
-                    <p className="text-xs text-gray-500">
-                      Current value: {profile.lastName || "(empty)"}
-                    </p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
-                    className="placeholder:text-ninja-white"
+                    className="placeholder:text-ninja-white bg-gray-100"
                     id="email"
                     name="email"
                     type="email"
@@ -408,34 +351,6 @@ export default function ProfilePage() {
                     Email cannot be changed
                   </p>
                 </div>
-
-                {/* <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    name="bio"
-                    value={profile.bio}
-                    onChange={handleInputChange}
-                    placeholder="Tell us about yourself"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Current value: {profile.bio || "(empty)"}
-                  </p>
-                </div> */}
-
-                {/* <div className="space-y-2">
-                  <Label htmlFor="interests">Interests</Label>
-                  <Input
-                    id="interests"
-                    name="interests"
-                    value={profile.interests}
-                    onChange={handleInputChange}
-                    placeholder="Fantasy, Adventure, Mystery"
-                  />
-                  <p className="text-xs text-gray-500">
-                    Current value: {profile.interests || "(empty)"}
-                  </p>
-                </div> */}
 
                 <div className="space-y-4 ">
                   <Label htmlFor="avatar">Profile Picture</Label>
@@ -469,7 +384,7 @@ export default function ProfilePage() {
 
                 <Button
                   type="submit"
-                  className="bg-ninja-peach text-ninja-black hover:bg-ninja-peach/90"
+                  className="bg-ninja-crimson text-white hover:bg-ninja-crimson/90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Saving..." : "Save Changes"}
@@ -518,7 +433,7 @@ export default function ProfilePage() {
 
                 <Button
                   type="submit"
-                  className="bg-ninja-peach text-ninja-black hover:bg-ninja-peach/90"
+                  className="bg-ninja-crimson text-white hover:bg-ninja-crimson/90"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Updating..." : "Update Password"}
