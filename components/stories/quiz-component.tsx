@@ -132,10 +132,10 @@ export default function QuizComponent({
   const submitQuizResults = async () => {
     try {
       setIsSubmitting(true);
-      const finalScore =
-        ((score + (selectedOption === currentQuestion.correctAnswer ? 1 : 0)) /
-          totalQuestions) *
-        100;
+      
+      // Score is already updated in the state by handleSubmitAnswer
+      const rawScore = score;
+      const finalPercentage = (rawScore / totalQuestions) * 100;
 
       // Format answers for API submission
       const formattedAnswers = answers.map((answer, index) => ({
@@ -153,7 +153,7 @@ export default function QuizComponent({
           quizId: quiz._id,
           storyId,
           userId,
-          score: finalScore,
+          score: rawScore, // Send raw score to server
           // Don't send answers again since they're already in the database
           bookAssignmentId,
           submissionId: submissionId, // Include the submission ID
@@ -171,7 +171,7 @@ export default function QuizComponent({
       toast({
         className: "bg-ninja-crimson text-white",
         title: "Quiz Completed!",
-        description: `You scored ${finalScore.toFixed(0)}% on this quiz.${
+        description: `You scored ${finalPercentage.toFixed(0)}% on this quiz.${
           data.awardedNinjaGold
             ? ` You earned ${data.awardedNinjaGold} Ninja Gold!`
             : ""
@@ -349,3 +349,4 @@ export default function QuizComponent({
     </div>
   );
 }
+

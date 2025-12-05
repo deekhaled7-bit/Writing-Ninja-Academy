@@ -158,13 +158,18 @@ export async function submitQuizAnswers({
       0
     );
 
+    let percentageScore = 0;
+    if (totalPossibleScore > 0) {
+      percentageScore = (score / totalPossibleScore) * 100;
+    }
+
     // If submissionId is provided, update the existing submission
     if (submissionId) {
       console.log("from action");
       const updateData: any = {
         score,
-        percentageScore: score,
-        passed: score / totalPossibleScore >= 0.6, // Pass if score is 60% or higher
+        percentageScore,
+        passed: percentageScore >= 60, // Pass if score is 60% or higher
         completedAt: new Date(),
       };
 
@@ -200,7 +205,7 @@ export async function submitQuizAnswers({
     // Update the book assignment if it exists
     if (bookAssignmentId) {
       await BookAssignment.findByIdAndUpdate(bookAssignmentId, {
-        quizScore: score,
+        quizScore: percentageScore,
         quizSubmissionId: submission._id,
         hasCompletedQuiz: true,
       });
